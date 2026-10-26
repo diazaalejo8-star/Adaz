@@ -186,10 +186,8 @@
     lastAuthConfig='';
     cloudSession=null;
     if ($('#plannerFunctionUrl')) $('#plannerFunctionUrl').value=cloudConfig.plannerUrl;
-    if (cloudConfig.autoSync) {
-      try { await syncSnapshot(true); }
-      catch (error) { renderCloudStatus('Configuración guardada. La sincronización aún no se pudo completar: '+error.message); }
-    } else renderCloudStatus('Conexión guardada. No se subirán datos automáticamente hasta que actives esa opción.');
+    if (cloudConfig.autoSync) renderCloudStatus('Conexión guardada. La copia automática está activada; la primera subida ocurre después de un cambio o cuando pulses Subir copia ahora. Si ya existía una copia de otro dispositivo, restáurala primero para no reemplazarla con datos locales antiguos.');
+    else renderCloudStatus('Conexión guardada. No se subirán datos automáticamente hasta que actives esa opción.');
     notify('Configuración de nube guardada en este dispositivo.');
   }
   async function sendMagicLink(event) {
@@ -533,7 +531,7 @@
   });
   document.addEventListener('change',event=>{
     if(event.target.id==='cloudAutoSync') {
-      if(event.target.checked&&!confirm('¿Confirmas que deseas subir automáticamente a tu base privada todos los registros de ADAZ, incluidos estudio, negocio/finanzas, entrenamiento, bienestar y revisiones?')) {
+      if(event.target.checked&&!confirm('¿Confirmas que deseas subir automáticamente a tu base privada todos los registros de ADAZ, incluidos estudio, negocio/finanzas, entrenamiento, bienestar y revisiones? La subida puede reemplazar la única copia en la nube con los datos de este dispositivo. Si necesitas conservar una copia de otro dispositivo, cancela y restáurala primero.')) {
         event.target.checked=false;
       }
       cloudConfig.autoSync=event.target.checked;
