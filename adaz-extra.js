@@ -18,7 +18,7 @@
   };
   let preferences = readStore();
   const save = () => {
-    try { localStorage.setItem(KEY, JSON.stringify(preferences)); }
+    try { localStorage.setItem(KEY, JSON.stringify(preferences)); window.dispatchEvent(new CustomEvent('adaz-data-updated')); }
     catch { notify('No se pudieron guardar los cambios. Exporta un respaldo y libera espacio.'); }
   };
   let notifyTimer=null;
