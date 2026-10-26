@@ -42,7 +42,7 @@ Deno.serve(async (request: Request) => {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: authorization } }
     });
-    const { data: userData, error: userError } = await userClient.auth.getUser();
+    const { data: userData, error: userError } = await userClient.auth.getUser(authorization.slice(7));
     if (userError || !userData.user) return respond(401, { error: "The session is invalid or expired. Sign in again." });
     const userId = userData.user.id;
     const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
