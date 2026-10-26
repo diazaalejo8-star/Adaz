@@ -159,7 +159,7 @@
     const a = document.createElement('a'); a.href=url; a.download='ADAZ-recordatorios.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
     notify(reminders.length ? 'Calendario exportado. Impórtalo en Google Calendar o en el calendario del teléfono y verifica que tenga notificaciones activas.' : 'Calendario básico exportado con revisión semanal y cierre diario. Impórtalo en el calendario del teléfono.');
   }
-  function checkDueReminders() {
+  async function checkDueReminders() {
     if (!('Notification' in window) || Notification.permission!=='granted') return;
     const now = new Date();
     const currentTime = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
@@ -175,7 +175,12 @@
       else applies=(r.date||dateKey)===dateKey;
       if (!applies || r.lastFired===dateKey) continue;
       try {
-        new Notification('ADAZ · '+r.title,{body:r.note||'Es hora del bloque que programaste.',icon:'./icon-192.png',tag:'adaz-'+r.id});
+        const options={body:r.note||'Es hora del bloque que programaste.',icon:'./icon-192.png',tag:'adaz-'+r.id};
+        if ('serviceWorker' in navigator) {
+          const registration=await navigator.serviceWorker.ready;
+          if (registration && typeof registration.showNotification==='function') await registration.showNotification('ADAZ · '+r.title,options);
+          else new Notification('ADAZ · '+r.title,options);
+        } else new Notification('ADAZ · '+r.title,options);
         r.lastFired=dateKey; changed=true;
       } catch {}
     }
