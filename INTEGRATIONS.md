@@ -33,6 +33,8 @@ Necesitas un proyecto Supabase. En ADAZ > IA y conexiones, introduce el Project 
 
 La tabla de progreso guarda el estado completo de la app: tareas, registros académicos, datos de negocio/finanzas, entrenamiento, bienestar y revisiones. No incluyas información que no quieras guardar en una base remota. Puedes desactivar la sincronización en cualquier momento. Desactivar no elimina copias ya almacenadas en Supabase: debes borrarlas en el Dashboard o con una acción explícita de borrado.
 
+Si eres menor de 18 años, pide permiso y apoyo a tu padre, madre o tutor antes de configurar la API, la facturación o enviar datos personales a servicios externos. No introduzcas datos sensibles en campos de demostración.
+
 ## C. Desplegar el copiloto seguro
 
 El navegador no debe llamar directamente a la OpenAI API con una API key. La clave se guarda exclusivamente en Secrets del lado del servidor. Consulta las recomendaciones oficiales sobre seguridad de API keys de OpenAI: https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety
