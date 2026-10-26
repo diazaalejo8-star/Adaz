@@ -121,7 +121,7 @@
       return;
     }
     if (cloudSession&&cloudSession.user) {
-      status.textContent='Sesión activa: '+(cloudSession.user.email||'usuario autenticado')+'. Sincronización automática '+(cloudConfig.autoSync?'ACTIVADA':'desactivada')+'.';
+      status.textContent='Sesión activa: '+(cloudSession.user.email||'usuario autenticado')+'. Copia automática '+(cloudConfig.autoSync?'ACTIVADA':'desactivada')+'.';
       return;
     }
     status.textContent='Proyecto configurado, pero sin sesión. Entra con tu correo para sincronizar o llamar al copiloto.';
@@ -169,7 +169,7 @@
     supabaseClient.auth.onAuthStateChange((event,session)=>{
       cloudSession=session||null;
       renderCloudStatus();
-      if (event==='SIGNED_IN'&&cloudConfig.autoSync) scheduleAutoSync();
+      if (event==='SIGNED_IN') renderCloudStatus('Sesión iniciada. Antes de subir, puedes restaurar una copia existente o subir este dispositivo.');
     });
     renderCloudStatus();
     return supabaseClient;
@@ -226,16 +226,12 @@
     } catch(error) {renderCloudStatus('No se pudo cerrar la sesión: '+error.message);}
   }
   async function syncSnapshot(silent) {
-    if (!cloudConfig.autoSync&&!silent) {
-      renderCloudStatus('Activa la casilla de sincronización automática o usa la exportación local. No se ha subido nada.');
-      return;
-    }
     const client=await ensureSupabaseClient();
     const {data,error:sessionError}=await client.auth.getSession();
     if (sessionError) throw sessionError;
     const session=data.session;
     cloudSession=session;
-    if (!session?.user) throw new Error('Inicia sesión antes de sincronizar.');
+    if (!session?.user) throw new Error('Inicia sesión antes de subir una copia.');
     const snapshot=currentLocalData();
     const result=await client.from('adaz_snapshots').upsert({
       user_id:session.user.id,
@@ -243,8 +239,8 @@
       updated_at:new Date().toISOString()
     },{onConflict:'user_id'});
     if (result.error) throw result.error;
-    renderCloudStatus('Sincronizado correctamente · '+new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+'. Tus registros permanecen también en este dispositivo.');
-    if (!silent) notify('Copia segura de progreso sincronizada.');
+    renderCloudStatus('Copia subida correctamente · '+new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+'. Tus registros permanecen también en este dispositivo.');
+    if (!silent) notify('Copia de progreso subida a Supabase.');
   }
   function scheduleAutoSync() {
     clearTimeout(cloudDebounce);
@@ -254,6 +250,28 @@
       catch(error) {renderCloudStatus('Sincronización pendiente: '+error.message);}
     },1200);
   }
+
+  async function restoreCloudSnapshot() {
+    const client=await ensureSupabaseClient();
+    const {data:authData,error:authError}=await client.auth.getSession();
+    if(authError) throw authError;
+    const session=authData.session;
+    if(!session?.user) throw new Error('Inicia sesión antes de restaurar una copia.');
+    const {data,error}=await client.from('adaz_snapshots').select('payload,updated_at').eq('user_id',session.user.id).maybeSingle();
+    if(error) throw error;
+    if(!data?.payload) {
+      renderCloudStatus('No hay una copia en la nube para esta cuenta todavía. Sube una copia desde este dispositivo primero.');
+      return;
+    }
+    const when=data.updated_at?new Date(data.updated_at).toLocaleString('es-CO'):'fecha desconocida';
+    if(!confirm('Se encontró una copia del '+when+'. Restaurarla reemplazará los registros locales de ADAZ y los recordatorios/ruta local. Exporta un respaldo antes si necesitas conservar lo que tienes en este dispositivo. ¿Continuar?')) return;
+    const payload=data.payload||{};
+    localStorage.setItem('adaz-data-v1',JSON.stringify(payload.progress||{}));
+    localStorage.setItem('adaz-routine-v1',JSON.stringify(payload.routineAndReminders||{}));
+    renderCloudStatus('Copia restaurada. Recargando ADAZ…');
+    location.reload();
+  }
+
   async function askCopilot(event) {
     event.preventDefault();
     const question=($('#aiQuestion')?.value||'').trim();
@@ -437,9 +455,8 @@
       if (parsed) url='https://open.spotify.com/'+parsed[1]+'/'+parsed[2];
       else throw new Error('Ese URI no parece una lista, álbum o artista de Spotify.');
     }
-    const opened=window.open(url,'_blank','noopener,noreferrer');
-    if (!opened) location.href=url;
     renderSpotifyStatus('Abriendo Spotify. En Android, el sistema puede abrir la app instalada o la página web.');
+    location.assign(url);
   }
   async function refreshSpotifyPlayback() {
     if (!spotifySession?.access_token) throw new Error('Conecta primero el control avanzado de Spotify.');
@@ -542,6 +559,7 @@
       else if(action==='testCloud') await testCloud();
       else if(action==='cloudSignOut') await signOutCloud();
       else if(action==='syncNow') await syncSnapshot(false);
+      else if(action==='restoreCloud') await restoreCloudSnapshot();
       else if(action==='clearCloudConfig') {
         if(!confirm('¿Borrar la configuración de nube y desactivar la sincronización en este dispositivo? Los datos ya subidos a Supabase no se eliminan.')) return;
         cloudConfig={supabaseUrl:'',supabaseKey:'',plannerUrl:'',autoSync:false,aiConsent:false};
