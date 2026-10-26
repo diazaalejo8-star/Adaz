@@ -21,9 +21,10 @@
     try { localStorage.setItem(KEY, JSON.stringify(preferences)); }
     catch { notify('No se pudieron guardar los cambios. Exporta un respaldo y libera espacio.'); }
   };
+  let notifyTimer=null;
   const notify = message => {
     const toast = $('#toast');
-    if (toast) { toast.textContent = message; toast.classList.add('show'); }
+    if (toast) { toast.textContent = message; toast.classList.add('show'); clearTimeout(notifyTimer); notifyTimer=setTimeout(()=>toast.classList.remove('show'),3200); }
     else window.alert(message);
   };
   const week = {
