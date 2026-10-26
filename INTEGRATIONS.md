@@ -42,9 +42,10 @@ El navegador no debe llamar directamente a la OpenAI API con una API key. La cla
 1. En tu proyecto de Supabase abre Edge Functions y crea una función llamada adaz-planner.
 2. Copia el archivo supabase/functions/adaz-planner/index.ts al editor de la función.
 3. En la configuración de Secrets de Edge Functions establece OPENAI_API_KEY (una API key propia) y, opcionalmente, OPENAI_MODEL. No compartas esa clave por chat ni la guardes en el repositorio. El código usa gpt-6-astra como nombre por defecto; si tu cuenta de API no dispone de ese modelo, cambia OPENAI_MODEL a uno habilitado en tu proyecto.
-4. Deja la validación JWT activada. La función requiere sesión autenticada, valida el usuario con Supabase Auth, aplica un límite de ocho consultas por usuario por hora y utiliza store:false en la petición a la Responses API.
-5. En ADAZ guarda el Project URL, la publishable/anon key y la URL de función https://TU-PROYECTO.supabase.co/functions/v1/adaz-planner.
-6. Inicia sesión, marca Acepto compartir el resumen actual de ADAZ al pedir análisis de IA y realiza una consulta de prueba. La función recibe el estado de ADAZ en ese momento; la API cobra según tu propia configuración de facturación.
+4. Si quieres permitir que el copiloto investigue información actual al necesitarla, añade la variable de servidor ADAZ_ENABLE_WEB_SEARCH=true. Esto habilita la herramienta web_search de Responses API y puede aumentar el coste; si no la configuras, el copiloto trabaja con el resumen de ADAZ y el conocimiento del modelo sin búsqueda en vivo.
+5. Deja la validación JWT activada. La función requiere sesión autenticada, valida el usuario con Supabase Auth, aplica un límite de ocho consultas por usuario por hora y utiliza store:false en la petición a la Responses API.
+6. En ADAZ guarda el Project URL, la publishable/anon key y la URL de función https://TU-PROYECTO.supabase.co/functions/v1/adaz-planner.
+7. Inicia sesión, marca Acepto compartir el resumen actual de ADAZ al pedir análisis de IA y realiza una consulta de prueba. La función recibe el estado de ADAZ en ese momento; la API cobra según tu propia configuración de facturación.
 
 La integración consulta al modelo únicamente cuando pulsas Consultar copiloto. Los datos pueden sincronizarse automáticamente a Supabase, pero no se generan consultas de IA por cada casilla marcada, lo que evita gastos imprevisibles.
 
