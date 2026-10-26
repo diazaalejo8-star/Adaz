@@ -5,7 +5,7 @@ Este repositorio es una PWA estática de GitHub Pages. No contiene claves privad
 ## Qué permite esta versión
 
 - Spotify: abre un enlace o playlist de Spotify. El control avanzado usa OAuth Authorization Code con PKCE y funciones de Spotify Web API; requiere registrar tu propia app de desarrollador y tener Spotify Premium para controlar la reproducción.
-- Nube: copia una instantánea de tu progreso a tu propia tabla privada Supabase, pero únicamente después de configurar un proyecto, iniciar sesión y activar de forma explícita la sincronización automática.
+- Nube: sube una instantánea de tu progreso a tu propia tabla privada Supabase, pero únicamente después de configurar un proyecto, iniciar sesión y activar de forma explícita la copia automática. Es una copia unidireccional desde este dispositivo; la restauración desde la nube es una acción aparte y reemplaza los datos locales después de pedir confirmación.
 - Copiloto: envía una consulta y el resumen local de ADAZ a una Supabase Edge Function; esa función llama a la OpenAI API. La conversación se guarda localmente y el acceso a la IA es bajo demanda para evitar costes por cada cambio.
 - ChatGPT: la aplicación no puede conectarse a tu historial privado de ChatGPT ni subir mensajes a esta conversación automáticamente. El botón Preparar resumen para ChatGPT descarga un archivo que tú puedes adjuntar manualmente aquí. El uso de la OpenAI API tiene facturación independiente del plan de ChatGPT.
 
