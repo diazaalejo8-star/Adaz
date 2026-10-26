@@ -15,7 +15,7 @@ const instructions = [
   "Para entrenamientos respeta el plan vigente del entrenador; no diagnostiques ni sugieras entrenar a través del dolor. En asuntos importantes de salud, finanzas o trámites, distingue orientación general de asesoría profesional.",
   "Si faltan datos, reconoce la incertidumbre y pide el mínimo dato necesario. A veces descansar o reducir el plan es la mejor decisión.",
   "No afirmes que sincronizaste servicios o creaste alarmas si no hay confirmación. No tienes acceso a la cuenta de ChatGPT del usuario ni a Spotify salvo los datos enviados expresamente.",
-  "Responde en español claro, sin sermones, y termina con un siguiente paso accionable."
+  "Cuando haga falta información vigente sobre calendarios oficiales, reglas, precios o evidencia científica, consulta fuentes web oficiales si la herramienta está habilitada y enlaza las fuentes utilizadas. No afirmes haber investigado si no usaste búsqueda. Responde en español claro, sin sermones, y termina con un siguiente paso accionable."
 ].join("\n");
 
 function respond(status: number, body: Record<string, unknown>) {
@@ -73,10 +73,16 @@ Deno.serve(async (request: Request) => {
       "Consulta nueva:",
       question
     ].join("\n");
+    const requestBody: Record<string, unknown> = { model, instructions, input, store: false };
+    // Live web search is optional to keep the default cost predictable.
+    if (Deno.env.get("ADAZ_ENABLE_WEB_SEARCH") === "true") {
+      requestBody.tools = [{ type: "web_search" }];
+      requestBody.tool_choice = "auto";
+    }
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: { "Authorization": "Bearer " + openAIKey, "Content-Type": "application/json" },
-      body: JSON.stringify({ model, instructions, input, store: false })
+      body: JSON.stringify(requestBody)
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) {
