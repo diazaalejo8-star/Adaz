@@ -1,0 +1,2 @@
+# Adaz
+For apk
