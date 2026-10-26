@@ -12,9 +12,9 @@
   const readStore = () => {
     try {
       const parsed = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (parsed && typeof parsed === 'object') return {reminders:Array.isArray(parsed.reminders)?parsed.reminders:[], leisureDone:Array.isArray(parsed.leisureDone)?parsed.leisureDone:[]};
+      if (parsed && typeof parsed === 'object') return {reminders:Array.isArray(parsed.reminders)?parsed.reminders:[], leisureDone:Array.isArray(parsed.leisureDone)?parsed.leisureDone:[], roadmapDone:Array.isArray(parsed.roadmapDone)?parsed.roadmapDone:[]};
     } catch {}
-    return {reminders:[], leisureDone:[]};
+    return {reminders:[], leisureDone:[], roadmapDone:[]};
   };
   let preferences = readStore();
   const save = () => {
@@ -204,7 +204,28 @@
     const history = $('#leisureHistory');
     if (history) history.innerHTML = preferences.leisureDone.slice(-8).reverse().map(x => '<div class="list-item"><span class="bullet">✓</span><div><b class="smalltext">'+escapeHTML(x.title)+'</b><div class="muted smalltext">'+escapeHTML(x.date)+'</div></div></div>').join('') || '<div class="empty">Tus actividades completadas aparecerán aquí.</div>';
   }
-  let leisureIndex = null;
+
+  const roadmapPhases = [
+    {id:'baseline',period:'Ahora · octubre–noviembre de 2026',title:'Establecer la línea base',tasks:['Actualizar el horario de colegio y entrenamiento que realmente estás usando.','Hacer una práctica diagnóstica de IELTS y registrar qué habilidad necesita más trabajo.','Resolver una muestra por cada área de Saber 11 y guardar los errores frecuentes.','Conciliar capital, costos, pedidos, inventario y dinero pendiente de Aestel Lux.','Registrar durante dos semanas sueño, energía y carga deportiva para entender la rutina real.']},
+    {id:'close2026',period:'Diciembre de 2026',title:'Cerrar el año con datos',tasks:['Revisar qué métodos de estudio sí mejoraron los resultados.','Calcular ventas, costos y margen real sin sumar anticipos pendientes como caja.','Revisar qué productos y contenidos merecen continuar o pausar.','Definir tres prioridades realistas para el primer trimestre de 2027.']},
+    {id:'q1',period:'Primer trimestre de 2027',title:'Construir consistencia',tasks:['Sostener bloques semanales de IELTS y rotar las cuatro habilidades.','Practicar Saber 11 por área; mantener un registro de errores recurrentes.','Mejorar catálogo y presentación de Aestel Lux usando pedidos y consultas reales.','Mantener el plan de entrenamiento con seguimiento de recuperación y descanso.']},
+    {id:'q2',period:'Segundo trimestre de 2027',title:'Medir y corregir',tasks:['Hacer bloques cronometrados y revisar los errores con evidencia.','Ajustar el estudio hacia las áreas más débiles, no solo hacia las más cómodas.','Comparar margen por producto y la conversión de consultas a pedidos.','Revisar carga, sueño y vida personal para que el plan siga siendo sostenible.']},
+    {id:'exam',period:'Antes de Saber 11',title:'Preparación según calendario oficial',tasks:['Confirmar fechas, inscripción y requisitos exclusivamente en el ICFES.','Organizar simulacros graduales y repaso espaciado según los resultados.','Preparar logística de examen con anticipación, sin depender de una fecha supuesta.']},
+    {id:'q4',period:'Segundo semestre de 2027',title:'Evaluar y rediseñar',tasks:['Revisar resultados académicos y decidir el siguiente objetivo de formación.','Hacer balance de Aestel Lux: caja, pedidos, rentabilidad, garantía y canales.','Evaluar aprendizajes, salud, descanso, relaciones y prioridades del siguiente año.']}
+  ];
+  function renderRoadmap() {
+    const root=$('#roadmapList');
+    if (!root) return;
+    const done=preferences.roadmapDone||[];
+    root.innerHTML=roadmapPhases.map(p=>{
+      const complete=done.includes(p.id);
+      return '<article class="skill" style="margin-bottom:10px;border-color:'+(complete?'#397b62':'var(--line)')+';background:'+(complete?'#10271f':'#0d1523')+'"><div class="row-between"><span class="tag '+(complete?'green':'blue')+'">'+(complete?'COMPLETADO':'EN PROCESO')+'</span><span class="muted smalltext">'+escapeHTML(p.period)+'</span></div><h3 style="font-size:14px;margin:10px 0 6px">'+escapeHTML(p.title)+'</h3><ul style="padding-left:20px;margin:7px 0;color:var(--muted);font-size:11px">'+p.tasks.map(t=>'<li style="margin:5px 0">'+escapeHTML(t)+'</li>').join('')+'</ul><button class="btn small '+(complete?'':'primary')+'" type="button" data-roadmap-toggle="'+escapeHTML(p.id)+'">'+(complete?'Marcar de nuevo en proceso':'Marcar fase como completada')+'</button></article>';
+    }).join('');
+    const status=$('#roadmapStatus');
+    if (status) status.textContent=done.length+' de '+roadmapPhases.length+' fases marcadas como completadas. Revisa la ruta cada domingo.';
+  }
+
+    let leisureIndex = null;
   function showNextLeisure() {
     const cards = $$('#leisureCatalog .leisure-choice');
     if (!cards.length) return;
@@ -262,11 +283,21 @@
   document.addEventListener('click', e => {
     if (e.target.closest('[data-page="routine"]')) setTimeout(currentSchedule,40);
     if (e.target.closest('[data-page="leisure"]')) setTimeout(renderLeisure,40);
+    if (e.target.closest('[data-page="plan"]')) setTimeout(renderRoadmap,40);
+    const roadmapButton=e.target.closest('[data-roadmap-toggle]');
+    if (roadmapButton) {
+      const id=roadmapButton.dataset.roadmapToggle;
+      preferences.roadmapDone=preferences.roadmapDone||[];
+      preferences.roadmapDone=preferences.roadmapDone.includes(id)?preferences.roadmapDone.filter(x=>x!==id):preferences.roadmapDone.concat(id);
+      save(); renderRoadmap(); return;
+    }
   });
   function initial() {
     if ($('#routineHeading')) currentSchedule();
     if ($('#reminderList')) { $('#reminderDate').value=today(); renderReminders(); }
     if ($('#leisureFeature')) renderLeisure();
+    if ($('#roadmapList')) renderRoadmap();
+    window.addEventListener('adaz-extras-imported',()=>{preferences=readStore();renderReminders();renderLeisure();renderRoadmap();});
     checkDueReminders();
     window.setInterval(checkDueReminders,15000);
     document.addEventListener('visibilitychange',()=>{ if (!document.hidden) { checkDueReminders(); if ($('#reminderList')) renderReminders(); }});
