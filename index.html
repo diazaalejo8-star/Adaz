@@ -69,6 +69,40 @@
     .footer-note{color:#7f8ca1}
     @media(prefers-color-scheme:light){:root{color-scheme:dark}}
 
+  
+    /* ADAZ expanded modules */
+    details{background:#0c1421;border:1px solid var(--line);border-radius:13px;padding:12px 14px;margin:9px 0}
+    details summary{cursor:pointer;font-weight:800;color:var(--ink);list-style-position:inside}
+    details[open] summary{margin-bottom:10px;color:#b7cdfd}
+    details p,details li{font-size:12px;color:#c4cede}
+    details ul,details ol{padding-left:22px}
+    .material-library .card{box-shadow:none}
+    .routine-timeline{display:grid;gap:10px}
+    .routine-item{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;border:1px solid var(--line);border-radius:14px;padding:13px;background:#0d1523}
+    .routine-time{font-weight:800;font-size:11px;color:#a9c5ff}
+    .routine-body h3{font-size:13px;margin:0 0 4px}
+    .routine-body p{font-size:11px;margin:0;color:var(--muted)}
+    .leisure-feature{background:linear-gradient(135deg,#111e32,#0d1422);border:1px solid #293a55;border-radius:20px;padding:22px}
+    .leisure-feature h2{font-size:22px;margin:7px 0}
+    .leisure-feature p{color:#c4cede;max-width:700px}
+    .leisure-feature .btn{margin:6px 6px 0 0}
+    .leisure-catalog{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .leisure-choice{padding:13px;border:1px solid var(--line);border-radius:13px;background:#0d1523}
+    .leisure-choice.active{border-color:#8ab0ff;background:#13233b}
+    .leisure-choice b{display:block;font-size:12px;margin-bottom:4px}
+    .leisure-choice p{font-size:11px;color:var(--muted);margin:0}
+    .reminder-status{font-size:11px;border:1px solid var(--line);padding:10px 12px;border-radius:11px;color:#b7c6dc;background:#0b1220}
+    .routine-hero{padding:22px 24px;border-radius:20px;background:linear-gradient(125deg,#101d30,#0a1220);border:1px solid #273a56;margin-bottom:16px}
+    .routine-hero h1{margin:4px 0 3px;font-size:clamp(24px,3vw,32px)}
+    .routine-hero p{margin:6px 0 0;color:#c2cede}
+    .section-anchor{scroll-margin-top:90px}
+    .study-mini-question{padding:12px;border-radius:12px;background:#111d2e;border:1px solid #293a55;margin-top:10px}
+    .study-mini-question p{margin:4px 0}
+    .bottom-nav{overflow-x:auto;justify-content:flex-start;gap:4px;scrollbar-width:thin}
+    .bottom-nav .nav-btn{flex:0 0 auto;min-width:67px}
+    @media(max-width:820px){.routine-item{grid-template-columns:1fr;gap:5px;padding:12px}.routine-time{font-size:10px}.leisure-catalog{grid-template-columns:repeat(2,minmax(0,1fr))}.leisure-feature{padding:17px}.bottom-nav{justify-content:flex-start}.bottom-nav .nav-btn{flex:0 0 auto;min-width:67px}}
+    @media(max-width:440px){.leisure-catalog{grid-template-columns:1fr}.routine-hero{padding:17px}}
+
   </style>
 </head>
 <body>
@@ -77,13 +111,16 @@
     <div class="brand"><div class="brand-mark">AD</div><div><div class="brand-name">ADAZ</div><div class="brand-sub">Sistema personal</div></div></div>
     <div><div class="nav-caption">Tu espacio</div><nav class="nav-list" id="sideNav">
       <button class="nav-btn active" data-page="dashboard"><span class="nav-icon">◫</span>Panel del día</button>
+      <button class="nav-btn" data-page="routine"><span class="nav-icon">◷</span>Mi rutina y alarmas</button>
       <button class="nav-btn" data-page="study"><span class="nav-icon">▤</span>Estudios</button>
       <button class="nav-btn" data-page="business"><span class="nav-icon">↗</span>ADAZ / Negocio</button>
       <button class="nav-btn" data-page="training"><span class="nav-icon">⌁</span>Entrenamiento</button>
       <button class="nav-btn" data-page="review"><span class="nav-icon">◷</span>Revisión semanal</button>
+      <button class="nav-btn" data-page="review"><span class="nav-icon">◷</span>Revisión semanal</button>
     </nav></div>
     <div><div class="nav-caption">Sistema</div><nav class="nav-list">
       <button class="nav-btn" data-page="library"><span class="nav-icon">◎</span>Biblioteca y método</button>
+      <button class="nav-btn" data-page="leisure"><span class="nav-icon">✦</span>Tiempo libre e ideas</button>
       <button class="nav-btn" data-action="export"><span class="nav-icon">⇩</span>Exportar mis datos</button>
       <button class="nav-btn" data-action="settings"><span class="nav-icon">⚙</span>Configuración</button>
     </nav></div>
@@ -110,10 +147,120 @@
         <div class="grid two section-gap"><div class="card"><div class="card-header"><div><h2>Esta semana</h2><div class="card-sub">Lo registrado en ADAZ.</div></div><button class="btn small" data-page="review">Ver revisión →</button></div><div class="chart" id="studyChart"></div><div class="row-between smalltext muted" style="margin-top:12px"><span>Minutos de estudio por día</span><span id="chartWeekLabel"></span></div></div><div class="card"><div class="card-header"><div><h2>Recordatorios importantes</h2><span class="tag orange">SISTEMA</span></div></div><div class="list-simple"><div class="list-item"><span class="bullet">📘</span><div><b class="smalltext">IELTS</b><div class="muted smalltext">Registra habilidad y resultado; apunta a mejorar con evidencia, no solo a acumular horas.</div></div></div><div class="list-item"><span class="bullet">🧠</span><div><b class="smalltext">Saber 11</b><div class="muted smalltext">Practica las cinco áreas y lleva un registro de errores.</div></div></div><div class="list-item"><span class="bullet">💼</span><div><b class="smalltext">Negocio</b><div class="muted smalltext">Revisa caja, pedidos y margen antes de volver a invertir.</div></div></div><div class="list-item"><span class="bullet">🌿</span><div><b class="smalltext">Carga sostenible</b><div class="muted smalltext">Si estás muy cansado o vas empeorando, reduce el plan y registra el motivo.</div></div></div></div><button class="btn" style="width:100%;margin-top:10px" data-action="calendar">Descargar recordatorios (.ics)</button></div></div>
       </section>
 
+      <section class="page" id="page-routine">
+        <div class="routine-hero">
+          <div class="eyebrow">Sistema operativo personal</div>
+          <h1 id="routineHeading">Tu rutina de hoy</h1>
+          <p id="routineDate">Cargando fecha…</p>
+          <p>Una estructura orientativa para ayudarte a empezar. Mantén flexibles los bloques que dependen del colegio, el entrenador, la familia o tu energía real.</p>
+        </div>
+        <div class="grid two">
+          <div class="card">
+            <div class="card-header"><div><h2>Agenda de referencia</h2><div class="card-sub">Los bloques aparecen según el día de la semana.</div></div><span class="tag blue">HOY</span></div>
+            <div id="routineTimeline" class="routine-timeline"></div>
+            <div id="routineDateNote" class="note warn"></div>
+          </div>
+          <div class="grid" style="align-content:start">
+            <div class="card">
+              <div class="card-header"><div><h2>Mis tareas de hoy</h2><div class="card-sub" id="routineTaskSummary">Tus tareas del Panel del día aparecerán aquí.</div></div></div>
+              <div id="routineTaskList" class="list-simple"></div>
+              <button class="btn primary" style="width:100%;margin-top:12px" type="button" data-page="dashboard">Abrir y editar el Panel del día</button>
+            </div>
+            <div class="card">
+              <div class="card-header"><div><h2>Recordatorios y alarmas</h2><div class="card-sub">Programa estudio, revisión de pedidos o cierre diario.</div></div></div>
+              <p class="muted smalltext">Los avisos dentro de ADAZ se comprueban mientras la app permanece abierta. Para que el teléfono avise con ADAZ cerrada, exporta los recordatorios al calendario y activa sus notificaciones.</p>
+              <form id="reminderForm" class="form-grid">
+                <div class="field full"><label for="reminderTitle">¿Qué quieres recordar?</label><input id="reminderTitle" required maxlength="90" placeholder="Ej. Empezar práctica de IELTS" /></div>
+                <div class="field"><label for="reminderDate">Fecha de inicio</label><input id="reminderDate" type="date" required /></div>
+                <div class="field"><label for="reminderTime">Hora</label><input id="reminderTime" type="time" required /></div>
+                <div class="field"><label for="reminderRepeat">Repetición</label><select id="reminderRepeat"><option value="once">Una vez</option><option value="daily">Todos los días</option><option value="weekdays">Lunes a viernes</option><option value="weekly">Cada semana</option></select></div>
+                <div class="field full"><label for="reminderNote">Nota breve (opcional)</label><input id="reminderNote" maxlength="140" placeholder="Ej. Solo 30 minutos; luego revisar errores" /></div>
+                <div class="form-actions"><button class="btn primary" type="submit">Guardar recordatorio</button></div>
+              </form>
+              <div class="reminder-status" id="notificationStatus" role="status" aria-live="polite" style="margin-top:12px">Estado de las notificaciones…</div>
+              <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:12px">
+                <button class="btn" type="button" data-action="enableNotifications">Activar avisos de ADAZ</button>
+                <button class="btn" type="button" data-action="exportReminderCalendar">Exportar alarmas al calendario (.ics)</button>
+              </div>
+              <div class="note">Los recordatorios se guardan en este dispositivo y no se sincronizan automáticamente. Importa el archivo .ics en el calendario del teléfono y comprueba que estén habilitadas sus notificaciones.</div>
+              <div class="divider"></div>
+              <div class="callout-title">Recordatorios guardados</div>
+              <div id="reminderList" class="list-simple section-gap"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="page" id="page-study">
         <div class="page-heading"><div><div class="eyebrow">01 / Aprendizaje deliberado</div><h1>Estudios</h1><p>Practicar, medir, encontrar errores y volver sobre ellos. El tiempo solo es útil cuando sabes qué aprendiste.</p></div><button class="btn primary" data-action="focus">▶ Iniciar sesión</button></div>
         <div class="grid four"><div class="card stat-card"><div class="stat-label">IELTS / minutos esta semana</div><div class="stat-number" id="ieltsMinutes">0</div><div class="stat-label">Objetivo inicial editable: 120–160 min</div></div><div class="card stat-card"><div class="stat-label">Saber 11 / minutos esta semana</div><div class="stat-number" id="icfesMinutes">0</div><div class="stat-label">Incluye práctica por área</div></div><div class="card stat-card"><div class="stat-label">Precisión media registrada</div><div class="stat-number" id="accuracyAverage">—</div><div class="stat-label">Solo sesiones con resultado porcentual</div></div><div class="card stat-card"><div class="stat-label">Sesiones esta semana</div><div class="stat-number" id="weekStudySessions">0</div><div class="stat-label">Pueden ser breves y enfocadas</div></div></div>
         <div class="card section-gap"><div class="row-between"><div><h2>Meta semanal de estudio</h2><div class="card-sub" id="studyTargetText">Objetivo configurable · mide los minutos efectivos que realmente registras.</div></div><span class="tag blue" id="studyTargetPct">0%</span></div><div class="progress blue" style="margin-top:13px"><span id="studyTargetBar" style="width:0"></span></div></div>
+        <div class="card section-gap material-library" id="studyMaterial">
+          <div class="card-header"><div><h2>Material de estudio dentro de ADAZ</h2><div class="card-sub">Guías breves y ejercicios originales para que puedas estudiar desde aquí. Abre cada bloque, responde primero y revela la explicación después.</div></div><span class="tag blue">PRACTICAR</span></div>
+          <div class="grid two">
+            <div class="card">
+              <h2>IELTS · estrategias y práctica</h2>
+              <details open><summary>Listening · cómo trabajar una grabación</summary>
+                <ol><li>Antes de escuchar, lee las preguntas e identifica si necesitas una fecha, nombre, cifra, lugar o idea general.</li><li>Predice qué tipo de palabra encajaría; escucha sin asumir que usarán exactamente las palabras de la pregunta.</li><li>Detecta paráfrasis y distractores: un hablante puede mencionar una opción y luego corregirse.</li><li>Al terminar, clasifica cada error: falta de vocabulario, no reconocer una paráfrasis, perder el turno, ortografía o precipitarse.</li></ol>
+                <p><b>Mini práctica original:</b> una estudiante dice: “I first planned to go on Tuesday, but the lab was closed, so I booked Thursday morning instead.” ¿Qué día reservó finalmente?</p>
+                <details><summary>Ver respuesta</summary><p><b>Thursday morning.</b> Tuesday aparece como plan inicial; la frase posterior corrige el plan. Este es un ejemplo de distractor por autocorrección.</p></details>
+                <button class="btn small" type="button" data-material-fill="IELTS|Listening|35|Practicar un ejercicio de Listening y clasificar cada error|Corrección de errores">Preparar sesión de 35 min</button>
+              </details>
+              <details><summary>Reading · leer con propósito</summary>
+                <p>Primero identifica el tema y estructura del texto; luego busca evidencia para cada pregunta. En True / False / Not Given, diferencia entre contradicción explícita y una información que el texto simplemente no menciona.</p>
+                <div class="study-mini-question"><p><b>Texto original:</b> A community library extended its evening hours after a survey showed that many students worked during the day. Visitor numbers rose during the first month, although the library has not yet evaluated whether the change improved exam results.</p><p><b>Pregunta:</b> The library has proved that longer opening hours improve exam results.</p>
+                  <details><summary>Respuesta y razonamiento</summary><p><b>Not Given.</b> Se reporta más visitas, pero todavía no se evaluaron los resultados de los exámenes. No es correcto convertir una posibilidad en un hecho probado.</p></details>
+                </div>
+                <button class="btn small" type="button" data-material-fill="IELTS|Reading|35|Resolver una tarea de Reading y justificar la evidencia textual|Simulacro cronometrado">Preparar sesión de 35 min</button>
+              </details>
+              <details><summary>Writing Task 2 · estructura operativa</summary>
+                <ol><li>Analiza qué pide la consigna: opinión, discusión, ventajas/desventajas, causa/solución o dos preguntas.</li><li>Planifica una tesis que responda exactamente a la pregunta y dos ideas principales desarrollables.</li><li>Usa párrafos con idea central, explicación, ejemplo pertinente y vínculo con la tesis.</li><li>Reserva tiempo para revisar si respondiste la consigna, la progresión lógica, gramática y precisión léxica.</li></ol>
+                <p><b>Consigna original para practicar:</b> Some people believe that students should learn personal finance at school. To what extent do you agree or disagree?</p>
+                <p><b>Plan de 3 minutos:</b> postura provisional; argumento 1 + ejemplo; argumento 2 + ejemplo; posible objeción; conclusión que no introduzca una idea nueva.</p>
+                <button class="btn small" type="button" data-material-fill="IELTS|Writing|35|Escribir un plan y un párrafo argumentativo sobre educación financiera|Producción / feedback">Preparar sesión de 35 min</button>
+              </details>
+              <details><summary>Speaking · respuestas con desarrollo</summary>
+                <p>Practica con la secuencia <b>respuesta → razón → ejemplo → matiz</b>. No memorices discursos completos: aprende a desarrollar la idea con naturalidad, reformular cuando falte una palabra y corregirte sin bloquearte.</p>
+                <p><b>Tarjeta original:</b> Describe a skill you would like to learn. Incluye qué habilidad es, cuándo empezaste a interesarte, cómo la aprenderías y por qué te importa.</p>
+                <p>Grábate durante 1–2 minutos. Escúchate y elige solo dos ajustes prioritarios: organización, pausas, vocabulario preciso, pronunciación inteligible o errores gramaticales recurrentes.</p>
+                <button class="btn small" type="button" data-material-fill="IELTS|Speaking|20|Grabar respuesta de 1–2 minutos y anotar dos mejoras|Producción / feedback">Preparar sesión de 20 min</button>
+              </details>
+              <div class="source-row"><h3>Prácticas oficiales IELTS</h3><p>Utiliza las preguntas de muestra oficiales para medir tu nivel y familiarizarte con los formatos del examen.</p><a href="https://ielts.org/take-a-test/preparation-resources/sample-test-questions" target="_blank" rel="noopener noreferrer">Abrir IELTS.org ↗</a></div>
+            </div>
+            <div class="card">
+              <h2>ICFES Saber 11 · práctica razonada</h2>
+              <details open><summary>Lectura Crítica · inferir sin añadir supuestos</summary>
+                <p><b>Texto original:</b> El colegio instaló bebederos reutilizables y promovió llevar botellas propias. Durante el primer mes disminuyó la compra de botellas desechables en la cafetería. El informe no midió el consumo de agua fuera del colegio.</p>
+                <p><b>Pregunta:</b> ¿Cuál conclusión está mejor apoyada por la información?</p>
+                <ol type="A"><li>Todos los estudiantes dejaron de usar plástico.</li><li>La medida se asoció con una reducción de compras desechables en la cafetería.</li><li>El consumo de agua de la ciudad disminuyó.</li><li>La iniciativa fue la única causa posible del cambio.</li></ol>
+                <details><summary>Respuesta explicada</summary><p><b>B.</b> Es la única que reproduce el alcance de la evidencia. A, C y D hacen afirmaciones absolutas o fuera de lo medido.</p></details>
+                <button class="btn small" type="button" data-material-fill="ICFES|Lectura Crítica|25|Resolver una pregunta de inferencia y justificar por qué descarto tres opciones|Práctica de recuperación">Preparar sesión de 25 min</button>
+              </details>
+              <details><summary>Matemáticas · proporciones y unidades</summary>
+                <p><b>Pregunta original:</b> Una mezcla usa concentrado y agua en razón 3:5. Si se preparan 64 vasos de la mezcla usando la misma proporción, ¿cuántos vasos corresponden al agua?</p>
+                <details><summary>Ver solución</summary><p>La razón tiene 3 + 5 = 8 partes. Cada parte representa 64 ÷ 8 = 8 vasos. El agua ocupa 5 × 8 = <b>40 vasos</b>. Comprueba que las partes sumen 64.</p></details>
+                <button class="btn small" type="button" data-material-fill="ICFES|Matemáticas|25|Resolver problemas de razón y proporción explicando cada paso|Práctica guiada">Preparar sesión de 25 min</button>
+              </details>
+              <details><summary>Ciencias Naturales · variables y evidencia</summary>
+                <p><b>Pregunta original:</b> Un estudiante compara el crecimiento de dos plantas y quiere comprobar si la cantidad de luz influye. ¿Qué diseño da una comparación más justa?</p>
+                <details><summary>Ver solución</summary><p>Mantener iguales la especie, el tipo de suelo, el agua, el tamaño de las macetas y el tiempo; variar solo la exposición a la luz y medir el crecimiento con el mismo método. Así se reduce la influencia de variables de confusión.</p></details>
+                <button class="btn small" type="button" data-material-fill="ICFES|Ciencias Naturales|25|Identificar variable independiente, resultado medido y variables de control|Práctica guiada">Preparar sesión de 25 min</button>
+              </details>
+              <details><summary>Sociales y Ciudadanas · comparar fuentes</summary>
+                <p><b>Pregunta original:</b> Una alcaldía afirma que un programa aumentó la asistencia al transporte público; un grupo ciudadano dice que el cambio se debe a una reducción temporal de tarifas. ¿Qué dato ayuda más a evaluar las explicaciones?</p>
+                <details><summary>Ver solución</summary><p>Comparar datos de uso antes, durante y después del cambio, junto con las fechas de implementación, tarifas y otros factores relevantes. Un solo testimonio no basta para atribuir causalidad.</p></details>
+                <button class="btn small" type="button" data-material-fill="ICFES|Sociales y Ciudadanas|25|Comparar afirmaciones y determinar qué evidencia permite evaluarlas|Práctica guiada">Preparar sesión de 25 min</button>
+              </details>
+              <details><summary>Inglés ICFES · inferir significado por contexto</summary>
+                <p><b>Texto original:</b> “Although Maya was reluctant at first, she eventually volunteered to present the project.” ¿Qué sugiere <i>reluctant</i> en este contexto?</p>
+                <details><summary>Ver respuesta</summary><p><b>Que inicialmente no estaba muy dispuesta o dudaba.</b> La palabra <i>although</i> y el contraste con <i>eventually volunteered</i> dan la pista contextual.</p></details>
+                <button class="btn small" type="button" data-material-fill="ICFES|Inglés ICFES|20|Inferir el sentido de cinco palabras usando pistas del contexto|Práctica de recuperación">Preparar sesión de 20 min</button>
+              </details>
+              <div class="source-row"><h3>Material gratuito oficial ICFES</h3><p>La Caja de Herramientas permite revisar competencias, ejemplos de las cinco pruebas e interpretación de resultados.</p><a href="https://www.icfes.gov.co/caja-de-herramientas-saber-11/" target="_blank" rel="noopener noreferrer">Abrir Caja de Herramientas ↗</a></div>
+            </div>
+          </div>
+          <div class="note green">Cómo usarlo: responde primero sin abrir las soluciones, revisa el razonamiento y registra una sesión. Los ejercicios de esta sección son originales de ADAZ; para prácticas completas usa los materiales oficiales enlazados.</div>
+        </div>
         <div class="grid two section-gap"><div class="card"><div class="card-header"><div><h2>Registrar sesión de estudio</h2><div class="card-sub">Guarda objetivos y resultados reales.</div></div></div><form id="studyForm" class="form-grid"><div class="field"><label for="studyProgram">Programa</label><select id="studyProgram" required><option>IELTS</option><option>ICFES</option><option>Escolar</option><option>Otro</option></select></div><div class="field"><label for="studySkill">Habilidad / área</label><select id="studySkill"><option>Listening</option><option>Reading</option><option>Writing</option><option>Speaking</option><option>Matemáticas</option><option>Lectura Crítica</option><option>Ciencias Naturales</option><option>Sociales y Ciudadanas</option><option>Inglés ICFES</option><option>Repaso espaciado</option><option>Otra</option></select></div><div class="field"><label for="studyDate">Fecha</label><input id="studyDate" type="date" required /></div><div class="field"><label for="studyMinutes">Minutos efectivos</label><input id="studyMinutes" type="number" min="1" max="600" value="30" required /></div><div class="field"><label for="studyAccuracy">Resultado (%) — opcional</label><input id="studyAccuracy" type="number" min="0" max="100" placeholder="Ej. 72" /></div><div class="field"><label for="studyBand">Band IELTS (0–9, opcional)</label><input id="studyBand" type="number" min="0" max="9" step="0.5" placeholder="Ej. 6.5" /></div><div class="field"><label for="studyMethod">Método</label><select id="studyMethod"><option>Práctica de recuperación</option><option>Simulacro cronometrado</option><option>Repaso espaciado</option><option>Corrección de errores</option><option>Práctica guiada</option><option>Producción / feedback</option></select></div><div class="field full"><label for="studyGoal">Objetivo concreto</label><input id="studyGoal" placeholder="Ej. Resolver 12 preguntas de proporciones y justificar los errores" required /></div><div class="field full"><label for="studyResult">Resultado / error principal / próximo paso</label><textarea id="studyResult" placeholder="¿Qué lograste? ¿Qué necesitas repasar? Sé específico."></textarea></div><div class="form-actions"><button class="btn primary" type="submit">Guardar sesión</button></div></form></div>
           <div class="card"><div class="card-header"><div><h2>Ruta académica</h2><div class="card-sub">Objetivos de referencia; edita el progreso tras medirlo.</div></div></div><div class="skill-cards"><div class="skill"><div class="skillname">IELTS · Listening</div><div class="skillval">Meta 8.0</div><div class="skill-desc">Última banda: <b id="bandListening">—</b></div></div><div class="skill"><div class="skillname">IELTS · Reading</div><div class="skillval">Meta 8.0</div><div class="skill-desc">Última banda: <b id="bandReading">—</b></div></div><div class="skill"><div class="skillname">IELTS · Writing</div><div class="skillval">Meta 8.0</div><div class="skill-desc">Última banda: <b id="bandWriting">—</b></div></div><div class="skill"><div class="skillname">IELTS · Speaking</div><div class="skillval">Meta 8.0</div><div class="skill-desc">Última banda: <b id="bandSpeaking">—</b></div></div></div><div class="divider"></div><div class="callout-title">Ciclo de estudio recomendado</div><div class="list-simple"><div class="list-item"><span class="bullet">1</span><div><b class="smalltext">Recupera la información sin mirar</b><div class="muted smalltext">Preguntas, tarjetas o una explicación desde memoria.</div></div></div><div class="list-item"><span class="bullet">2</span><div><b class="smalltext">Corrige con fuente fiable</b><div class="muted smalltext">Anota por qué fue incorrecta cada respuesta.</div></div></div><div class="list-item"><span class="bullet">3</span><div><b class="smalltext">Programa otro repaso</b><div class="muted smalltext">Vuelve en unos días; ajusta el intervalo según el resultado.</div></div></div></div><div class="note warn">No se fija una fecha oficial de Saber 11 de 2027 dentro de ADAZ. Confirma la convocatoria y la elegibilidad en el sitio oficial del ICFES.</div></div></div>
         <div class="card section-gap"><div class="card-header"><div><h2>Historial de sesiones</h2><div class="card-sub">Datos que has registrado en este dispositivo.</div></div><button class="btn small" data-action="export">Exportar respaldo</button></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Programa / área</th><th>Objetivo</th><th>Min.</th><th>Resultado</th><th></th></tr></thead><tbody id="studyTable"></tbody></table></div><div id="studyEmpty" class="empty hidden">Aún no hay sesiones guardadas. Registra la primera, aunque sea de 15 minutos.</div></div>
@@ -125,6 +272,31 @@
         <div class="grid two section-gap"><div class="card"><div class="card-header"><div><h2>Registrar venta o costo</h2><div class="card-sub">Introduce solo cifras verificables.</div></div></div><form id="businessForm" class="form-grid"><div class="field"><label for="bizType">Tipo de movimiento</label><select id="bizType"><option value="sale">Venta</option><option value="cost">Costo / compra</option><option value="refund">Devolución / reembolso</option></select></div><div class="field"><label for="bizDate">Fecha</label><input id="bizDate" type="date" required /></div><div class="field"><label for="bizName">Producto / concepto</label><input id="bizName" placeholder="Ej. Manilla tejida" required /></div><div class="field"><label for="bizRevenue">Ingreso (COP)</label><input id="bizRevenue" type="number" min="0" step="100" value="0" required /></div><div class="field"><label for="bizCost">Costo total (COP)</label><input id="bizCost" type="number" min="0" step="100" value="0" required /></div><div class="field"><label for="bizStatus">Estado relacionado</label><select id="bizStatus"><option>Pagado / ejecutado</option><option>Anticipo</option><option>Pendiente</option><option>Cancelado</option></select></div><div class="field full"><label for="bizNotes">Notas</label><textarea id="bizNotes" placeholder="Proveedor, envío, empaque, comisión, saldo pendiente…"></textarea></div><div class="form-actions"><button class="btn primary" type="submit">Guardar movimiento</button></div></form><div class="note">Para una venta, registra el ingreso realmente cobrado. Añade como costo las piezas, empaques, envío subsidiado, comisiones y demás costos atribuibles. No registres una venta pendiente como caja recibida.</div></div>
           <div class="grid" style="align-content:start"><div class="card"><div class="card-header"><div><h2>Pedidos en seguimiento</h2><div class="card-sub">No dejes anticipos o entregas en la memoria.</div></div></div><form id="orderForm" class="form-grid"><div class="field"><label for="orderProduct">Producto / pedido</label><input id="orderProduct" required placeholder="Ej. Rosary / manilla" /></div><div class="field"><label for="orderStatus">Estado</label><select id="orderStatus"><option>Solicitud</option><option>Anticipo recibido</option><option>Pedido a proveedor</option><option>En preparación</option><option>Listo para entrega</option><option>Entregado</option><option>Cancelado</option></select></div><div class="field"><label for="orderDeposit">Anticipo recibido (COP)</label><input id="orderDeposit" type="number" min="0" step="100" value="0" /></div><div class="field"><label for="orderBalance">Saldo por cobrar (COP)</label><input id="orderBalance" type="number" min="0" step="100" value="0" /></div><div class="field full"><label for="orderDue">Fecha objetivo de seguimiento</label><input id="orderDue" type="date" /></div><div class="form-actions"><button class="btn" type="submit">Guardar pedido</button></div></form><div id="orderList" class="list-simple section-gap"></div></div><div class="card"><div class="card-header"><div><h2>Ritmo de contenido</h2><div class="card-sub">Registra publicación, no solo ideas.</div></div></div><form id="contentForm" class="form-grid"><div class="field"><label for="contentDate">Fecha</label><input id="contentDate" type="date" required /></div><div class="field"><label for="contentChannel">Canal</label><select id="contentChannel"><option>Instagram</option><option>TikTok</option><option>Facebook</option><option>WhatsApp Business</option></select></div><div class="field"><label for="contentFormat">Formato</label><select id="contentFormat"><option>Reel / video corto</option><option>Historia</option><option>Carrusel</option><option>Catálogo / producto</option><option>Testimonio / proceso</option></select></div><div class="field"><label for="contentMetric">Resultado medido (opcional)</label><input id="contentMetric" type="number" min="0" placeholder="Vistas, clics o consultas" /></div><div class="field full"><label for="contentTopic">Tema / llamada a la acción</label><input id="contentTopic" required placeholder="Ej. Cómo cuidar el oro laminado; pedir catálogo por WhatsApp" /></div><div class="form-actions"><button class="btn" type="submit">Guardar contenido</button></div></form><div class="divider"></div><div class="callout-title">Publicaciones registradas</div><div id="contentList" class="list-simple section-gap"></div></div></div></div>
         <div class="grid two section-gap"><div class="card"><div class="card-header"><div><h2>Flujo de caja / historial</h2><div class="card-sub">Movimientos guardados. La utilidad real necesita costos completos.</div></div></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Ingreso</th><th>Costo</th><th></th></tr></thead><tbody id="businessTable"></tbody></table></div><div id="businessEmpty" class="empty hidden">No hay movimientos aún. Empieza registrando cobros y compras reales.</div></div><div class="card"><div class="card-header"><div><h2>Capital y reglas de reinversión</h2><div class="card-sub">Cifras base compartidas anteriormente; confirma o cambia los valores.</div></div></div><form id="capitalForm" class="form-grid"><div class="field"><label for="capitalStart">Inversión inicial (COP)</label><input id="capitalStart" type="number" min="0" step="1000" value="200000" /></div><div class="field"><label for="capitalProfit">Utilidad neta estimada histórica (COP)</label><input id="capitalProfit" type="number" min="0" step="1000" value="150000" /></div><div class="field full"><label for="capitalReconcile">Caja actual verificada + inventario + dinero por cobrar − obligaciones</label><input id="capitalReconcile" type="number" min="0" step="1000" placeholder="No calcular automáticamente: concilia primero" /></div><div class="form-actions"><button class="btn" type="submit">Actualizar base</button></div></form><div class="note warn">Los $200.000 de inversión y los ~$150.000 de utilidad son una referencia inicial aportada por ti, no un saldo de caja validado. No sumes utilidad histórica a la caja actual sin reconciliar movimientos y obligaciones.</div><div class="divider"></div><div class="callout-title">Antes de aceptar preventas con descuento</div><div class="muted smalltext">Calcula precio cobrado − costos de producto − envío − empaque − comisiones − posibles garantías. Define fecha de entrega, anticipo, saldo y devolución por escrito. No comprometas el dinero de pedidos a gastos personales.</div></div></div>
+      
+        <div class="card section-gap">
+          <div class="card-header"><div><h2>Guía operativa · Aestel Lux</h2><div class="card-sub">Usa esto como lista de control; actualiza cada punto si cambian los proveedores, precios o condiciones.</div></div><span class="tag orange">NEGOCIO</span></div>
+          <div class="grid two">
+            <div>
+              <div class="callout-title">Producto y proveedores</div>
+              <div class="list-simple">
+                <div class="list-item"><span class="bullet">01</span><div><b class="smalltext">Posicionamiento</b><div class="muted smalltext">Joyería contemporánea en oro laminado; comunica “materiales de alta calidad” y no presentes el producto como acero.</div></div></div>
+                <div class="list-item"><span class="bullet">02</span><div><b class="smalltext">Venta por encargo</b><div class="muted smalltext">Prioriza pedidos confirmados y evita acumular inventario que inmovilice el capital. Informa plazo, anticipo y saldo antes del cobro.</div></div></div>
+                <div class="list-item"><span class="bullet">03</span><div><b class="smalltext">Lista de proveedores acordada</b><div class="muted smalltext">Tree Gold para piezas de oro laminado y Beads Market Co. para balinería/componentes. Antes de pagar, verifica disponibilidad, coste final y políticas vigentes. No se incluye Inversiones Palacio en el plan de proveedores.</div></div></div>
+                <div class="list-item"><span class="bullet">04</span><div><b class="smalltext">Precio y margen</b><div class="muted smalltext">Precio cobrado menos pieza/materiales, envío, empaque, comisiones, devoluciones y provisión de garantía. Registra ingresos reales por separado de anticipos pendientes.</div></div></div>
+              </div>
+            </div>
+            <div>
+              <div class="callout-title">Marca, contenido y confianza</div>
+              <div class="list-simple">
+                <div class="list-item"><span class="bullet">A</span><div><b class="smalltext">Identidad</b><div class="muted smalltext">Estética contemporánea y cuidada, no excesivamente artificial; comunica producto, materiales y proceso con fotos reales.</div></div></div>
+                <div class="list-item"><span class="bullet">B</span><div><b class="smalltext">Canales</b><div class="muted smalltext">Instagram, TikTok, Facebook y WhatsApp Business. Lleva cada pieza de contenido a una acción clara: consultar catálogo, pedir precio o solicitar una pieza.</div></div></div>
+                <div class="list-item"><span class="bullet">C</span><div><b class="smalltext">Pilares de contenido</b><div class="muted smalltext">Producto y cómo combinarlo; cuidado y materiales; proceso, pedidos y preguntas frecuentes. Registra alcance, consultas y pedidos, no solo visualizaciones.</div></div></div>
+                <div class="list-item"><span class="bullet">D</span><div><b class="smalltext">Garantía y cuidado</b><div class="muted smalltext">La política de 4 años al cliente debe escribirse con condiciones claras y costos presupuestados. Las condiciones de los proveedores no son iguales para todos los componentes: confirma cobertura por pieza, herraje y tipo de hilo antes de prometer cobertura uniforme.</div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="note warn">Control antes de reinvertir: concilia efectivo/cuenta, inventario, anticipos, cuentas por cobrar y obligaciones. Las cifras históricas de ADAZ son referencias hasta que las confirmes con movimientos.</div>
+        </div>
       </section>
 
       <section class="page" id="page-training">
@@ -155,11 +327,44 @@
           </div></div>
       </section>
 
+      <section class="page" id="page-leisure">
+        <div class="page-heading"><div><div class="eyebrow">Explorar · crear · descansar</div><h1>Tiempo libre e ideas</h1><p>ADAZ también te ayuda a encontrar algo agradable para hacer. No todo bloque tiene que convertirse en productividad; el descanso, la creatividad y las relaciones cuentan.</p></div></div>
+        <div class="grid two">
+          <div class="card">
+            <div class="card-header"><div><h2>Idea sugerida para hoy</h2><div class="card-sub">Un pequeño estímulo para cuando no sepas qué hacer.</div></div><span class="tag purple">FLEXIBLE</span></div>
+            <div class="leisure-feature" id="leisureFeature"><h2>Cargando idea…</h2><p>Un momento.</p></div>
+            <div class="note">La idea del día es una sugerencia, no una tarea obligatoria. Puedes cambiarla, ignorarla o simplemente descansar.</div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div><h2>Recursos para explorar</h2><div class="card-sub">Actividades educativas, creativas y recreativas.</div></div></div>
+            <div class="source-row"><h3>British Council · escucha en inglés</h3><p>Actividades de Listening por niveles para practicar un poco sin convertirlo en simulacro.</p><a href="https://learnenglish.britishcouncil.org/skills/listening" target="_blank" rel="noopener noreferrer">Explorar actividades ↗</a></div>
+            <div class="source-row"><h3>TED · ideas y curiosidades</h3><p>Charlas sobre ciencia, creatividad, educación y temas que despierten tu curiosidad.</p><a href="https://www.ted.com/topics/education" target="_blank" rel="noopener noreferrer">Explorar charlas ↗</a></div>
+            <div class="source-row"><h3>IELTS · preparar algo concreto</h3><p>Cuando tengas ganas de practicar en serio, elige una actividad oficial corta y revisa las respuestas.</p><a href="https://ielts.org/take-a-test/preparation-resources/sample-test-questions" target="_blank" rel="noopener noreferrer">Práctica oficial ↗</a></div>
+            <div class="source-row"><h3>ICFES · practicar con propósito</h3><p>Abre un ejemplo explicado de una prueba y úsalo solo si te apetece un reto académico.</p><a href="https://www.icfes.gov.co/caja-de-herramientas-saber-11/" target="_blank" rel="noopener noreferrer">Práctica oficial ↗</a></div>
+          </div>
+        </div>
+        <div class="card section-gap">
+          <div class="card-header"><div><h2>Catálogo de ideas</h2><div class="card-sub">Toca “Otra idea” en la tarjeta superior para elegir una al azar.</div></div></div>
+          <div class="leisure-catalog" id="leisureCatalog">
+            <div class="leisure-choice" data-type="Aprendizaje" data-duration="10–15 min" data-title="Microclase de inglés" data-description="Escucha un clip corto en inglés; anota cinco expresiones y crea una frase con cada una." data-url="https://learnenglish.britishcouncil.org/skills/listening"><b>Inglés con curiosidad</b><p>Escuchar, descubrir expresiones y utilizarlas.</p></div>
+            <div class="leisure-choice" data-type="Curiosidad" data-duration="10–20 min" data-title="Una idea nueva" data-description="Mira una charla sobre ciencia, tecnología, historia o creatividad y anota una idea que no conocías y una pregunta." data-url="https://www.ted.com/topics/education"><b>Una idea nueva</b><p>Explorar un tema porque te interesa.</p></div>
+            <div class="leisure-choice" data-type="Pensamiento" data-duration="5–10 min" data-title="Reto de lógica" data-description="Una camiseta cuesta $40.000 después de un descuento del 20%. Calcula el precio inicial y explica por qué no basta con sumarle el 20% a $40.000." data-url=""><b>Lógica y números</b><p>Un reto corto sin calculadora.</p></div>
+            <div class="leisure-choice" data-type="Creatividad" data-duration="15–30 min" data-title="Crear algo pequeño" data-description="Haz un boceto de una joya, una portada, una foto con intención o una página de tu álbum creativo. Busca terminar una versión sencilla." data-url=""><b>Diseño o manualidades</b><p>Crear sin exigir perfección.</p></div>
+            <div class="leisure-choice" data-type="Bienestar" data-duration="10–20 min" data-title="Despejarte" data-description="Una caminata segura, movilidad suave o una pausa fuera de la pantalla, si te apetece y es compatible con tu entrenamiento." data-url=""><b>Movimiento suave</b><p>Un descanso mental, no una obligación física.</p></div>
+            <div class="leisure-choice" data-type="Vida personal" data-duration="20–60 min" data-title="Conectar con alguien" data-description="Propón conversar, jugar algo de mesa, cocinar con la familia o pasar un rato con alguien de confianza." data-url=""><b>Tiempo con otros</b><p>Relaciones y presencia.</p></div>
+            <div class="leisure-choice" data-type="Descanso" data-duration="15–40 min" data-title="Descanso de verdad" data-description="Escoge música, lectura, una serie o una afición solo porque te gusta. No tienes que justificar cada minuto libre." data-url=""><b>Música, lectura o serie</b><p>Ocio sin culpa.</p></div>
+            <div class="leisure-choice" data-type="Negocio creativo" data-duration="15–25 min" data-title="Mini laboratorio Aestel Lux" data-description="Boceta una publicación sobre el cuidado de las joyas, los materiales o el proceso de diseño. No hace falta comprar inventario ni pagar anuncios." data-url=""><b>Idea para la marca</b><p>Crear una pieza sencilla y auténtica.</p></div>
+            <div class="leisure-choice" data-type="Organización ligera" data-duration="10 min" data-title="Reset de espacio" data-description="Ordena una superficie, prepara lo necesario para mañana y termina al sonar el temporizador. No conviertas esto en una limpieza completa." data-url=""><b>Reset de 10 minutos</b><p>Una mejora visible y pequeña.</p></div>
+          </div>
+        </div>
+        <div class="card section-gap"><div class="card-header"><div><h2>Actividades realizadas</h2><div class="card-sub">Un registro ligero de ideas que decidiste disfrutar.</div></div></div><div id="leisureHistory" class="list-simple"></div></div>
+      </section>
+
       <div class="footer-note">ADAZ · avance real, no perfección · Los datos de esta versión se guardan localmente en el navegador de este dispositivo.</div>
     </div>
   </main>
 </div>
-<nav class="bottom-nav" id="bottomNav"><button class="nav-btn active" data-page="dashboard"><span class="nav-icon">◫</span><span class="nav-label">Hoy</span></button><button class="nav-btn" data-page="study"><span class="nav-icon">▤</span><span class="nav-label">Estudio</span></button><button class="nav-btn" data-page="business"><span class="nav-icon">↗</span><span class="nav-label">Negocio</span></button><button class="nav-btn" data-page="training"><span class="nav-icon">⌁</span><span class="nav-label">Salud</span></button><button class="nav-btn" data-page="review"><span class="nav-icon">◷</span><span class="nav-label">Revisión</span></button></nav>
+<nav class="bottom-nav" id="bottomNav"><button class="nav-btn active" data-page="dashboard"><span class="nav-icon">◫</span><span class="nav-label">Hoy</span></button><button class="nav-btn" data-page="routine"><span class="nav-icon">◷</span><span class="nav-label">Rutina</span></button><button class="nav-btn" data-page="study"><span class="nav-icon">▤</span><span class="nav-label">Estudio</span></button><button class="nav-btn" data-page="business"><span class="nav-icon">↗</span><span class="nav-label">Negocio</span></button><button class="nav-btn" data-page="training"><span class="nav-icon">⌁</span><span class="nav-label">Salud</span></button><button class="nav-btn" data-page="review"><span class="nav-icon">◷</span><span class="nav-label">Revisión</span></button><button class="nav-btn" data-page="library"><span class="nav-icon">◎</span><span class="nav-label">Biblioteca</span></button><button class="nav-btn" data-page="leisure"><span class="nav-icon">✦</span><span class="nav-label">Ocio</span></button></nav>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalContent"></div></div>
 <input class="hidden" id="importFile" type="file" accept="application/json,.json" />
@@ -202,7 +407,7 @@
     return [{title:'Sesión de estudio a elección',desc:'Escoge el punto más débil según tu registro; alterna práctica de IELTS e ICFES.',category:'Estudios',minutes:30},{title:'Bloque de negocio',desc:'Actualizar catálogo, revisar métricas o preparar una pieza de contenido.',category:'Negocio',minutes:40},{title:'Natación según el entrenador',desc:'Registra la carga cuando termines.',category:'Salud',minutes:0}];
   };
   const tasksForToday = () => {const k=todayISO();if(!Array.isArray(state.tasks[k])) state.tasks[k]=defaultTasks().map(t=>({...t,id:uid(),done:false}));return state.tasks[k];};
-  const setPage = page => {if(!$('#page-'+page))return; currentPage=page;$$('.page').forEach(e=>e.classList.toggle('active',e.id==='page-'+page));$$('[data-page]').forEach(e=>e.classList.toggle('active',e.dataset.page===page));const labels={dashboard:'Panel del día',study:'Estudios',business:'Negocio',training:'Entrenamiento',review:'Revisión semanal',library:'Biblioteca y método'};$('#crumbPage').textContent=labels[page]||page;window.scrollTo({top:0,behavior:'smooth'});if(page==='business') renderBusiness();if(page==='study') renderStudy();if(page==='training') renderTraining();if(page==='review') renderReviews();};
+  const setPage = page => {if(!$('#page-'+page))return; currentPage=page;$$('.page').forEach(e=>e.classList.toggle('active',e.id==='page-'+page));$$('[data-page]').forEach(e=>e.classList.toggle('active',e.dataset.page===page));const labels={dashboard:'Panel del día',routine:'Mi rutina y alarmas',study:'Estudios',business:'Negocio',training:'Entrenamiento',review:'Revisión semanal',library:'Biblioteca y método',leisure:'Tiempo libre e ideas'};$('#crumbPage').textContent=labels[page]||page;window.scrollTo({top:0,behavior:'smooth'});if(page==='business') renderBusiness();if(page==='study') renderStudy();if(page==='training') renderTraining();if(page==='review') renderReviews();};
   const checkedBadge = c => ({IELTS:'blue',ICFES:'orange',Salud:'green',Negocio:'orange','Vida personal':'purple','Planificación':'purple','Recuperación':'green','Repaso':'blue','Estudios':'blue'})[c]||'blue';
   const renderTasks = () => {const tasks=tasksForToday();const done=tasks.filter(t=>t.done).length;$('#todayTasks').innerHTML=tasks.map(t=>`<label class="task"><input type="checkbox" data-task-id="${esc(t.id)}" ${t.done?'checked':''} aria-label="Marcar ${esc(t.title)} completada"><span class="task-body"><span class="task-title" style="${t.done?'text-decoration:line-through;color:#7c8490':''}">${esc(t.title)}</span><span class="task-desc">${esc(t.desc||'')}</span><span class="task-meta"><span class="tag ${checkedBadge(t.category)}">${esc(t.category)}</span>${Number(t.minutes)>0?`<span class="tag">${Number(t.minutes)} min</span>`:''}</span></span><button type="button" class="btn small danger" data-delete-task="${esc(t.id)}" aria-label="Eliminar tarea">×</button></label>`).join('');$('#dailyProgress').style.width=(tasks.length?done/tasks.length*100:0)+'%';$('#taskProgressText').textContent=`${done} de ${tasks.length} completadas`;$('#completionHero').textContent=(tasks.length?Math.round(done/tasks.length*100):0)+'%';};
   const getMonthRevenue = () => {const month=todayISO().slice(0,7);return state.business.filter(b=>b.date?.startsWith(month)).reduce((s,b)=>s+(Number(b.income)||0),0);};
@@ -258,5 +463,6 @@
   setTodayDefaults();renderAll();updateTimerFace();
 })();
 </script>
+<script src="./adaz-extra.js"></script>
 </body>
 </html>
