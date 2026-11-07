@@ -1,4 +1,4 @@
-# ADAZ: integración de Spotify y copiloto con IA
+# ADAZ: integración de JACOB, Spotify y conexiones sociales
 
 Este repositorio es una PWA estática de GitHub Pages. No contiene claves privadas ni está conectado a cuentas externas por defecto. La aplicación local puede seguir funcionando sin activar ninguna integración.
 
@@ -6,7 +6,7 @@ Este repositorio es una PWA estática de GitHub Pages. No contiene claves privad
 
 - Spotify: abre un enlace o playlist de Spotify. El control avanzado usa OAuth Authorization Code con PKCE y funciones de Spotify Web API; requiere registrar tu propia app de desarrollador y tener Spotify Premium para controlar la reproducción.
 - Nube: sube una instantánea de tu progreso a tu propia tabla privada Supabase, pero únicamente después de configurar un proyecto, iniciar sesión y activar de forma explícita la copia automática. Es una copia unidireccional desde este dispositivo; la restauración desde la nube es una acción aparte y reemplaza los datos locales después de pedir confirmación.
-- Copiloto: envía una consulta y el resumen local de ADAZ a una Supabase Edge Function; esa función llama a la OpenAI API. La conversación se guarda localmente y el acceso a la IA es bajo demanda para evitar costes por cada cambio.
+- JACOB: envía una consulta y el resumen local autorizado de ADAZ —incluidos Aestel Business, ADAZ Health, Academy y agenda— a una Supabase Edge Function; esa función llama a la OpenAI API. La conversación se guarda localmente y el acceso es bajo demanda.
 - ChatGPT: la aplicación no puede conectarse a tu historial privado de ChatGPT ni subir mensajes a esta conversación automáticamente. El botón Preparar resumen para ChatGPT descarga un archivo que tú puedes adjuntar manualmente aquí. El uso de la OpenAI API tiene facturación independiente del plan de ChatGPT.
 
 ## A. Spotify: abrir música primero
@@ -71,3 +71,61 @@ Antes de considerar la integración terminada:
 - prueba Spotify con una playlist real y un dispositivo activo;
 - comprueba que ADAZ sigue abriendo y guardando datos si el usuario no conecta nada;
 - no compartas ni subas capturas que contengan tokens o claves privadas.
+
+
+## F. JACOB — agente de ADAZ
+
+JACOB utiliza la Edge Function existente adaz-planner. La versión de código actualizada:
+- personaliza las instrucciones para Aestel Business, Marketing, Academy, Health y planificación;
+- incorpora a la instantánea de contexto los módulos Aestel, Health, Academy y Timeline;
+- mantiene autenticación de Supabase, límite de consultas y la API key exclusivamente en el servidor;
+- usa gpt-6.1-sol como modelo predeterminado, modificable mediante OPENAI_MODEL en Supabase Secrets.
+
+Para activarlo:
+1. Despliega de nuevo supabase/functions/adaz-planner/index.ts desde el proyecto Supabase.
+2. En Edge Function Secrets configura OPENAI_API_KEY y, si quieres, OPENAI_MODEL=gpt-6.1-sol.
+3. En ADAZ configura el Project URL, la publishable/anon key y la URL de la función; inicia sesión y acepta el consentimiento solo después de revisar qué datos se compartirán.
+4. Envía una consulta de prueba sobre Aestel Business y comprueba que JACOB no invente métricas.
+
+El código de JACOB ya está en el repositorio, pero no estará operativo desde la app hasta que la función se despliegue y los secretos estén configurados. La facturación de la OpenAI API es independiente de ChatGPT. Define límites de gasto en el proyecto antes de usarlo de forma frecuente.
+
+## G. Aestel Business — Instagram y TikTok
+
+La versión actual implementa una cola local de borradores y una aprobación interna. Aprobar un borrador significa únicamente que quedó marcado como aprobado para revisión y publicación manual dentro de ADAZ; no publica ni edita ninguna cuenta externa.
+
+Para Instagram:
+- La cuenta de destino debe ser profesional (Business o Creator según la API y función elegida).
+- Se necesita registrar una app en Meta for Developers, implementar el flujo de autorización y solicitar los permisos mínimos para los datos y acciones que se desean usar.
+- Revisa la documentación: https://developers.facebook.com/docs/instagram-platform/
+
+Para TikTok:
+- La Display API y Content Posting API son productos distintos. Consultar perfil/vídeos requiere los scopes correspondientes; publicar directamente requiere el scope video.publish, consentimiento del creador, revisión/auditoría de la app y cumplimiento de sus reglas.
+- Los clientes no auditados tienen restricciones de visibilidad para contenido publicado.
+- Revisa el inicio de Content Posting API: https://developers.tiktok.com/docs/en/content-posting-api-get-started
+- Revisa Display API: https://developers.tiktok.com/docs/en/display-api-overview
+
+Diseño previsto para producción:
+1. Registrar apps en los portales de desarrollador y configurar HTTPS redirect URI.
+2. Usar Authorization Code + PKCE y comprobar state en el callback.
+3. Intercambiar códigos y mantener refresh tokens cifrados en el backend; no guardar client secrets ni tokens sociales en JavaScript, GitHub, localStorage o APK.
+4. Obtener scopes aprobados y respetar la revocación.
+5. Antes de publicar, presentar el canal, texto, multimedia, visibilidad y hora exactos. Exigir una confirmación independiente justo antes de cada publicación.
+6. Registrar el ID de publicación y resultado de la API; permitir cancelar borradores y desconectar cuentas.
+
+La PWA es un cliente público y no puede proteger client secrets. La guía vigente de OAuth para apps de navegador recomienda Authorization Code + PKCE y una arquitectura backend/BFF cuando se necesita custodiar tokens: https://www.rfc-editor.org/rfc/rfc10017.html
+
+No introduzcas contraseñas, códigos 2FA o tokens en ADAZ ni en el chat. Antes de autorizar una cuenta social, compartir datos o configurar servicios con cobro, revisa los permisos y condiciones con tu padre, madre o acudiente y cumple las reglas de edad de la plataforma.
+
+## H. Seguridad de Spotify
+
+El control avanzado usa OAuth PKCE. La versión actual mantiene tokens de Spotify solo en memoria y elimina un token persistente heredado si lo encuentra; por ello puede ser necesario volver a autorizar Spotify al cerrar o recargar ADAZ. La opción Abrir música sigue disponible sin control remoto.
+
+## I. Nuevos datos incluidos en respaldos
+
+Los respaldos JSON y la instantánea de nube incluyen ahora:
+- Aestel Business: registros de ventas y borradores.
+- ADAZ Health: hábitos y notas opcionales.
+- Academy: progreso gamificado.
+- Timeline: actividades planificadas.
+
+Los registros de salud y negocio pueden ser privados. Mantén la sincronización desactivada salvo que realmente quieras compartirlos con tu propio proyecto Supabase y hayas revisado el consentimiento.
