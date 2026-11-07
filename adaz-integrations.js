@@ -9,7 +9,7 @@
   const AI_HISTORY_KEY = 'adaz-ai-history';
   let cloudConfig = readJSON(CLOUD_KEY, {supabaseUrl:'',supabaseKey:'',plannerUrl:'',autoSync:false,aiConsent:false});
   let spotifyConfig = readJSON(SPOTIFY_KEY, {clientId:'',playlistUrl:'https://open.spotify.com/search/workout%20music',redirectUri:''});
-  let spotifySession = readJSON(SPOTIFY_SESSION_KEY, null);
+  let spotifySession = null; // Tokens kept only in memory; reconnect after a full reload.
   let supabaseClient = null;
   let cloudSession = null;
   let cloudDebounce = null;
@@ -400,7 +400,7 @@
         expires_at:Date.now()+Number(payload.expires_in||3600)*1000,
         scope:payload.scope||''
       };
-      saveLocal(SPOTIFY_SESSION_KEY,spotifySession);
+      localStorage.removeItem(SPOTIFY_SESSION_KEY); // Remove legacy persistent token, if one exists.
       localStorage.removeItem(SPOTIFY_PKCE_KEY);
       history.replaceState(null,'',appBaseUri());
       renderSpotifyStatus('Spotify conectado. Pulsa “Actualizar dispositivo / canción” para revisar el dispositivo activo.');
@@ -425,7 +425,7 @@
       expires_at:Date.now()+Number(payload.expires_in||3600)*1000,
       scope:payload.scope||spotifySession.scope||''
     };
-    saveLocal(SPOTIFY_SESSION_KEY,spotifySession);
+    // Keep the refresh token in memory only; never persist OAuth tokens in browser storage.
     return spotifySession.access_token;
   }
   async function spotifyRequest(path,method,body,retried) {
@@ -592,7 +592,7 @@
     if(!$('#page-integrations')) return;
     renderIntegrationPage();
     await handleSpotifyCallback();
-    spotifySession=readJSON(SPOTIFY_SESSION_KEY,null);
+    // The Spotify session is intentionally ephemeral and is not restored from localStorage.
     if(cloudConfig.supabaseUrl&&cloudConfig.supabaseKey) {
       try { await ensureSupabaseClient(); }
       catch(error) {renderCloudStatus('No se pudo iniciar Supabase ahora: '+error.message);}
