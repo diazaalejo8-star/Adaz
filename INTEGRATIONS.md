@@ -129,3 +129,14 @@ Los respaldos JSON y la instantánea de nube incluyen ahora:
 - Timeline: actividades planificadas.
 
 Los registros de salud y negocio pueden ser privados. Mantén la sincronización desactivada salvo que realmente quieras compartirlos con tu propio proyecto Supabase y hayas revisado el consentimiento.
+
+
+## JACOB — guía paso a paso de activación
+
+Consulta también **JACOB-ACTIVACION.md** en la raíz del repositorio. Incluye el orden recomendado: aplicar el SQL privado, desplegar la Edge Function, guardar OPENAI_API_KEY en Supabase Edge Function Secrets, configurar Redirect URLs, iniciar sesión en ADAZ y probar una consulta.
+
+El backend utiliza GPT-6.1 Sol (gpt-6.1-sol) por defecto, límite de 8 consultas por usuario y hora y máximo de 1.400 tokens de salida por respuesta. Esto reduce el tamaño de cada respuesta, pero no representa un límite mensual de gasto. La cuenta API y cualquier forma de pago deben ser administradas por un adulto responsable; la facturación de API es independiente de ChatGPT.
+
+Supabase provee actualmente SUPABASE_PUBLISHABLE_KEYS y SUPABASE_SECRET_KEYS como variables de entorno predeterminadas. El código de JACOB las utiliza con fallback a las claves heredadas. No pegues claves secretas de Supabase en ADAZ o GitHub.
+
+JACOB recibe resumen de tareas, estudio, Aestel Business, Academy, agenda y recordatorios cuando el usuario inicia sesión y acepta el consentimiento. Los registros personales de gimnasio, natación, sueño y alimentación permanecen en el dispositivo y se excluyen del resumen enviado.
