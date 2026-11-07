@@ -27,6 +27,7 @@ if(f.id==='pfGoalForm'){e.preventDefault();finance.goals.push({id:uid(),name:Str
 if(f.matches('[data-pf-add]')){e.preventDefault();const g=finance.goals.find(x=>x.id===f.dataset.pfAdd);if(g){g.saved+=Number(v.get('amount'));write(fk,finance);renderFinance()}}
 if(f.id==='adazSetForm'){e.preventDefault();const rows=read(rk,[]);rows.push({id:uid(),date:String(v.get('date')),day:String(v.get('day')),exercise:String(v.get('exercise')),load:Number(v.get('load'))||0,reps:String(v.get('reps')||''),sets:Number(v.get('sets'))||0,effort:String(v.get('effort')),note:String(v.get('note')||'')});write(rk,rows);f.reset();f.elements.date.value=today();f.elements.sets.value=2;renderSets()}});
 document.addEventListener('click',e=>{const d=e.target.closest('[data-pf-del]');if(d&&confirm('¿Eliminar este objetivo?')){finance.goals=finance.goals.filter(g=>g.id!==d.dataset.pfDel);write(fk,finance);renderFinance()}if(e.target.closest('[data-page="finance"]'))setTimeout(renderFinance,30);if(e.target.closest('[data-page="training"]'))setTimeout(renderSets,30)})}
+window.addEventListener('adaz-finance-updated',()=>{finance=read(fk,{transactions:[],goals:[]});finance.transactions=Array.isArray(finance.transactions)?finance.transactions:[];finance.goals=Array.isArray(finance.goals)?finance.goals:[];renderFinance()});
 function init(){style();injectFinance();injectTraining();renderFinance();renderSets();bind()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
