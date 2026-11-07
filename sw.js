@@ -1,5 +1,5 @@
-const CACHE = 'adaz-shell-v7';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './adaz-extra.js', './adaz-integrations.js', './adaz-academy.js', './adaz-business-health.js'];
+const CACHE = 'adaz-shell-v8';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './adaz-extra.js', './adaz-integrations.js', './adaz-academy.js', './adaz-business-health.js', './adaz-personal-finance-training.js'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
   self.skipWaiting();
