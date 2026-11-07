@@ -45,13 +45,18 @@
     return location.origin + location.pathname.replace(/index\.html$/i,'').replace(/\/?$/,'/');
   }
   function currentLocalData() {
+    const rawProgress=readJSON('adaz-data-v1',{});
+    // Keep personal Health details on-device: do not send workouts, sleep or nutrition logs to JACOB.
+    const progress={};
+    for (const key of ['tasks','study','focusSessions','business','orders','content','capital','prefs']) {
+      if (rawProgress[key]!==undefined) progress[key]=rawProgress[key];
+    }
     return {
       exportedAt:new Date().toISOString(),
       app:'ADAZ',
-      progress:readJSON('adaz-data-v1',{}),
+      progress,
       routineAndReminders:readJSON('adaz-routine-v1',{}),
       aestelBusiness:readJSON('adaz-aestel-v1',{}),
-      health:readJSON('adaz-health-v1',{}),
       academy:readJSON('adaz-academy-v1',{}),
       agenda:readJSON('adaz-agenda-v1',{})
     };
