@@ -9,6 +9,7 @@ const toast=m=>{const t=$('#toast');if(t){t.textContent=m;t.classList.add('show'
 const bizKey='adaz-aestel-v1',healthKey='adaz-health-v1',agendaKey='adaz-agenda-v1';
 let biz=read(bizKey,{sales:[],posts:[]}),health=read(healthKey,{meals:{},habits:{}}),agenda=read(agendaKey,{events:[]});
 biz.sales=Array.isArray(biz.sales)?biz.sales:[];biz.posts=Array.isArray(biz.posts)?biz.posts:[];
+health.meals=health.meals&&typeof health.meals==='object'?health.meals:{};health.habits=health.habits&&typeof health.habits==='object'?health.habits:{};
 agenda.events=Array.isArray(agenda.events)?agenda.events:[];
 const css='#page-business .aestel-wrap,#page-training .health-wrap{margin-top:18px}'+
 '.adaz-showcase{background:linear-gradient(125deg,#172943,#0b1321);border:1px solid #2c4261;border-radius:20px;padding:21px;margin-bottom:15px;color:#edf3fd}.adaz-showcase h2{font-size:23px;margin:4px 0}.adaz-showcase p{color:#bdc9da;font-size:12px;margin:6px 0}'+
@@ -43,7 +44,7 @@ function renderBusiness(){
  const total=biz.sales.reduce((a,x)=>a+Number(x.revenue||0),0),cost=biz.sales.reduce((a,x)=>a+Number(x.cost||0),0);
  $('#aestelSales').textContent=money(total);$('#aestelCosts').textContent=money(cost);$('#aestelProfit').textContent=money(total-cost);$('#aestelCount').textContent=biz.sales.length;
  $('#aestelSalesList').innerHTML=biz.sales.length?biz.sales.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>'<div class="adaz-row"><div><strong>'+esc(x.product)+'</strong><small>'+esc(x.date)+' · '+esc(x.channel)+' · Venta '+money(x.revenue)+' · Costo '+money(x.cost)+'</small><small>Resultado estimado: '+money(Number(x.revenue)-Number(x.cost))+(x.note?' · '+esc(x.note):'')+'</small></div><button class="adaz-btn" data-sale-delete="'+esc(x.id)+'">Eliminar</button></div>').join(''):'<div class="empty">Aún no hay ventas en este registro.</div>';
- $('#aestelPostsList').innerHTML=biz.posts.length?biz.posts.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>'<div class="adaz-row"><div><strong>'+esc(x.topic)+'</strong><small>'+esc(x.platform)+' · '+esc(x.format)+' · '+esc(x.date)+' · Objetivo: '+esc(x.goal)+'</small><small>'+esc(x.copy.slice(0,180))+(x.copy.length>180?'…':'')+'</small><span class="adaz-chip '+(x.status==='Aprobado para publicación manual'?'ok':'warn')+'">'+esc(x.status)+'</span></div><div class="adaz-flex"><button class="adaz-btn" data-post-approve="'+esc(x.id)+'" '+(x.status.startsWith('Aprobado')?'disabled':'')+'>Aprobar</button><button class="adaz-btn" data-post-copy="'+esc(x.id)+'">Copiar</button><button class="adaz-btn" data-post-delete="'+esc(x.id)+'">×</button></div></div>').join(''):'<div class="empty">No hay borradores. Guarda ideas de contenido para revisarlas.</div>';
+ $('#aestelPostsList').innerHTML=biz.posts.length?biz.posts.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>'<div class="adaz-row"><div><strong>'+esc(x.topic)+'</strong><small>'+esc(x.platform)+' · '+esc(x.format)+' · '+esc(x.date)+' · Objetivo: '+esc(x.goal)+'</small><small>'+esc(x.copy.slice(0,180))+(x.copy.length>180?'…':'')+'</small><span class="adaz-chip '+(x.status==='Aprobado para publicación manual'?'ok':'warn')+'">'+esc(x.status)+'</span></div><div class="adaz-flex"><button class="adaz-btn" data-post-approve="'+esc(x.id)+'" '+(String(x.status||'').startsWith('Aprobado')?'disabled':'')+'>Aprobar</button><button class="adaz-btn" data-post-copy="'+esc(x.id)+'">Copiar</button><button class="adaz-btn" data-post-delete="'+esc(x.id)+'">×</button></div></div>').join(''):'<div class="empty">No hay borradores. Guarda ideas de contenido para revisarlas.</div>';
 }
 function insertHealth(){
  const page=$('#page-training');if(!page||page.querySelector('.health-wrap'))return;
@@ -85,13 +86,14 @@ function renderPlanner(){
   (st.study||[]).filter(x=>x.date===selected).forEach(x=>items.push({date:selected,title:x.program+' · '+x.skill,area:'Estudios',done:true,detail:(x.minutes||0)+' min'}));
   (st.workouts||[]).filter(x=>x.date===selected).forEach(x=>items.push({date:selected,title:x.type,area:'ADAZ Health',done:true,detail:(x.minutes||0)+' min'}));
   biz.sales.filter(x=>x.date===selected).forEach(x=>items.push({date:selected,title:'Venta · '+x.product,area:'Aestel Business',done:true,detail:money(x.revenue)}));
+  biz.posts.filter(x=>x.date===selected).forEach(x=>items.push({date:selected,title:'Contenido · '+x.topic,area:'Aestel Business',done:String(x.status||'').startsWith('Aprobado'),detail:x.platform+' · '+(x.status||'Borrador')}));
  }else{
   ev.forEach(x=>items.push({...x,detail:x.note||''}));
   Object.entries(st.tasks||{}).filter(([day])=>day>=from&&day<=to).forEach(([day,tasks])=>(tasks||[]).forEach(t=>items.push({date:day,title:t.title,area:t.category,done:!!t.done,detail:t.desc||''})));
   (st.study||[]).filter(x=>x.date>=from&&x.date<=to).forEach(x=>items.push({date:x.date,title:x.program+' · '+x.skill,area:'Estudios',done:true,detail:(x.minutes||0)+' min · '+(x.goal||'')}));
   (st.workouts||[]).filter(x=>x.date>=from&&x.date<=to).forEach(x=>items.push({date:x.date,title:x.type,area:'ADAZ Health',done:true,detail:(x.minutes||0)+' min'}));
   biz.sales.filter(x=>x.date>=from&&x.date<=to).forEach(x=>items.push({date:x.date,title:'Venta · '+x.product,area:'Aestel Business',done:true,detail:money(x.revenue)+' · '+x.channel}));
-  biz.posts.filter(x=>x.date>=from&&x.date<=to).forEach(x=>items.push({date:x.date,title:'Contenido · '+x.topic,area:'Aestel Business',done:x.status.startsWith('Aprobado'),detail:x.platform+' · '+x.status}));
+  biz.posts.filter(x=>x.date>=from&&x.date<=to).forEach(x=>items.push({date:x.date,title:'Contenido · '+x.topic,area:'Aestel Business',done:String(x.status||'').startsWith('Aprobado'),detail:x.platform+' · '+x.status}));
   const study=(st.study||[]).filter(x=>x.date>=from&&x.date<=to).length,train=(st.workouts||[]).filter(x=>x.date>=from&&x.date<=to).length,sales=biz.sales.filter(x=>x.date>=from&&x.date<=to).length;
   items.unshift({date:from,title:'Resumen · '+study+' sesiones de estudio · '+train+' entrenamientos · '+sales+' ventas',area:'Resumen',done:false,detail:view==='week'?'Semana':'Mes'});
  }
@@ -122,8 +124,9 @@ function initialize(){
  $('#agendaDate')?.addEventListener('change',renderPlanner);
  document.addEventListener('click',e=>{if(e.target.closest('[data-page="plan"]'))setTimeout(renderPlanner,50);if(e.target.closest('[data-page="business"]'))setTimeout(renderBusiness,50);if(e.target.closest('[data-page="training"]'))setTimeout(renderHealth,50)});
  window.addEventListener('adaz-data-updated',()=>{if($('#healthSessions'))renderHealth();if($('#agendaView'))renderPlanner()});
- window.addEventListener('adaz-aestel-updated',renderBusiness);
- window.addEventListener('adaz-health-updated',renderHealth);
+ window.addEventListener('adaz-aestel-updated',()=>{biz=read(bizKey,{sales:[],posts:[]});biz.sales=Array.isArray(biz.sales)?biz.sales:[];biz.posts=Array.isArray(biz.posts)?biz.posts:[];renderBusiness()});
+ window.addEventListener('adaz-health-updated',()=>{health=read(healthKey,{meals:{},habits:{}});health.meals=health.meals||{};health.habits=health.habits||{};renderHealth()});
+ window.addEventListener('adaz-agenda-updated',()=>{agenda=read(agendaKey,{events:[]});agenda.events=Array.isArray(agenda.events)?agenda.events:[];renderPlanner()});
  document.addEventListener('change',e=>{if(e.target.matches('[data-food]')){const now=today();health.habits[now]=health.habits[now]||{};health.habits[now][e.target.dataset.food]=e.target.checked;write(healthKey,health)}});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize);else initialize();
