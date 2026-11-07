@@ -270,6 +270,10 @@
     const payload=data.payload||{};
     localStorage.setItem('adaz-data-v1',JSON.stringify(payload.progress||{}));
     localStorage.setItem('adaz-routine-v1',JSON.stringify(payload.routineAndReminders||{}));
+    localStorage.setItem('adaz-aestel-v1',JSON.stringify(payload.aestelBusiness||{}));
+    localStorage.setItem('adaz-health-v1',JSON.stringify(payload.health||{}));
+    localStorage.setItem('adaz-academy-v1',JSON.stringify(payload.academy||{}));
+    localStorage.setItem('adaz-agenda-v1',JSON.stringify(payload.agenda||{}));
     renderCloudStatus('Copia restaurada. Recargando ADAZ…');
     location.reload();
   }
