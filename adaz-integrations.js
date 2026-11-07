@@ -49,7 +49,11 @@
       exportedAt:new Date().toISOString(),
       app:'ADAZ',
       progress:readJSON('adaz-data-v1',{}),
-      routineAndReminders:readJSON('adaz-routine-v1',{})
+      routineAndReminders:readJSON('adaz-routine-v1',{}),
+      aestelBusiness:readJSON('adaz-aestel-v1',{}),
+      health:readJSON('adaz-health-v1',{}),
+      academy:readJSON('adaz-academy-v1',{}),
+      agenda:readJSON('adaz-agenda-v1',{})
     };
   }
   function aiHistory() { return readJSON(AI_HISTORY_KEY,[]).filter(x=>x&&['user','assistant'].includes(x.role)&&typeof x.content==='string').slice(-12); }
@@ -67,7 +71,7 @@
       bubble.className='ai-msg '+item.role;
       const role=document.createElement('div');
       role.className='ai-role';
-      role.textContent=item.role==='user'?'Tu consulta':'ADAZ Copiloto';
+      role.textContent=item.role==='user'?'Tu consulta':'JACOB';
       const body=document.createElement('div');
       body.textContent=item.content;
       bubble.append(role,body);
@@ -132,8 +136,8 @@
     renderAIHistory();
     const aiStatus=$('#aiStatus');
     if (aiStatus) {
-      if (cloudConfig.plannerUrl) aiStatus.textContent='Función de IA configurada. Inicia sesión y marca el consentimiento de análisis para habilitar consultas.';
-      else aiStatus.textContent='Falta configurar una función segura de IA. Consulta INTEGRATIONS.md en el repositorio.';
+      if (cloudConfig.plannerUrl) aiStatus.textContent='JACOB está configurado en el servidor. Inicia sesión y acepta expresamente el envío de datos para conversar.';
+      else aiStatus.textContent='JACOB aún necesita una función segura de Supabase y una clave API guardada como secreto del servidor.';
     }
   }
   function loadScript(src) {
@@ -274,10 +278,10 @@
     event.preventDefault();
     const question=($('#aiQuestion')?.value||'').trim();
     if (!question) return;
-    if (!cloudConfig.aiConsent) {setStatus('aiStatus','Primero acepta explícitamente el envío del resumen a la IA mediante la casilla de consentimiento.');return;}
+    if (!cloudConfig.aiConsent) {setStatus('aiStatus','Primero acepta explícitamente el envío del resumen de ADAZ a JACOB mediante la casilla de consentimiento.');return;}
     if (!cloudConfig.plannerUrl) {setStatus('aiStatus','Configura la URL de la función segura adaz-planner. La clave OpenAI nunca va aquí; debe estar en el servidor.');return;}
     try {
-      setStatus('aiStatus','Preparando tus datos y consultando al copiloto…');
+      setStatus('aiStatus','JACOB está analizando el contexto que autorizaste…');
       const client=await ensureSupabaseClient();
       const {data,error}=await client.auth.getSession();
       if (error) throw error;
@@ -291,7 +295,7 @@
           'Authorization':'Bearer '+cloudSession.access_token,
           'apikey':cloudConfig.supabaseKey
         },
-        body:JSON.stringify({question,snapshot:currentLocalData(),history})
+        body:JSON.stringify({agent:'JACOB',question,snapshot:currentLocalData(),history})
       });
       const result=await response.json().catch(()=>({}));
       if (!response.ok) throw new Error(result.error||result.message||('El servidor respondió con HTTP '+response.status));
@@ -300,7 +304,7 @@
       saveLocal(AI_HISTORY_KEY,next);
       renderAIHistory();
       $('#aiQuestion').value='';
-      setStatus('aiStatus','Respuesta recibida · '+new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+'. La conversación queda guardada localmente.');
+      setStatus('aiStatus','JACOB respondió · '+new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})+'. Conversación guardada localmente.');
     } catch(error) {
       setStatus('aiStatus','No se pudo consultar al copiloto: '+error.message);
     }
@@ -313,7 +317,7 @@
   function exportChatGPTSummary() {
     const snapshot=currentLocalData();
     const packageForChatGPT={
-      title:'ADAZ — resumen de contexto para revisar con ChatGPT',
+      title:'ADAZ — resumen de contexto para JACOB / revisión manual',
       createdAt:new Date().toISOString(),
       instruction:'Usa este resumen para analizar mis objetivos y sugerir ajustes. Distingue datos registrados de metas estimadas; identifica incertidumbres y pide confirmación cuando falte información.',
       snapshot
@@ -406,7 +410,7 @@
     }
   }
   async function refreshSpotifySession(force) {
-    spotifySession=readJSON(SPOTIFY_SESSION_KEY,null);
+    spotifySession=null;
     if (spotifySession?.access_token&&!force&&spotifySession.expires_at>Date.now()+60000) return spotifySession.access_token;
     if (!spotifySession?.refresh_token) throw new Error('Conecta de nuevo Spotify: no hay un token de refresco disponible.');
     if (!spotifyConfig.clientId) throw new Error('Falta el Client ID público de Spotify.');
