@@ -317,10 +317,133 @@
 
       <section class="page" id="page-training">
         <div class="page-heading">
-          <div>
-            <div class="eyebrow">03 / Salud y rendimiento</div>
-            <h1>Entrenamiento</h1>
-            <p>Tu rutina de gimnasio, potencia para natación y registro de sesiones, explicados paso a paso.</p>
+          <div><div class="eyebrow">03 / Salud y rendimiento</div><h1>Entrenamiento</h1><p>Abre el día que te toca. Sigue los ejercicios en el orden indicado.</p></div>
+        </div>
+        <style>
+          #adaz-strength-plan{color:#e8edf5}
+          #adaz-strength-plan .routine-hero{background:linear-gradient(125deg,#172b42,#0b1422);border:1px solid #344a66;border-radius:18px;padding:18px;margin:10px 0 14px}
+          #adaz-strength-plan .routine-hero h2{font-size:23px;line-height:1.15;margin:7px 0}
+          #adaz-strength-plan .routine-hero p{font-size:12px;color:#bdcadb;margin:0}
+          #adaz-strength-plan .routine-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+          #adaz-strength-plan .routine-kpis div{background:#111d2c;border:1px solid #2b4059;border-radius:12px;padding:11px}
+          #adaz-strength-plan .routine-kpis b{display:block;font-size:16px}
+          #adaz-strength-plan .routine-kpis small{font-size:10px;color:#aebbd0}
+          #adaz-strength-plan .routine-info{background:#0d1725;border:1px solid #2b4059;border-radius:12px;padding:11px;font-size:11px;color:#c7d2e1;margin:10px 0}
+          #adaz-strength-plan .routine-info b{color:#b7f36b}
+          #adaz-strength-plan .routine-day{background:#111d2c;border:1px solid #2c4059;border-radius:14px;margin:10px 0;overflow:hidden}
+          #adaz-strength-plan .routine-day summary{padding:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:800;list-style:none}
+          #adaz-strength-plan .routine-day summary::-webkit-details-marker{display:none}
+          #adaz-strength-plan .routine-day summary small{display:block;color:#aebbd0;font-size:10px;font-weight:500}
+          #adaz-strength-plan .routine-day-body{padding:0 14px 14px}
+          #adaz-strength-plan .routine-group{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#b7f36b;font-weight:850;margin:13px 0 6px}
+          #adaz-strength-plan .routine-ex{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;border-top:1px solid #2b3b51;padding:10px 0}
+          #adaz-strength-plan .routine-ex b{font-size:12px}
+          #adaz-strength-plan .routine-ex small{display:block;font-size:10px;color:#aebbd0;line-height:1.45}
+          #adaz-strength-plan .routine-dose{text-align:right;white-space:nowrap;font-size:11px;font-weight:850;color:#f1f5fb}
+          #adaz-strength-plan .routine-dose small{font-size:10px;font-weight:500}
+          #adaz-strength-plan .routine-cue{grid-column:1/-1;background:#0b1421;padding:8px;border-radius:8px}
+          #adaz-strength-plan .routine-section{background:#111d2c;border:1px solid #2c4059;border-radius:14px;padding:14px;margin:10px 0}
+          #adaz-strength-plan .routine-section h3{font-size:14px;margin:4px 0 6px}
+          #adaz-strength-plan .routine-section p{font-size:11px;color:#bdcadb}
+          #adaz-strength-plan .routine-section a{color:#9dc0ff}
+          #adaz-strength-plan .routine-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+          #adaz-strength-plan .routine-form label{display:grid;gap:4px;font-size:11px;color:#c5cfde}
+          #adaz-strength-plan .routine-form input,#adaz-strength-plan .routine-form select{background:#0b1220;color:#e8edf5;border:1px solid #33435b;border-radius:9px;padding:9px;min-width:0;width:100%}
+          #adaz-strength-plan .routine-form .full{grid-column:1/-1}
+          #adaz-strength-plan .routine-button{background:#b7f36b;color:#101827;border:0;border-radius:9px;padding:10px 13px;font-size:11px;font-weight:850}
+          @media(max-width:520px){#adaz-strength-plan .routine-form{grid-template-columns:1fr}#adaz-strength-plan .routine-form .full{grid-column:1}#adaz-strength-plan .routine-day summary{padding:12px}}
+        </style>
+        <div id="adaz-strength-plan">
+          <div class="routine-hero"><div style="font-size:10px;letter-spacing:1.7px;color:#b7f36b;font-weight:850">ADAZ HEALTH</div><h2>Tu rutina, paso a paso.</h2><p>4 días de gimnasio · fuerza, hipertrofia y potencia para natación. Abre cada día para ver qué hacer.</p></div>
+          <div class="routine-kpis"><div><b>4 días</b><small>Gimnasio</small></div><div><b>6–10</b><small>Repeticiones de fuerza</small></div><div><b>2 series</b><small>Por ejercicio</small></div></div>
+          <div class="routine-info"><b>Antes de empezar:</b> calienta 5–8 minutos y realiza series suaves de preparación. Las 2 series escritas son las series de trabajo. Usa cargas controlables, conserva unas 2–3 repeticiones posibles y pide a tu entrenador que revise la técnica y la distribución con tus sesiones de piscina.</div>
+          <details class="routine-day" open>
+            <summary><span>Día 1 · Tren superior A<small>Pecho, espalda, hombros y brazos</small></span><span>＋</span></summary>
+            <div class="routine-day-body">
+              <div class="routine-group">A · Potencia — primero</div>
+              <div class="routine-ex"><div><b>1. Salto vertical bajo</b><small>Pliometría · bilateral</small></div><div class="routine-dose">2 × 3<small>2–3 min</small></div><small class="routine-cue">Salta con intención y aterriza suave, estable y sin ruido. Detente si pierdes control.</small></div>
+              <div class="routine-ex"><div><b>2. Lanzamiento frontal con balón medicinal</b><small>Potencia · bilateral · balón ligero</small></div><div class="routine-dose">2 × 3–4<small>2–3 min</small></div><small class="routine-cue">Lanza rápido con coordinación; recupera por completo entre repeticiones.</small></div>
+              <div class="routine-group">B · Compuestos — descanso indicado: 5 min</div>
+              <div class="routine-ex"><div><b>3. Press de pecho en máquina</b><small>Bilateral · pecho y tríceps</small></div><div class="routine-dose">2 × 6–10<small>5 min</small></div><small class="routine-cue">Espalda apoyada, muñecas alineadas y bajada controlada.</small></div>
+              <div class="routine-ex"><div><b>4. Remo con pecho apoyado</b><small>Bilateral · espalda media</small></div><div class="routine-dose">2 × 6–10<small>5 min</small></div><small class="routine-cue">Lleva los codos atrás sin encoger los hombros ni usar impulso.</small></div>
+              <div class="routine-ex"><div><b>5. Jalón unilateral en polea</b><small>Un brazo a la vez · 6–10 por lado</small></div><div class="routine-dose">2 × 6–10 por lado<small>5 min</small></div><small class="routine-cue">Lleva el codo hacia la cadera y evita girar el tronco.</small></div>
+              <div class="routine-group">C · Aislados — descanso indicado: 2 min</div>
+              <div class="routine-ex"><div><b>6. Elevación lateral en máquina</b><small>Bilateral · deltoides lateral</small></div><div class="routine-dose">2 × 6–10<small>2 min</small></div><small class="routine-cue">Eleva con control, sin balancear el cuerpo.</small></div>
+              <div class="routine-ex"><div><b>7. Extensión de tríceps en polea a una mano</b><small>Un brazo a la vez · 6–10 por lado</small></div><div class="routine-dose">2 × 6–10 por lado<small>2 min</small></div><small class="routine-cue">Mantén el codo quieto junto al cuerpo.</small></div>
+              <div class="routine-ex"><div><b>8. Curl predicador en máquina</b><small>Bilateral · bíceps</small></div><div class="routine-dose">2 × 6–10<small>2 min</small></div><small class="routine-cue">Apoya el brazo y baja lentamente sin despegar el codo.</small></div>
+            </div>
+          </details>
+          <details class="routine-day">
+            <summary><span>Día 2 · Tren inferior A<small>Cuádriceps, glúteos, isquios y estabilidad</small></span><span>＋</span></summary>
+            <div class="routine-day-body">
+              <div class="routine-group">A · Compuestos — descanso indicado: 5 min</div>
+              <div class="routine-ex"><div><b>1. Prensa de piernas</b><small>Bilateral · cuádriceps y glúteos</small></div><div class="routine-dose">2 × 6–10<small>5 min</small></div><small class="routine-cue">Pies firmes; baja solo hasta donde mantengas espalda y pelvis apoyadas.</small></div>
+              <div class="routine-ex"><div><b>2. Peso muerto rumano con mancuernas</b><small>Bilateral · cadena posterior</small></div><div class="routine-dose">2 × 6–10<small>5 min</small></div><small class="routine-cue">Lleva la cadera atrás y conserva la espalda neutra; recorrido cómodo.</small></div>
+              <div class="routine-ex"><div><b>3. Sentadilla búlgara asistida</b><small>Una pierna a la vez · 6–8 por lado</small></div><div class="routine-dose">2 × 6–8 por lado<small>5 min</small></div><small class="routine-cue">Usa apoyo si hace falta; baja estable sin perder el equilibrio.</small></div>
+              <div class="routine-group">B · Aislados y core — descanso indicado: 2 min</div>
+              <div class="routine-ex"><div><b>4. Curl femoral sentado</b><small>Bilateral · isquiosurales</small></div><div class="routine-dose">2 × 6–10<small>2 min</small></div><small class="routine-cue">Ajusta la máquina y flexiona las rodillas sin rebotes.</small></div>
+              <div class="routine-ex"><div><b>5. Elevación de gemelos</b><small>Bilateral · pantorrillas</small></div><div class="routine-dose">2 × 6–10<small>2 min</small></div><small class="routine-cue">Sube y baja con control, sin rebotar.</small></div>
+              <div class="routine-ex"><div><b>6. Dead bug</b><small>Alternando lados · control del tronco</small></div><div class="routine-dose">2 × 6–10 por lado<small>2 min</small></div><small class="routine-cue">Mueve brazo y pierna contrarios sin despegar la zona lumbar.</small></div>
+            </div>
+          </details>
+          <details class="routine-day">
+            <summary><span>Día 3 · Tren superior B<small>Pecho, espalda, deltoides posteriores y brazos</small></span><span>＋</span></summary>
+            <div class="routine-day-body">
+              <div class="routine-group">A · Potencia — primero</div>
+              <div class="routine-ex"><div><b>1. Salto horizontal corto</b><small>Pliometría · bilateral</small></div><div class="routine-dose">2 × 3<small>2–3 min</small></div><small class="routine-cue">Salta una distancia cómoda y aterriza estable; no persigas máxima distancia.</small></div>
+              <div class="routine-ex"><div><b>2. Lanzamiento rotacional con balón medicinal</b><small>Potencia · 3 por lado · balón ligero</small></div><div class="routine-dose">2 × 3 por lado<small>2–3 min</small></div><small class="routine-cue">Coordina cadera y tronco; no fuerces el giro lumbar.</small></div>
+              <div class="routine-group">B · Compuestos — descanso indicado: 5 min</div>
+              <div class="routine-ex"><div><b>3. Press inclinado con mancuernas</b><small>Bilateral · pecho superior y tríceps</small></div><div class="routine-dose">2 × 6–10<small>5 min</small></div><small class="routine-cue">Baja con control y mantén los hombros cómodos y estables.</small></div>
+              <div class="routine-ex"><div><b>4. Remo unilateral en polea</b><small>Un brazo a la vez · 6–10 por lado</small></div><div class="routine-dose">2 × 6–10 por lado<small>5 min</small></div><small class="routine-cue">Evita rotar el tronco; guía el codo hacia atrás.</small></div>
+              <div class="routine-ex"><div><b>5. Jalón al pecho con agarre neutro</b><small>Bilateral · dorsal y brazos</small></div><div class="routine-dose">2 × 6–10<small>5 min</small></div><small class="routine-cue">Lleva la barra al pecho sin impulsarte ni tirar detrás de la nuca.</small></div>
+              <div class="routine-group">C · Aislados — descanso indicado: 2 min</div>
+              <div class="routine-ex"><div><b>6. Apertura inversa en máquina</b><small>Bilateral · deltoides posterior</small></div><div class="routine-dose">2 × 6–10<small>2 min</small></div><small class="routine-cue">Abre los brazos sin elevar los hombros.</small></div>
+              <div class="routine-ex"><div><b>7. Elevación lateral unilateral en polea</b><small>Un brazo a la vez · 6–10 por lado</small></div><div class="routine-dose">2 × 6–10 por lado<small>2 min</small></div><small class="routine-cue">Eleva en un plano cómodo sin inclinar el torso.</small></div>
+              <div class="routine-ex"><div><b>8. Curl Bayesian en polea</b><small>Un brazo a la vez · 6–10 por lado</small></div><div class="routine-dose">2 × 6–10 por lado<small>2 min</small></div><small class="routine-cue">Codo ligeramente detrás del cuerpo; evita mover el hombro.</small></div>
+              <div class="routine-ex"><div><b>9. Extensión de tríceps sobre la cabeza con cuerda</b><small>Bilateral · tríceps</small></div><div class="routine-dose">2 × 6–10<small>2 min</small></div><small class="routine-cue">Mantén abdomen firme y codos estables, sin arquear la espalda.</small></div>
+            </div>
+          </details>
+          <details class="routine-day">
+            <summary><span>Día 4 · Tren inferior B<small>Piernas, cadera y control del tronco</small></span><span>＋</span></summary>
+            <div class="routine-day-body">
+              <div class="routine-group">A · Compuestos — descanso indicado: 5 min</div>
+              <div class="routine-ex"><div><b>1. Sentadilla hack o variante que enseñe tu entrenador</b><small>Bilateral · cuádriceps y glúteos</small></div><div class="routine-dose">2 × 6–10<small>5 min</small></div><small class="routine-cue">Mantén todo el pie apoyado y usa un rango que controles.</small></div>
+              <div class="routine-ex"><div><b>2. Hip thrust en máquina o banco</b><small>Bilateral · glúteos</small></div><div class="routine-dose">2 × 6–10<small>5 min</small></div><small class="routine-cue">Extiende la cadera sin hiperextender la espalda baja.</small></div>
+              <div class="routine-ex"><div><b>3. Zancada hacia atrás</b><small>Una pierna a la vez · 6–8 por lado</small></div><div class="routine-dose">2 × 6–8 por lado<small>5 min</small></div><small class="routine-cue">Da un paso estable atrás y conserva la rodilla alineada con el pie.</small></div>
+              <div class="routine-group">B · Aislados y core — descanso indicado: 2 min</div>
+              <div class="routine-ex"><div><b>4. Curl femoral tumbado</b><small>Bilateral · isquiosurales</small></div><div class="routine-dose">2 × 6–10<small>2 min</small></div><small class="routine-cue">Controla la subida y la bajada, sin rebotes.</small></div>
+              <div class="routine-ex"><div><b>5. Extensión de rodilla en máquina</b><small>Bilateral · cuádriceps</small></div><div class="routine-dose">2 × 6–10<small>2 min</small></div><small class="routine-cue">Ajusta el eje de la máquina y extiende sin dar impulso.</small></div>
+              <div class="routine-ex"><div><b>6. Pallof press en polea</b><small>Ambos lados · estabilidad del tronco</small></div><div class="routine-dose">2 × 6–10 por lado<small>2 min</small></div><small class="routine-cue">Extiende los brazos sin dejar que el tronco rote.</small></div>
+            </div>
+          </details>
+          <div class="routine-info"><b>Natación y recuperación:</b> coloca las sesiones de gimnasio con tu entrenador alrededor de las prácticas de piscina. Los bloques de potencia deben hacerse sin fatiga y con supervisión; no añadas saltos o lanzamientos si la técnica se deteriora. No compenses sesiones perdidas acumulando entrenamientos.</div>
+          <div class="routine-section">
+            <div style="font-size:10px;letter-spacing:1px;color:#b7f36b;font-weight:850">NATACIÓN</div>
+            <h3>Velocidad y técnica</h3><p>Trabaja calidad de brazada, salidas y virajes según tu entrenador. Los esfuerzos rápidos son breves y con recuperación suficiente.</p>
+            <h3>Resistencia eficiente</h3><p>Usa el volumen e intervalos que te indiquen. Prioriza ritmo sostenible y técnica estable.</p>
+          </div>
+          <div class="routine-section">
+            <h3>Mi progreso</h3><p>Guarda una sesión para consultar tu historial. No necesitas registrar cada repetición.</p>
+            <form id="adazSetForm" class="routine-form">
+              <label>Fecha<input name="date" type="date" value="2026-11-07" required></label>
+              <label>Sesión<select name="day"><option>Día 1 · Superior A</option><option>Día 2 · Inferior A</option><option>Día 3 · Superior B</option><option>Día 4 · Inferior B</option><option>Natación</option></select></label>
+              <label class="full">Ejercicio o bloque<input name="exercise" maxlength="100" required placeholder="Ej. Remo con pecho apoyado"></label>
+              <label>Carga kg (opcional)<input name="load" type="number" min="0" step="0.5"></label>
+              <label>Repeticiones / distancia<input name="reps" maxlength="30" placeholder="Ej. 8 reps o 6 × 25 m"></label>
+              <label>Series<input name="sets" type="number" min="0" max="10" value="2"></label>
+              <label>Esfuerzo<select name="effort"><option>Suave</option><option selected>Moderado</option><option>Alto</option></select></label>
+              <label class="full">Nota breve<input name="note" maxlength="160" placeholder="Ej. Técnica estable y buena recuperación"></label>
+              <div class="full"><button class="routine-button" type="submit">Guardar registro</button></div>
+            </form>
+            <div id="adazSetHistory" class="v2-list"></div>
+          </div>
+          <div class="routine-info"><b>Seguridad:</b> esta es una plantilla para revisar con un entrenador cualificado. Por tu etapa de desarrollo y el volumen de natación, técnica y recuperación tienen prioridad. La AAP recomienda supervisión cualificada, progresión técnica y cargas moderadas; si aparece dolor, detén el ejercicio y pide orientación.</div>
+          <div class="routine-section">
+            <b>Referencias para la selección de ejercicios y criterios</b>
+            <p><a href="https://www.youtube.com/watch?v=S6rqpxVGKZ4" target="_blank" rel="noopener">Jeff Nippard · The Only 25 Exercises You Ever Need (2026)</a></p>
+            <p><a href="https://www.youtube.com/watch?v=71op1DQ2gyo" target="_blank" rel="noopener">Jeff Nippard · How To Train For Pure Muscle Growth</a></p>
+            <p><a href="https://publications.aap.org/pediatrics/article/145/6/e20201010/76942/" target="_blank" rel="noopener">American Academy of Pediatrics · Resistance Training for Children and Adolescents</a></p>
+            <p><a href="https://pubmed.ncbi.nlm.nih.gov/39205815/" target="_blank" rel="noopener">Singer et al. (2024) · Descanso entre series e hipertrofia</a></p>
           </div>
         </div>
       </section>
