@@ -87,6 +87,7 @@ function renderPlanner(){
   (st.workouts||[]).filter(x=>x.date===selected).forEach(x=>items.push({date:selected,title:x.type,area:'ADAZ Health',done:true,detail:(x.minutes||0)+' min'}));
   biz.sales.filter(x=>x.date===selected).forEach(x=>items.push({date:selected,title:'Venta · '+x.product,area:'Aestel Business',done:true,detail:money(x.revenue)}));
   biz.posts.filter(x=>x.date===selected).forEach(x=>items.push({date:selected,title:'Contenido · '+x.topic,area:'Aestel Business',done:String(x.status||'').startsWith('Aprobado'),detail:x.platform+' · '+(x.status||'Borrador')}));
+  (st.business||[]).filter(x=>x.date===selected).forEach(x=>items.push({date:selected,title:'Movimiento · '+x.name,area:'Aestel Business',done:true,detail:'Ingreso '+money(x.income)+' · costo '+money(x.cost)}));
  }else{
   ev.forEach(x=>items.push({...x,detail:x.note||''}));
   Object.entries(st.tasks||{}).filter(([day])=>day>=from&&day<=to).forEach(([day,tasks])=>(tasks||[]).forEach(t=>items.push({date:day,title:t.title,area:t.category,done:!!t.done,detail:t.desc||''})));
@@ -94,6 +95,7 @@ function renderPlanner(){
   (st.workouts||[]).filter(x=>x.date>=from&&x.date<=to).forEach(x=>items.push({date:x.date,title:x.type,area:'ADAZ Health',done:true,detail:(x.minutes||0)+' min'}));
   biz.sales.filter(x=>x.date>=from&&x.date<=to).forEach(x=>items.push({date:x.date,title:'Venta · '+x.product,area:'Aestel Business',done:true,detail:money(x.revenue)+' · '+x.channel}));
   biz.posts.filter(x=>x.date>=from&&x.date<=to).forEach(x=>items.push({date:x.date,title:'Contenido · '+x.topic,area:'Aestel Business',done:String(x.status||'').startsWith('Aprobado'),detail:x.platform+' · '+x.status}));
+  (st.business||[]).filter(x=>x.date>=from&&x.date<=to).forEach(x=>items.push({date:x.date,title:'Movimiento · '+x.name,area:'Aestel Business',done:true,detail:'Ingreso '+money(x.income)+' · costo '+money(x.cost)}));
   const study=(st.study||[]).filter(x=>x.date>=from&&x.date<=to).length,train=(st.workouts||[]).filter(x=>x.date>=from&&x.date<=to).length,sales=biz.sales.filter(x=>x.date>=from&&x.date<=to).length;
   items.unshift({date:from,title:'Resumen · '+study+' sesiones de estudio · '+train+' entrenamientos · '+sales+' ventas',area:'Resumen',done:false,detail:view==='week'?'Semana':'Mes'});
  }
