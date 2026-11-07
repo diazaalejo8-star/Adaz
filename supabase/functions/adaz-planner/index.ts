@@ -34,8 +34,17 @@ Deno.serve(async (request: Request) => {
   if (!authorization.startsWith("Bearer ")) return respond(401, { error: "Sign in to ADAZ before using the AI copilot." });
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY") || "";
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+  const readDefaultKey = (name: string) => {
+    try {
+      const values = JSON.parse(Deno.env.get(name) || "{}");
+      return typeof values.default === "string" ? values.default : "";
+    } catch {
+      return "";
+    }
+  };
+  // Prefer current publishable/secret key dictionaries, with legacy fallback.
+  const anonKey = readDefaultKey("SUPABASE_PUBLISHABLE_KEYS") || Deno.env.get("SUPABASE_ANON_KEY") || "";
+  const serviceKey = readDefaultKey("SUPABASE_SECRET_KEYS") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
   const openAIKey = Deno.env.get("OPENAI_API_KEY") || "";
   const model = Deno.env.get("OPENAI_MODEL") || "gpt-6.1-sol";
   if (!supabaseUrl || !anonKey || !serviceKey || !openAIKey) return respond(500, { error: "Missing server-side secrets. Verify Supabase environment settings and OPENAI_API_KEY." });
@@ -76,7 +85,7 @@ Deno.serve(async (request: Request) => {
       "Consulta nueva:",
       question
     ].join("\n");
-    const requestBody: Record<string, unknown> = { model, instructions, input, store: false };
+    const requestBody: Record<string, unknown> = { model, instructions, input, store: false, max_output_tokens: 1400 };
     // Live web search is optional to keep the default cost predictable.
     if (Deno.env.get("ADAZ_ENABLE_WEB_SEARCH") === "true") {
       requestBody.tools = [{ type: "web_search" }];
