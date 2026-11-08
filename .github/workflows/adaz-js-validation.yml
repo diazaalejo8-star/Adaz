@@ -40,3 +40,38 @@ jobs:
             echo "Checking $file"
             node --check "$file"
           done
+      - name: Guard navigation and mobile layout
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          html = Path("index.html").read_text(encoding="utf-8")
+          css = Path("adaz-apple.css").read_text(encoding="utf-8")
+          sw = Path("sw.js").read_text(encoding="utf-8")
+
+          if re.search(r"(?<!\$)\$\([^)]*\)\.forEach", html):
+              raise SystemExit("Navigation regression: single-element selector used with forEach")
+          if "$$('.nav-btn[data-page]').forEach" not in html:
+              raise SystemExit("Navigation regression: multi-element selector is missing")
+
+          bottom = re.search(r'<nav class="bottom-nav" id="bottomNav">(.*?)</nav>', html, re.S)
+          if not bottom:
+              raise SystemExit("Mobile navigation was not found")
+          tabs = re.findall(r'class="nav-btn"', bottom.group(1))
+          if len(tabs) != 5:
+              raise SystemExit(f"Expected 5 mobile tabs, found {len(tabs)}")
+          if 'data-page="training"' in bottom.group(1):
+              raise SystemExit("Health should live inside More, not overflow the tab bar")
+          if 'data-page="training"><span>⌁</span><b>ADAZ Health' not in html:
+              raise SystemExit("Health shortcut is missing from the More hub")
+
+          if "grid-template-columns:repeat(5,minmax(0,1fr))" not in css:
+              raise SystemExit("iPhone-style five-column tab bar is missing")
+          if "grid-auto-columns:100%" not in css:
+              raise SystemExit("Full-width swipe cards are missing")
+          if "adaz-shell-v28" not in sw:
+              raise SystemExit("Service worker cache version was not refreshed")
+
+          print("Navigation, five-tab layout and swipe-card checks passed.")
+          PY
