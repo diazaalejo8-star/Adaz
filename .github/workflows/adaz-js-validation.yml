@@ -1,0 +1,42 @@
+name: Validate ADAZ JavaScript
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get ADAZ source
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check external JavaScript modules
+        run: |
+          for file in adaz-*.js; do
+            echo "Checking $file"
+            node --check "$file"
+          done
+      - name: Check JavaScript embedded in index.html
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          html = Path("index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script>(.*?)</script>", html, flags=re.S)
+          if not scripts:
+              raise SystemExit("No inline scripts found in index.html")
+          for number, source in enumerate(scripts, 1):
+              Path(f"/tmp/adaz-inline-{number}.js").write_text(source, encoding="utf-8")
+              print(f"Extracted inline script {number}")
+          PY
+          for file in /tmp/adaz-inline-*.js; do
+            echo "Checking $file"
+            node --check "$file"
+          done
