@@ -40,6 +40,7 @@ const tracks={
 const css=document.createElement('style');
 css.id='adaz-academy-compact-style';
 css.textContent=[
+'#page-study #studyMaterial{display:none!important}',
 '#page-academy{--ac-bg:#0b1220;--ac-card:#121e2e;--ac-soft:#17263a;--ac-border:#2a3d55;--ac-text:#edf3fb;--ac-muted:#a7b5c8;--ac-accent:#b7f36b}',
 '#page-academy .ac-wrap{max-width:880px;margin:0 auto}',
 '#page-academy .ac-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:4px 0 15px}',
@@ -214,7 +215,7 @@ function syncStudyHistory(record){
  const form=document.getElementById('studyForm');if(!form)return;
  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v};
  set('studyProgram',record.program);set('studySkill',findTopic(record.track,record.topicId)?.skill||'Otra');set('studyDate',record.date);set('studyMinutes',record.minutes);
- set('studyAccuracy',record.accuracy===null?'':record.accuracy);set('studyBand','');set('studyMethod','Simulacro cronometrado');
+ set('studyAccuracy',record.accuracy===null?'':record.accuracy);set('studyBand','');set('studyMethod','Práctica guiada');
  set('studyGoal','Práctica oficial: '+record.title);
  set('studyResult','Resultado verificado: '+(record.score===null?'sin puntuación':record.score+'/'+record.max)+'; error principal: '+(record.error||'no especificado')+'. '+(record.note||''));
  form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
