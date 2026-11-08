@@ -5,8 +5,13 @@ window.__adazAcademyCompact=true;
 const KEY='adaz-learning-flow-v1',LEGACY='adaz-academy-v1';
 const $=(s,r=page)=>r.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const today=()=>new Date().toISOString().slice(0,10);
-const plusDays=(n)=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+const localDate=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>localDate(new Date());
+const plusDays=(n)=>{const d=new Date();d.setDate(d.getDate()+n);return localDate(d)};
+function mainStudy(){const d=read('adaz-data-v1',{});return {rows:Array.isArray(d.study)?d.study:[],target:Math.max(30,Number(d.prefs?.weeklyTargetMinutes)||150)}}
+function studyWeekStart(){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return localDate(d)}
+function studyMetrics(){const data=mainStudy(),rows=data.rows.filter(x=>x.date>=studyWeekStart()&&x.date<=today()),minutes=rows.reduce((a,x)=>a+Math.max(0,Number(x.minutes)||0),0),measured=rows.filter(x=>x.accuracy!==''&&x.accuracy!==null&&x.accuracy!==undefined&&Number.isFinite(Number(x.accuracy))),accuracy=measured.length?Math.round(measured.reduce((a,x)=>a+Number(x.accuracy),0)/measured.length):null;return {...data,weekRows:rows,minutes,accuracy,sessions:rows.length}}
+
 const read=(key,fallback)=>{try{const v=JSON.parse(localStorage.getItem(key)||'null');return v&&typeof v==='object'?v:fallback}catch{return fallback}};
 const legacy=read(LEGACY,{});
 let store=read(KEY,{track:'icfes',xp:Number(legacy.xp)||0,streak:Number(legacy.streak)||0,last:legacy.last||'',subjects:{},history:[],active:null});
@@ -105,6 +110,26 @@ css.textContent=[
 '#page-academy .ac-empty{border:1px dashed var(--ac-border);border-radius:12px;padding:13px;color:var(--ac-muted);font-size:10px}',
 '#page-academy .ac-mini{font-size:9px;color:var(--ac-muted);line-height:1.5}',
 '#page-academy .ac-resultgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}',
+'#page-academy .ac-study-overview{background:linear-gradient(140deg,#17283c,#101925);border:1px solid #2d425b;border-radius:16px;padding:14px;margin:13px 0}',
+'#page-academy .ac-study-overview-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}',
+'#page-academy .ac-study-overview h2{font-size:13px;margin:0;color:var(--ac-text)}',
+'#page-academy .ac-study-overview button{border:1px solid #405a79;background:#1b2d43;color:#d6e6fa;border-radius:9px;padding:8px 10px;font-size:9px;font-weight:850}',
+'#page-academy .ac-study-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}',
+'#page-academy .ac-study-kpi{background:#0d1725;border:1px solid #293d55;border-radius:11px;padding:10px;min-width:0}',
+'#page-academy .ac-study-kpi b{font-size:17px;display:block;color:#f0f5fb}',
+'#page-academy .ac-study-kpi span{font-size:9px;color:var(--ac-muted);line-height:1.3;display:block}',
+'#page-academy .ac-target{height:6px;background:#28394f;border-radius:99px;overflow:hidden;margin-top:10px}',
+'#page-academy .ac-target i{height:100%;display:block;background:#9fc5ff;border-radius:99px}',
+'#page-academy .ac-wide{width:100%}',
+'#page-academy .ac-log-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}',
+'#page-academy .ac-log-form label{display:grid;gap:5px;font-size:10px;color:#c8d4e3;font-weight:800}',
+'#page-academy .ac-log-form input,#page-academy .ac-log-form select,#page-academy .ac-log-form textarea{width:100%;min-width:0;background:#0d1726;color:var(--ac-text);border:1px solid #354962;border-radius:10px;padding:10px;font:inherit;font-size:11px}',
+'#page-academy .ac-log-full{grid-column:1/-1}',
+'#page-academy .ac-progress-table{display:grid;gap:7px}',
+'#page-academy .ac-progress-item{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#0d1726;border:1px solid var(--ac-border);border-radius:12px;padding:11px;color:var(--ac-text)}',
+'#page-academy .ac-progress-item b{font-size:11px}',
+'#page-academy .ac-progress-item small{display:block;color:var(--ac-muted);font-size:9px;margin-top:3px}',
+'@media(max-width:560px){#page-academy .ac-log-form{grid-template-columns:1fr}#page-academy .ac-log-full{grid-column:1}#page-academy .ac-study-kpi{padding:8px}#page-academy .ac-study-kpi b{font-size:15px}}',
 '@media(max-width:560px){#page-academy .ac-head{flex-direction:column}#page-academy .ac-stats{width:100%}#page-academy .ac-row{grid-template-columns:29px minmax(0,1fr) auto;padding:9px}#page-academy .ac-qgrid{grid-template-columns:repeat(5,minmax(0,1fr))}#page-academy .ac-panel{padding:13px}}'
 ].join('');
 if(!document.getElementById(css.id))document.head.append(css);
@@ -121,9 +146,12 @@ function home(){
  const completed=items.filter(x=>progressFor(track,x.id).sessions>0).length;
  const pct=Math.round(completed/items.length*100);
  const next=due.find(x=>x.track===track)?.topic||items.find(x=>progressFor(track,x.id).sessions===0)||items[0];
+ const sm=studyMetrics(),targetPct=Math.min(100,Math.round(sm.minutes/sm.target*100));
+ const overview='<section class="ac-study-overview"><div class="ac-study-overview-head"><h2>Tu estudio y tus resultados</h2><button data-study-progress>Ver mi progreso completo →</button></div><div class="ac-study-kpis"><div class="ac-study-kpi"><b>'+sm.minutes+'</b><span>minutos esta semana</span></div><div class="ac-study-kpi"><b>'+sm.sessions+'</b><span>prácticas registradas</span></div><div class="ac-study-kpi"><b>'+(sm.accuracy===null?'—':sm.accuracy+'%')+'</b><span>promedio de aciertos</span></div></div><div class="ac-target"><i style="width:'+targetPct+'%"></i></div><p style="margin-top:7px">Llevas '+sm.minutes+' de '+sm.target+' minutos de tu meta semanal. Es una referencia flexible, no una obligación.</p></section>';
  page.innerHTML='<div class="ac-wrap">'+
  '<div class="ac-head"><div><div class="ac-kicker">ADAZ · ACADEMY</div><h1>¿Qué quieres estudiar hoy?</h1><p>Te mostramos qué hacer, paso a paso. Tú eliges el tema y empiezas.</p></div><div class="ac-stats"><span class="ac-stat">🔥 <b>'+store.streak+'</b> días seguidos</span><span class="ac-stat">✦ <b>'+store.xp+'</b> puntos</span></div></div>'+
  '<div class="ac-switch"><button data-track="icfes" class="'+(track==='icfes'?'active':'')+'">Saber 11</button><button data-track="ielts" class="'+(track==='ielts'?'active':'')+'">IELTS Academic</button></div>'+
+ overview+
  (active?'<section class="ac-next"><div class="ac-kicker">TU PRÁCTICA</div><h2>'+esc((findTopic(active.track,active.topicId)||{}).title||'Práctica')+'</h2><p>Guardamos dónde ibas. Puedes continuar desde aquí.</p><button class="ac-primary" data-resume>Continuar práctica →</button></section>':'<section class="ac-next"><div class="ac-kicker">'+(due.some(x=>x.track===track)?'HOY VAMOS A REPASAR':'PARA HOY')+'</div><h2>'+(due.find(x=>x.track===track)?'Volvamos a '+esc(next.title):'Empieza por '+esc(next.title))+'</h2><p>'+esc(next.desc)+' · Puedes dedicarle unos 15 a 25 minutos.</p><button class="ac-primary" data-topic="'+track+':'+next.id+'">Empezar ahora →</button></section>')+
  '<div class="ac-sectionline"><b>Así vas en '+titleTrack(track)+'</b><span>'+completed+'/'+items.length+' áreas practicadas · '+pct+'%</span></div><div class="ac-progress"><i style="width:'+pct+'%"></i></div>'+
  '<div class="ac-list" style="margin-top:9px">'+items.map((x,i)=>{const p=progressFor(track,x.id);return '<button class="ac-row '+(p.sessions?'done':'')+'" data-topic="'+track+':'+x.id+'"><span class="ac-num">'+(p.sessions?'✓':String(i+1).padStart(2,'0'))+'</span><span><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p></span><span class="ac-state">'+(p.nextReview&&p.nextReview<=today()?'Repasar':p.sessions?'Repetir':'Empezar')+' ›</span></button>'}).join('')+'</div>'+
