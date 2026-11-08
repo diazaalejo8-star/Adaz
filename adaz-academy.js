@@ -326,6 +326,8 @@ page.addEventListener('click',handleClick);
 document.addEventListener('submit',e=>{if(e.target&&e.target.id==='acManualForm'){e.preventDefault();saveManualStudy(e.target)}});
 window.addEventListener('adaz-prepare-study',e=>{manualStudyView(e.detail||{})});
 window.addEventListener('adaz-data-updated',()=>{if(page.classList.contains('active')){const prog=page.querySelector('.ac-study-overview');if(prog)home()}});
+window.addEventListener('adaz-experience-updated',()=>{if(page.classList.contains('active'))home()});
+document.addEventListener('click',e=>{if(e.target.closest('[data-page="academy"]'))setTimeout(home,90)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&store.active){stopTick();home()}});
 function addGymLibrary(){
  const training=document.querySelector('#page-training');
