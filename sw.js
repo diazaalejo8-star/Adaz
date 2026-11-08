@@ -1,6 +1,6 @@
-const CACHE = 'adaz-shell-v21';
+const CACHE = 'adaz-shell-v22';
 const SHELL_FILES = [
-  './', './index.html', './manifest.webmanifest', './icon.svg',
+  './', './index.html', './rescate.html', './manifest.webmanifest', './icon.svg',
   './icon-192.png', './icon-512.png', './adaz-apple.css',
   './adaz-extra.js', './adaz-integrations.js', './adaz-academy.js',
   './adaz-business-health.js', './adaz-personal-finance-training.js'
