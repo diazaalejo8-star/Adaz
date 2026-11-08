@@ -267,17 +267,12 @@
     const load=e.target.closest('[data-material-fill]');
     if (load) {
       const [program,skill,minutes,goal,method]=load.dataset.materialFill.split('|');
-      const nav=$('[data-page="study"]');
+      const nav=$('[data-page="academy"]');
       if (nav) nav.click();
       setTimeout(()=>{
-        const set=(id,val)=>{const field=$('#'+id); if(field) field.value=val;};
-        set('studyProgram',program); set('studySkill',skill); set('studyMinutes',minutes);
-        set('studyGoal',goal); set('studyMethod',method||'Práctica guiada');
-        const date=$('#studyDate'); if(date && !date.value) date.value=today();
-        const form=$('#studyForm');
-        if(form) form.scrollIntoView({behavior:'smooth',block:'center'});
-        notify('Sesión preparada. Completa el ejercicio del material y guarda el resultado al terminar.');
-      },60);
+        window.dispatchEvent(new CustomEvent('adaz-prepare-study', {detail:{program,skill,minutes,goal,method:method||'Práctica guiada'}}));
+        notify('Te dejamos preparada una sesión en Estudio. Revisa el objetivo y guarda tu avance cuando termines.');
+      },80);
     }
   });
   document.addEventListener('click', e => {
