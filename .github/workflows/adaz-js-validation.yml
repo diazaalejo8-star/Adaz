@@ -68,9 +68,12 @@ jobs:
 
           if "grid-template-columns:repeat(5,minmax(0,1fr))" not in css:
               raise SystemExit("iPhone-style five-column tab bar is missing")
-          if "grid-auto-columns:100%" not in css:
-              raise SystemExit("Full-width swipe cards are missing")
-          if "adaz-shell-v28" not in sw:
+          experience = Path("adaz-experience.js").read_text(encoding="utf-8")
+          if "Tu siguiente paso" not in experience or "data-ae-toggle" not in experience:
+              raise SystemExit("The one-step-at-a-time experience is missing")
+          if "home-extra-row" not in html or "home-stats" not in html:
+              raise SystemExit("The simplified home layout is missing")
+          if "adaz-shell-v29" not in sw:
               raise SystemExit("Service worker cache version was not refreshed")
 
           print("Navigation, five-tab layout and swipe-card checks passed.")
