@@ -1,4 +1,4 @@
-const CACHE = 'adaz-shell-v22';
+const CACHE = 'adaz-shell-v23';
 const SHELL_FILES = [
   './', './index.html', './rescate.html', './manifest.webmanifest', './icon.svg',
   './icon-192.png', './icon-512.png', './adaz-apple.css',
