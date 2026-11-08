@@ -95,6 +95,8 @@ const style=document.createElement('style');style.id='adaz-experience-360-style'
 `;
 document.head.append(style);
 function save(){try{const keys=Object.keys(state.daily).sort().slice(-45);state.daily=Object.fromEntries(keys.map(k=>[k,state.daily[k]]));localStorage.setItem(KEY,JSON.stringify(state))}catch(e){console.warn('ADAZ: no se pudo guardar la puntuación de actividades.',e)}}
+function academyPoints(){try{const x=JSON.parse(localStorage.getItem('adaz-learning-flow-v1')||'null');return Math.max(0,Number(x?.xp)||0)}catch{return 0}}
+function totalPoints(){return state.points+academyPoints()}
 function doneIds(page){const d=state.daily[dateKey()]||{};return Array.isArray(d[page])?d[page]:[]}
 function touchStreak(){const now=dateKey();if(state.lastActive!==now){const y=new Date();y.setDate(y.getDate()-1);const yesterday=y.getFullYear()+'-'+String(y.getMonth()+1).padStart(2,'0')+'-'+String(y.getDate()).padStart(2,'0');state.streak=state.lastActive===yesterday?state.streak+1:1;state.lastActive=now}}
 function complete(page,id){const list=doneIds(page);if(list.includes(id))return;const today=state.daily[dateKey()]||(state.daily[dateKey()]={});today[page]=list.concat(id);state.points+=5;touchStreak();save();render(page);const toast=$('#toast');if(toast){toast.textContent='¡Paso completado! +5 puntos ADAZ';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}}
