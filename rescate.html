@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090b10">
+<title>Recuperación ADAZ</title>
+<style>
+:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#090b10;color:#f4f6fa}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at 80% 0,rgba(85,126,190,.18),transparent 42%),#090b10}
+main{width:min(560px,100%);background:#121720;border:1px solid #29313e;border-radius:24px;padding:26px;box-shadow:0 22px 70px #0008}
+.mark{width:46px;height:46px;border-radius:15px;background:linear-gradient(145deg,#c4dcff,#83b5ff);display:grid;place-items:center;color:#0c1728;font-weight:900;letter-spacing:-1px}
+h1{font-size:25px;letter-spacing:-.8px;margin:20px 0 8px}p{color:#aab5c4;line-height:1.6;font-size:14px}
+.note{background:#0b121c;border:1px solid #303b4d;border-radius:14px;padding:13px;margin:16px 0;color:#d5dfec;font-size:13px;line-height:1.55}
+button,a{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;border:0;border-radius:13px;padding:13px 16px;font-weight:750;font-size:14px;text-decoration:none;cursor:pointer}
+button{background:#edf3fb;color:#101722}button:disabled{opacity:.55;cursor:wait}
+a{margin-top:10px;background:#223149;color:#dceaff;border:1px solid #344761}
+#status{min-height:46px;margin-top:14px;padding:12px;border-radius:12px;background:#0d1725;color:#bfd0e6;font-size:12px;line-height:1.5;white-space:pre-wrap}
+.small{font-size:11px;color:#7f8da1;margin-top:16px}
+</style>
+</head>
+<body>
+<main>
+<div class="mark">AD</div>
+<h1>Recuperación de ADAZ</h1>
+<p>Esta herramienta repara únicamente los archivos temporales y el Service Worker antiguos que pueden impedir que ADAZ cargue la versión publicada.</p>
+<div class="note"><b>Tus datos personales están protegidos.</b><br>Esta acción no borra historial, tareas, progreso, cuentas ni registros guardados. No lee ni modifica localStorage.</div>
+<button id="repair">Reparar la carga de ADAZ</button>
+<div id="status" role="status" aria-live="polite">Pulsa el botón para retirar únicamente el caché técnico anterior de ADAZ.</div>
+<a id="open" href="./?adaz-recovery=20261108" hidden>Abrir ADAZ actualizado</a>
+<p class="small">Si este sitio muestra esta pantalla, GitHub Pages está entregando contenido. La reparación no requiere desinstalar la APK.</p>
+</main>
+<script>
+const btn=document.getElementById('repair'),statusBox=document.getElementById('status'),openLink=document.getElementById('open');
+btn.addEventListener('click',async()=>{
+ btn.disabled=true;openLink.hidden=true;
+ statusBox.textContent='Revisando el almacenamiento técnico de ADAZ…';
+ try{
+  const base=new URL('./',location.href).href;
+  let registrations=0,cachesRemoved=0;
+  if('serviceWorker' in navigator){
+   const all=await navigator.serviceWorker.getRegistrations();
+   const own=all.filter(r=>r.scope===base||r.scope.startsWith(base));
+   const results=await Promise.all(own.map(r=>r.unregister()));
+   registrations=results.filter(Boolean).length;
+  }
+  if('caches' in window){
+   const keys=await caches.keys();
+   const own=keys.filter(k=>k.startsWith('adaz-shell-'));
+   const results=await Promise.all(own.map(k=>caches.delete(k)));
+   cachesRemoved=results.filter(Boolean).length;
+  }
+  statusBox.textContent='Reparación técnica completada.\nService Workers retirados: '+registrations+'\nCachés de ADAZ retirados: '+cachesRemoved+'\nTus registros personales no fueron modificados.';
+  openLink.hidden=false;
+  btn.textContent='Reparación completada';
+ }catch(error){
+  statusBox.textContent='No se pudo completar automáticamente: '+(error&&error.message?error.message:String(error))+'. Usa el botón de apertura para comprobar la página publicada.';
+  openLink.hidden=false;
+  btn.disabled=false;
+ }
+});
+</script>
+</body>
+</html>
