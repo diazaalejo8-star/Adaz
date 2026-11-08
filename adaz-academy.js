@@ -1,6 +1,27 @@
 (()=>{'use strict';
 const page=document.querySelector('#page-academy');
 if(!page)return;
+
+const machines=[
+["Chest press","Pectoral, tríceps y deltoides anterior","Ajusta el asiento para que las manijas queden cerca de la mitad del pecho. Espalda apoyada; empuja con control."],
+["Lat pulldown","Dorsal ancho y flexores del codo","Ajusta el apoyo de muslos. Lleva la barra al pecho sin balancear el tronco ni tirar detrás del cuello."],
+["Seated row","Dorsales, romboides y trapecio medio","Columna neutra; lleva el agarre al torso sin impulsarte hacia atrás."],
+["Leg press","Cuádriceps, glúteos e isquiotibiales","Pies estables. Baja solo mientras la pelvis permanezca apoyada; no bloquees rodillas."],
+["Leg extension","Cuádriceps","Alinea rodilla con el eje de la máquina. Extiende y baja sin impulso."],
+["Seated leg curl","Isquiotibiales","Ajusta el rodillo y flexiona las rodillas con recorrido cómodo y controlado."],
+["Hip abductor","Abductores de cadera","Espalda apoyada; apertura controlada, sin rebotes ni forzar el rango."],
+["Cable station","Depende del accesorio: espalda, pecho, brazos o core","Comprueba el mosquetón y altura del cable. Empieza con resistencia ligera."],
+["Shoulder press","Deltoides y tríceps","Ajusta el asiento para partir cerca de los hombros. Evita arquear la espalda."],
+["Assisted pull-up / dip","Espalda y bíceps o pecho y tríceps","Ajusta la asistencia y aprende el patrón con un instructor antes de aumentar dificultad."]
+];
+function injectGymLibrary(){
+ const training=document.querySelector('#page-training');
+ if(!training||training.querySelector('.gym-guide'))return;
+ const box=document.createElement('section');
+ box.className='card gym-guide section-gap';
+ box.innerHTML='<h2>Biblioteca de máquinas</h2><p class="academy-subtitle">Guía rápida de reconocimiento y ajustes generales. El equipo puede variar entre sedes.</p><div class="academy-note">Antes de usar una máquina nueva, pide a un instructor que te muestre los ajustes y compruebe la técnica. Empieza con una resistencia que puedas controlar y detén el ejercicio si sientes dolor.</div>'+machines.map(m=>'<details class="academy-machine"><summary>'+esc(m[0])+' · '+esc(m[1])+'</summary><p>'+esc(m[2])+'</p></details>').join('')+'<div class="academy-note">Esta biblioteca es educativa y no sustituye la inducción presencial ni las indicaciones de tu entrenador.</div>';
+ training.append(box);
+}
 const $=(s,r=page)=>r.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const urls={
@@ -67,7 +88,11 @@ css.textContent="#page-study #studyMaterial{display:none!important}"+
 "#page-academy .academy-start{display:block;width:100%;padding:13px 15px;border:0;border-radius:12px;background:#b7f36b;color:#101827;font-weight:900;font-size:12px;margin-top:12px;cursor:pointer}"+
 "#page-academy .academy-tag{display:inline-block;padding:5px 8px;border-radius:99px;background:#1e3047;color:#b9cbe2;font-size:9px;font-weight:850;margin:2px 4px 2px 0}"+
 "#page-academy .academy-empty{border:1px dashed #344a63;border-radius:14px;padding:16px;color:#aebbd0;font-size:11px}"+
-"@media(max-width:650px){#page-academy .academy-paths,#page-academy .academy-topics{grid-template-columns:1fr}#page-academy .academy-method{grid-template-columns:1fr}#page-academy .academy-hero{padding:18px;align-items:flex-start;flex-direction:column}#page-academy .academy-path{min-height:0}#page-academy .academy-detail-grid{grid-template-columns:1fr}}";
+"@media(max-width:650px){#page-academy .academy-paths,#page-academy .academy-topics{grid-template-columns:1fr}#page-academy .academy-method{grid-template-columns:1fr}#page-academy .academy-hero{padding:18px;align-items:flex-start;flex-direction:column}#page-academy .academy-path{min-height:0}#page-academy .academy-detail-grid{grid-template-columns:1fr}}"+String.raw`
+#page-training .academy-machine{background:#0d1725;border:1px solid #2b3f57;border-radius:12px;padding:12px 14px;margin:8px 0}
+#page-training .academy-machine summary{cursor:pointer;color:#eaf1fb;font-size:11px;font-weight:850}
+#page-training .academy-machine p{color:#b8c6d8;font-size:11px;line-height:1.6;margin:9px 0 0}
+`;
 if(!document.getElementById(css.id))document.head.append(css);
 function navLabels(){
  document.querySelectorAll('[data-page="study"]').forEach(b=>{
@@ -125,4 +150,5 @@ document.addEventListener('click',e=>{
 function renderHome(){const w=$('#academy-workspace');if(w)w.innerHTML='<div class="academy-empty">Selecciona Saber 11 o IELTS Academic para ver el material organizado.</div>';}
 navLabels();
 shell();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',injectGymLibrary,{once:true});else injectGymLibrary();
 })();
