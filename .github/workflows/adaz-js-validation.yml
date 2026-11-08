@@ -58,7 +58,7 @@ jobs:
           bottom = re.search(r'<nav class="bottom-nav" id="bottomNav">(.*?)</nav>', html, re.S)
           if not bottom:
               raise SystemExit("Mobile navigation was not found")
-          tabs = re.findall(r'class="nav-btn"', bottom.group(1))
+          tabs = re.findall(r'class="nav-btn(?: active)?"', bottom.group(1))
           if len(tabs) != 5:
               raise SystemExit(f"Expected 5 mobile tabs, found {len(tabs)}")
           if 'data-page="training"' in bottom.group(1):
