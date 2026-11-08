@@ -147,7 +147,7 @@ function home(){
  const pct=Math.round(completed/items.length*100);
  const next=due.find(x=>x.track===track)?.topic||items.find(x=>progressFor(track,x.id).sessions===0)||items[0];
  const sm=studyMetrics(),targetPct=Math.min(100,Math.round(sm.minutes/sm.target*100));
- const overview='<section class="ac-study-overview"><div class="ac-study-overview-head"><h2>Tu estudio y tus resultados</h2><button data-study-progress>Ver mi progreso completo →</button></div><div class="ac-study-kpis"><div class="ac-study-kpi"><b>'+sm.minutes+'</b><span>minutos esta semana</span></div><div class="ac-study-kpi"><b>'+sm.sessions+'</b><span>prácticas registradas</span></div><div class="ac-study-kpi"><b>'+(sm.accuracy===null?'—':sm.accuracy+'%')+'</b><span>promedio de aciertos</span></div></div><div class="ac-target"><i style="width:'+targetPct+'%"></i></div><p style="margin-top:7px">Llevas '+sm.minutes+' de '+sm.target+' minutos de tu meta semanal. Es una referencia flexible, no una obligación.</p></section>';
+ const overview='<section class="ac-study-overview"><div class="ac-study-overview-head"><h2>Tu estudio y tus resultados</h2><div style="display:flex;gap:6px;flex-wrap:wrap"><button data-study-progress>Ver mi progreso →</button><button data-open-manual>＋ Registrar práctica</button></div></div><div class="ac-study-kpis"><div class="ac-study-kpi"><b>'+sm.minutes+'</b><span>minutos esta semana</span></div><div class="ac-study-kpi"><b>'+sm.sessions+'</b><span>prácticas registradas</span></div><div class="ac-study-kpi"><b>'+(sm.accuracy===null?'—':sm.accuracy+'%')+'</b><span>promedio de aciertos</span></div></div><div class="ac-target"><i style="width:'+targetPct+'%"></i></div><p style="margin-top:7px">Llevas '+sm.minutes+' de '+sm.target+' minutos de tu meta semanal. Es una referencia flexible, no una obligación.</p></section>';
  page.innerHTML='<div class="ac-wrap">'+
  '<div class="ac-head"><div><div class="ac-kicker">ADAZ · ACADEMY</div><h1>¿Qué quieres estudiar hoy?</h1><p>Te mostramos qué hacer, paso a paso. Tú eliges el tema y empiezas.</p></div><div class="ac-stats"><span class="ac-stat">🔥 <b>'+store.streak+'</b> días seguidos</span><span class="ac-stat">✦ <b>'+store.xp+'</b> puntos</span></div></div>'+
  '<div class="ac-switch"><button data-track="icfes" class="'+(track==='icfes'?'active':'')+'">Saber 11</button><button data-track="ielts" class="'+(track==='ielts'?'active':'')+'">IELTS Academic</button></div>'+
@@ -248,10 +248,51 @@ function syncStudyHistory(record){
  set('studyResult','Resultado verificado: '+(record.score===null?'sin puntuación':record.score+'/'+record.max)+'; error principal: '+(record.error||'no especificado')+'. '+(record.note||''));
  form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
 }
+function progressView(){
+ const data=mainStudy(),rows=data.rows.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')),s=studyMetrics();
+ const latestBand=skill=>rows.filter(x=>x.program==='IELTS'&&x.skill===skill&&x.band!==''&&x.band!==null&&x.band!==undefined).sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+ const bands=['Listening','Reading','Writing','Speaking'];
+ const bandCards=bands.map(skill=>{const x=latestBand(skill);return '<div class="ac-row"><span class="ac-num">↗</span><span><h3>IELTS · '+skill+'</h3><p>'+(x?'Última banda registrada: '+Number(x.band).toFixed(1)+' · '+esc(x.date):'Aún no has registrado una banda')+'</p></span><span class="ac-state">Meta 8.0</span></div>'}).join('');
+ page.innerHTML='<div class="ac-wrap">'+toolbar('TU PROGRESO')+
+ '<div class="ac-head"><div><div class="ac-kicker">TU HISTORIAL Y TUS METAS</div><h1>Estás construyendo tu avance.</h1><p>Aquí se unen las prácticas de Academy y las sesiones de estudio que registras en ADAZ.</p></div></div>'+
+ '<section class="ac-study-overview"><h2>Esta semana</h2><div class="ac-study-kpis"><div class="ac-study-kpi"><b>'+s.minutes+'</b><span>minutos de estudio</span></div><div class="ac-study-kpi"><b>'+s.sessions+'</b><span>sesiones registradas</span></div><div class="ac-study-kpi"><b>'+(s.accuracy===null?'—':s.accuracy+'%')+'</b><span>promedio de aciertos</span></div></div><div class="ac-target"><i style="width:'+Math.min(100,Math.round(s.minutes/s.target*100))+'%"></i></div><p style="margin-top:7px">'+s.minutes+' de '+s.target+' minutos de tu meta semanal. Ajusta la meta desde Configuración.</p></section>'+
+ '<div class="ac-panel"><h3>Tus bandas de IELTS registradas</h3><div class="ac-list">'+bandCards+'</div><p class="ac-note">Solo se muestran resultados que hayas registrado. ADAZ no calcula ni predice una banda oficial.</p></div>'+
+ '<div class="ac-panel"><div class="ac-sectionline"><b>Prácticas y sesiones recientes</b><span>'+rows.length+' registros</span></div>'+
+ (rows.length?'<div class="ac-progress-table">'+rows.slice(0,10).map(x=>'<div class="ac-progress-item"><div><b>'+esc(x.program||'Estudio')+' · '+esc(x.skill||'General')+'</b><small>'+esc(x.date||'')+' · '+(Number(x.minutes)||0)+' min · '+esc(x.goal||'Práctica')+'</small></div><span class="ac-state">'+(x.accuracy!==''&&x.accuracy!=null?Number(x.accuracy)+'%':x.band!==''&&x.band!=null?'Band '+Number(x.band).toFixed(1):'Registrada')+'</span></div>').join('')+'</div>':'<div class="ac-empty">Todavía no hay prácticas registradas. Empieza con una actividad corta.</div>')+
+ '<div class="ac-foot"><button class="ac-primary" data-open-manual>＋ Registrar una sesión de estudio</button><button class="ac-quiet" data-history>Ver todo el historial</button></div></div></div>';
+}
+function manualStudyView(prefill={}){
+ const program=['IELTS','ICFES','Escolar','Otro'].includes(prefill.program)?prefill.program:(store.track==='ielts'?'IELTS':'ICFES');
+ const skillOptions=['Listening','Reading','Writing','Speaking','Matemáticas','Lectura Crítica','Ciencias Naturales','Sociales y Ciudadanas','Inglés ICFES','Repaso espaciado','Otra'];
+ const skill=skillOptions.includes(prefill.skill)?prefill.skill:(program==='IELTS'?'Listening':program==='ICFES'?'Lectura Crítica':'Otra');
+ const methods=['Práctica de recuperación','Simulacro cronometrado','Repaso espaciado','Corrección de errores','Práctica guiada','Producción / feedback'];
+ const method=methods.includes(prefill.method)?prefill.method:'Práctica guiada';
+ page.innerHTML='<div class="ac-wrap">'+toolbar('REGISTRAR TU ESTUDIO')+
+ '<section class="ac-panel"><div class="ac-kicker">GUARDA LO QUE HICISTE</div><h2>Una práctica también cuenta.</h2><p>Registra el tiempo real, qué trabajaste y qué aprendiste. No necesitas tener una puntuación para guardar el avance.</p>'+
+ '<form id="acManualForm" class="ac-log-form"><label>¿Qué estás preparando?<select name="program"><option '+(program==='IELTS'?'selected':'')+'>IELTS</option><option '+(program==='ICFES'?'selected':'')+'>ICFES</option><option '+(program==='Escolar'?'selected':'')+'>Escolar</option><option '+(program==='Otro'?'selected':'')+'>Otro</option></select></label>'+
+ '<label>¿Qué área trabajaste?<select name="skill">'+skillOptions.map(x=>'<option '+(x===skill?'selected':'')+'>'+esc(x)+'</option>').join('')+'</select></label>'+
+ '<label>Fecha<input name="date" type="date" value="'+today()+'" required></label><label>Minutos reales<input name="minutes" type="number" min="1" max="600" value="'+Math.max(1,Math.min(600,Number(prefill.minutes)||25))+'" required></label>'+
+ '<label>Resultado en porcentaje (opcional)<input name="accuracy" type="number" min="0" max="100" placeholder="Ej. 75"></label><label>Banda IELTS (opcional)<input name="band" type="number" min="0" max="9" step="0.5" placeholder="Ej. 7.0"></label>'+
+ '<label class="ac-log-full">¿Qué hiciste?<input name="goal" maxlength="180" required value="'+esc(prefill.goal||'')+'" placeholder="Ej. Practiqué Reading y revisé las respuestas incorrectas"></label>'+
+ '<label class="ac-log-full">¿Qué aprendiste o qué debes repasar?<textarea name="result" rows="3" placeholder="Anota una idea, un error o el siguiente paso."></textarea></label>'+
+ '<label class="ac-log-full">Cómo estudiaste<select name="method">'+methods.map(x=>'<option '+(x===method?'selected':'')+'>'+esc(x)+'</option>').join('')+'</select></label>'+
+ '<div class="ac-log-full ac-foot"><button class="ac-primary" type="submit">Guardar mi avance</button><button class="ac-quiet" type="button" data-home>Volver a Estudio</button></div></form></section></div>';
+}
+function saveManualStudy(form){
+ const values=new FormData(form),hidden=document.getElementById('studyForm');
+ if(!hidden){alert('No encontramos el registro de estudio. Vuelve a cargar ADAZ.');return}
+ const set=(id,value)=>{const field=document.getElementById(id);if(field)field.value=value};
+ set('studyProgram',String(values.get('program')||'IELTS'));set('studySkill',String(values.get('skill')||'Otra'));set('studyDate',String(values.get('date')||today()));
+ set('studyMinutes',String(values.get('minutes')||25));set('studyAccuracy',String(values.get('accuracy')??''));set('studyBand',String(values.get('band')??''));
+ set('studyMethod',String(values.get('method')||'Práctica guiada'));set('studyGoal',String(values.get('goal')||'').trim());set('studyResult',String(values.get('result')||'').trim());
+ hidden.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
+ home();
+ const toast=document.getElementById('toast');if(toast){toast.textContent='Tu sesión de estudio quedó guardada.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2400)}
+}
 function historyView(){
- const list=store.history.slice(0,12);
- page.innerHTML='<div class="ac-wrap">'+toolbar('TUS PRÁCTICAS')+'<div class="ac-head"><div><div class="ac-kicker">TU HISTORIAL</div><h1>Lo que has practicado</h1><p>Aquí puedes revisar tus prácticas y los resultados que anotaste.</p></div></div>'+
- (list.length?'<div class="ac-list">'+list.map(x=>'<div class="ac-row"><span class="ac-num">✓</span><span><h3>'+esc(x.title)+'</h3><p>'+esc(new Date(x.date+'T12:00:00').toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}))+' · '+x.minutes+' minutos · '+(x.accuracy===null?'Sin puntuación':x.accuracy+'%')+'</p></span><span class="ac-state">'+esc(x.error||'Completada')+'</span></div>').join('')+'</div>':'<div class="ac-empty">Todavía no has hecho ninguna práctica.</div>')+'</div>';
+ const list=mainStudy().rows.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,30);
+ page.innerHTML='<div class="ac-wrap">'+toolbar('TUS PRÁCTICAS')+'<div class="ac-head"><div><div class="ac-kicker">TU HISTORIAL</div><h1>Todo lo que has estudiado</h1><p>Se muestran juntas las prácticas de Academy y las sesiones que registraste manualmente.</p></div></div>'+
+ (list.length?'<div class="ac-progress-table">'+list.map(x=>'<div class="ac-progress-item"><div><b>'+esc(x.program||'Estudio')+' · '+esc(x.skill||'General')+'</b><small>'+esc(x.date||'')+' · '+(Number(x.minutes)||0)+' minutos · '+esc(x.goal||'Práctica')+'</small></div><span class="ac-state">'+(x.accuracy!==''&&x.accuracy!=null?Number(x.accuracy)+'%':x.band!==''&&x.band!=null?'Band '+Number(x.band).toFixed(1):'Guardada')+'</span></div>').join('')+'</div>':'<div class="ac-empty">Todavía no hay prácticas registradas.</div>')+'<div class="ac-foot"><button class="ac-primary" data-open-manual>＋ Registrar una sesión</button><button class="ac-quiet" data-study-progress>Ver mi progreso</button></div></div>';
 }
 function reviewView(){
  const due=dueTopics();
@@ -265,6 +306,8 @@ function handleClick(e){
  const topic=e.target.closest('[data-topic]');if(topic){const parts=topic.dataset.topic.split(':');topicView(parts[0],parts.slice(1).join(':'));return}
  if(e.target.closest('[data-home]')){stopTick();home();return}
  if(e.target.closest('[data-history]')){historyView();return}
+ if(e.target.closest('[data-study-progress]')){progressView();return}
+ if(e.target.closest('[data-open-manual]')){manualStudyView();return}
  if(e.target.closest('[data-review-list]')){reviewView();return}
  if(e.target.closest('[data-resume]')){resume();return}
  const startI=e.target.closest('[data-start-icfes]');if(startI){startIcfes(startI.dataset.startIcfes);return}
@@ -279,6 +322,9 @@ function handleClick(e){
  if(e.target.closest('[data-save-result]')){saveResult();return}
 }
 page.addEventListener('click',handleClick);
+document.addEventListener('submit',e=>{if(e.target&&e.target.id==='acManualForm'){e.preventDefault();saveManualStudy(e.target)}});
+window.addEventListener('adaz-prepare-study',e=>{manualStudyView(e.detail||{})});
+window.addEventListener('adaz-data-updated',()=>{if(page.classList.contains('active')){const prog=page.querySelector('.ac-study-overview');if(prog)home()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&store.active){stopTick();home()}});
 function addGymLibrary(){
  const training=document.querySelector('#page-training');
