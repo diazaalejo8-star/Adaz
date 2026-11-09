@@ -247,9 +247,11 @@ function simplifyRoutine(){
 function simplifyTraining(){
  const root=document.getElementById('adaz-strength-plan');if(!root||root.dataset.rsReady)return;root.dataset.rsReady='1';
  const stat=root.querySelector('.health-statrow');
+ root.querySelectorAll('.health-stat b').forEach(n=>{if(n.textContent.trim()==='6–10')n.textContent='8–12'});
+ root.querySelectorAll('.routine-note').forEach(n=>{n.innerHTML=n.innerHTML.replace('empieza con una carga que puedas controlar durante 6 repeticiones.','empieza con una resistencia cómoda que te permita hacer entre 8 y 12 repeticiones con técnica limpia.').replace('Cuando completes 10 en ambas series con buena técnica en más de una sesión, consulta con tu entrenador si corresponde un pequeño aumento.','Ajusta la resistencia solo con tu entrenador cuando la técnica sea constante.');});
  if(stat&&!root.querySelector('.rs-training-advice')){
   const note=document.createElement('div');note.className='routine-note rs-training-advice';
-  note.innerHTML='<b>Cómo encajarla con natación:</b> son cuatro sesiones disponibles, no una obligación de completar todas si la piscina, el colegio o el descanso ya te exigen bastante. Distribúyelas con tu entrenador, deja recuperación entre los dos días de piernas y no recuperes sesiones perdidas acumulándolas. La técnica y el descanso mandan.';
+  note.innerHTML='<b>Cómo encajarla con natación:</b> son hasta cuatro sesiones disponibles, no una obligación de completar todas si la piscina, el colegio o el descanso ya te exigen bastante. Distribúyelas con tu entrenador, deja recuperación entre los dos días de piernas y no recuperes sesiones perdidas acumulándolas. La base es 1–2 series de 8–12 repeticiones con resistencia controlable, técnica limpia y supervisión cualificada. <a href="https://publications.aap.org/pediatrics/article/145/6/e20201011/76942/Resistance-Training-for-Children-and-Adolescents" target="_blank" rel="noopener noreferrer">Guía de la Academia Americana de Pediatría ↗</a>';
   stat.after(note);
  }
  root.querySelectorAll('.routine-dose').forEach(node=>{
