@@ -112,12 +112,15 @@ if(!document.getElementById(styles.id))document.head.append(styles);
 function course(id){return courses.find(c=>c.id===id)}
 function lesson(courseId,lessonId){const c=course(courseId);return c&&c.lessons.find(l=>l.id===lessonId)}
 function completedCount(c){return c.lessons.filter(l=>state.done[l.id]).length}
-function nextLesson(c){return c.lessons.find(l=>!state.done[l.id])||c.lessons[c.lessons.length-1]}
+function nextLesson(c){return c.lessons.find(l=>!state.done[l.id])||null}
 function totalDone(){return courses.reduce((n,c)=>n+completedCount(c),0)}
 function home(){
+ if(state.current&&state.current.activeSince){state.current.activeSince=null;state.working[state.current.lessonId]=state.current;save()}
  const active=state.current&&lesson(state.current.courseId,state.current.lessonId)?state.current:null;
  const activeCourse=active?course(active.courseId):null;
- const last=activeCourse||(course(state.lastCourse)||course('icfes')),next=active?lesson(active.courseId,active.lessonId):(last?nextLesson(last):null);
+ let last=activeCourse||(course(state.lastCourse)||course('icfes'));
+ let next=active?lesson(active.courseId,active.lessonId):(last?nextLesson(last):null);
+ if(!active&&!next){const other=courses.find(c=>completedCount(c)<c.lessons.length);if(other){last=other;next=nextLesson(other)}}
  const done=totalDone(),total=courses.reduce((n,c)=>n+c.lessons.length,0);
  page.innerHTML='<div class="ss-wrap"><div class="ss-kicker">ADAZ · TU AULA</div><h1 class="ss-title">Aprende algo importante hoy.</h1><p class="ss-sub">Cuatro caminos. Lecciones breves. Todo ocurre aquí, dentro de ADAZ.</p>'+
  '<section class="ss-hero"><div class="ss-kicker">TU SIGUIENTE PASO</div><h2>'+(next?esc(next.title):'Elige qué quieres aprender')+'</h2><p>'+(next?(active?'Retoma donde lo dejaste en ':'Continúa en ')+esc(last.title)+' · '+next.time+' minutos aproximados.':'Selecciona una de las cuatro rutas para comenzar.')+'</p>'+(next?'<button class="ss-primary" data-studio-open="'+last.id+'" data-studio-lesson="'+next.id+'">'+(active?'Continuar lección →':'Empezar →')+'</button>':'')+'</section>'+
@@ -127,6 +130,7 @@ function home(){
 }
 function courseView(id){
  const c=course(id);if(!c){home();return}
+ if(state.current&&state.current.activeSince){state.current.activeSince=null;state.working[state.current.lessonId]=state.current}
  state.lastCourse=id;save();
  const n=completedCount(c),pct=Math.round(n/c.lessons.length*100),next=nextLesson(c);
  page.innerHTML='<div class="ss-wrap"><div class="ss-top"><button class="ss-back" data-studio-home>← Estudio</button><span class="ss-meta">'+n+' / '+c.lessons.length+' lecciones</span></div><div class="ss-kicker">TU RUTA DE APRENDIZAJE</div><h1 class="ss-title">'+esc(c.title)+'</h1><p class="ss-sub">'+esc(c.goal)+'</p>'+
@@ -139,8 +143,9 @@ function courseView(id){
 }
 function lessonView(cid,lid){
  const c=course(cid),l=lesson(cid,lid);if(!c||!l){courseView(cid);return}
- if(!(state.current&&state.current.courseId===cid&&state.current.lessonId===lid))state.current=state.working[lid]||{courseId:cid,lessonId:lid,answers:{},checked:false,result:null};
- state.current.courseId=cid;state.current.lessonId=lid;state.working[lid]=state.current;
+ const same=!!(state.current&&state.current.courseId===cid&&state.current.lessonId===lid);
+ if(!same){state.current=state.working[lid]||{courseId:cid,lessonId:lid,answers:{},checked:false,result:null};state.current.activeSince=null}
+ state.current.courseId=cid;state.current.lessonId=lid;if(!state.current.activeSince)state.current.activeSince=Date.now();state.working[lid]=state.current;
  state.lastCourse=cid;save();
  const current=state.current,done=!!state.done[lid];
  const index=c.lessons.indexOf(l)+1;
@@ -179,15 +184,16 @@ function completeLesson(){
  const cur=state.current;if(!cur||!cur.checked)return;
  const l=lesson(cur.courseId,cur.lessonId);if(!l)return;
  const cid=cur.courseId,score=cur.result;
- state.done[l.id]={date:today(),score:score,attempts:(state.done[l.id]?.attempts||0)+1};
+ const elapsed=cur.activeSince?Math.max(1,Math.min(600,Math.round((Date.now()-cur.activeSince)/60000))):1;
+ state.done[l.id]={date:today(),score:score,minutes:elapsed,attempts:(state.done[l.id]?.attempts||0)+1};
  delete state.working[l.id];state.current=null;save();
- syncMainStudy(cid,l.id,l.time,score,l.quiz.length);
+ syncMainStudy(cid,l.id,elapsed,score,l.quiz.length);
  courseView(cid);
  const toast=document.getElementById('toast');if(toast){toast.textContent='Lección guardada. Tu avance quedó registrado.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}
 }
 function handleClick(e){
- const homeBtn=e.target.closest('[data-studio-home]');if(homeBtn){save();home();return}
- const cBtn=e.target.closest('[data-studio-course]');if(cBtn){courseView(cBtn.dataset.studioCourse);return}
+ const homeBtn=e.target.closest('[data-studio-home]');if(homeBtn){if(state.current){state.current.activeSince=null;state.working[state.current.lessonId]=state.current}save();home();return}
+ const cBtn=e.target.closest('[data-studio-course]');if(cBtn){if(state.current){state.current.activeSince=null;state.working[state.current.lessonId]=state.current}courseView(cBtn.dataset.studioCourse);return}
  const open=e.target.closest('[data-studio-open]');if(open){lessonView(open.dataset.studioOpen,open.dataset.studioLesson);return}
  const choice=e.target.closest('[data-studio-answer]');if(choice&&state.current){const qi=Number(choice.dataset.studioAnswer),oi=Number(choice.dataset.choice);state.current.answers[qi]=oi;state.current.checked=false;state.current.result=null;state.working[state.current.lessonId]=state.current;save();const group=choice.closest('[data-ss-question]');group.querySelectorAll('[data-studio-answer]').forEach(b=>b.classList.toggle('selected',b===choice));page.querySelector('.ss-result')?.remove();page.querySelectorAll('.ss-feedback').forEach(n=>n.remove());const complete=page.querySelector('[data-studio-complete]');if(complete)complete.remove();return}
  const check=e.target.closest('[data-studio-check]');if(check){const l=state.current&&lesson(state.current.courseId,state.current.lessonId);if(!l)return;if(l.quiz.some((q,i)=>state.current.answers[i]===undefined)){const toast=document.getElementById('toast');if(toast){toast.textContent='Responde todas las preguntas primero.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800)}return}checkAnswers();return}
