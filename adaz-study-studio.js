@@ -176,8 +176,8 @@ function completeLesson(){
  const cid=cur.courseId,score=cur.result;
  state.done[l.id]={date:today(),score:score,attempts:(state.done[l.id]?.attempts||0)+1};
  state.current=null;save();
- courseView(cid);
  syncMainStudy(cid,l.id,l.time,score,l.quiz.length);
+ courseView(cid);
  const toast=document.getElementById('toast');if(toast){toast.textContent='Lección guardada. Tu avance quedó registrado.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}
 }
 function handleClick(e){
