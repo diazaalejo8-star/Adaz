@@ -288,19 +288,72 @@ function addFuelGuide(){
  '<div class="note">No incluimos metas de peso, calorías ni suplementos. Para ajustar la alimentación a tu crecimiento y a la carga de natación, consúltalo con tu familia y un profesional de nutrición deportiva pediátrica.</div>';
  root.append(card);
 }
+function makeDisclosure(node,label,className){
+ if(!node||node.closest('details')||node.dataset.ssWrapped)return;
+ const details=document.createElement('details');details.className=className||'ss-disclosure';
+ const summary=document.createElement('summary');summary.textContent=label;
+ node.before(details);details.append(summary,node);node.dataset.ssWrapped='1';
+}
+function simplifyFinance(){
+ const root=document.getElementById('page-finance');if(!root||root.dataset.ssReady)return;root.dataset.ssReady='1';
+ const transaction=root.querySelector('#pfTransactionForm'),goal=root.querySelector('#pfGoalForm');
+ makeDisclosure(transaction,'Añadir movimiento','ss-disclosure');
+ makeDisclosure(goal,'Crear una meta de ahorro','ss-disclosure');
+ makeDisclosure(root.querySelector('#pfTransactions'),'Ver movimientos recientes','ss-disclosure');
+ const kpis=root.querySelector('.v2-kpis');
+ if(kpis){
+  const extra=Array.from(kpis.children).slice(1);
+  extra.forEach(n=>n.hidden=true);
+  const more=document.createElement('details');more.className='ss-disclosure ss-finance-more';
+  const sum=document.createElement('summary');sum.textContent='Ver ingresos, gastos y ahorro';
+  extra.forEach(n=>{n.hidden=false;more.append(n)});
+  kpis.after(more);more.prepend(sum);
+ }
+ const st=document.createElement('style');st.id='adaz-finance-simple-style';
+ st.textContent=[
+ '#page-finance .v2-kpis{grid-template-columns:minmax(0,1fr)!important}',
+ '#page-finance .v2-kpis>.v2-kpi:not(:first-child){display:none}',
+ '#page-finance .ss-finance-more .v2-kpi{display:block!important}',
+ '#page-finance .ss-disclosure{border:1px solid #29394f;border-radius:12px;background:#0e1724;padding:11px;margin:9px 0}',
+ '#page-finance .ss-disclosure summary{font-size:11px;font-weight:800;color:#cfe0f5;cursor:pointer}',
+ '#page-finance .ss-disclosure form{margin-top:12px}',
+ '#page-finance .v2-card>h3{margin-bottom:8px}'
+ ].join('');
+ document.head.append(st);
+}
+function simplifyBusiness(){
+ const root=document.getElementById('page-business');if(!root||root.dataset.ssReady)return;root.dataset.ssReady='1';
+ makeDisclosure(root.querySelector('#aestelSaleForm'),'Registrar una venta','ss-disclosure');
+ makeDisclosure(root.querySelector('#aestelPostForm'),'Preparar una publicación','ss-disclosure');
+ makeDisclosure(root.querySelector('.adaz-suppliers'),'Ver proveedores','ss-disclosure');
+ makeDisclosure(root.querySelector('.adaz-social'),'Ver conexiones de redes','ss-disclosure');
+ const st=document.createElement('style');st.id='adaz-business-simple-style';
+ st.textContent=[
+ '#page-business .adaz-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}',
+ '#page-business .adaz-kpi{padding:10px!important}',
+ '#page-business .adaz-kpi b{font-size:16px!important}',
+ '#page-business .ss-disclosure{border:1px solid #29394f;border-radius:12px;background:#0e1724;padding:11px;margin:9px 0}',
+ '#page-business .ss-disclosure summary{font-size:11px;font-weight:800;color:#cfe0f5;cursor:pointer}',
+ '#page-business .ss-disclosure form{margin-top:12px}',
+ '#page-business .adaz-panel{padding:13px!important}',
+ '#page-business .adaz-showcase{padding:15px!important}',
+ '#page-business .adaz-showcase h2{font-size:20px!important}'
+ ].join('');
+ document.head.append(st);
+}
 function init(){
  home();
  const program=document.getElementById('studyProgram');
  if(program){['Negocio','Medicina'].forEach(v=>{if(!Array.from(program.options).some(o=>o.textContent===v)){const o=document.createElement('option');o.textContent=v;program.append(o)}})}
  const focus=document.getElementById('focusCategory');
  if(focus){const business=Array.from(focus.options).find(o=>o.value==='Negocio');if(business)business.textContent='Oro Laminado';if(!Array.from(focus.options).some(o=>o.value==='Medicina')){const o=document.createElement('option');o.value='Medicina';o.textContent='Medicina';focus.append(o)}}
- simplifyRoutine();simplifyTraining();addFuelGuide();
+ simplifyRoutine();simplifyTraining();addFuelGuide();simplifyFinance();simplifyBusiness();
  document.addEventListener('click',e=>{
   if(e.target.closest('[data-page="routine"]'))setTimeout(simplifyRoutine,100);
   if(e.target.closest('[data-page="training"]'))setTimeout(()=>{simplifyTraining();addFuelGuide()},100);
  });
- const observer=new MutationObserver(()=>{simplifyTraining();addFuelGuide()});
- const train=document.getElementById('page-training');if(train)observer.observe(train,{childList:true,subtree:true});
+ const observer=new MutationObserver(()=>{simplifyTraining();addFuelGuide();simplifyFinance();simplifyBusiness()});
+ const contentRoot=document.querySelector('.content');if(contentRoot)observer.observe(contentRoot,{childList:true,subtree:true});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
