@@ -176,7 +176,7 @@ function syncMainStudy(cid,lid,mins,score,max){
  addOption(program,p);addOption(skill,l.title);
  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v};
  set('studyProgram',p);set('studySkill',l.title);set('studyDate',today());set('studyMinutes',String(mins));
- set('studyAccuracy','');set('studyBand','');set('studyMethod','Lección interactiva');
+ set('studyAccuracy','');set('studyBand','');set('studyMethod','Práctica guiada');
  set('studyGoal',l.title);set('studyResult','Cuestionario original ADAZ: '+score+'/'+max+' respuestas correctas.');
  form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
 }
@@ -287,6 +287,8 @@ function init(){
  home();
  const program=document.getElementById('studyProgram');
  if(program){['Negocio','Medicina'].forEach(v=>{if(!Array.from(program.options).some(o=>o.textContent===v)){const o=document.createElement('option');o.textContent=v;program.append(o)}})}
+ const focus=document.getElementById('focusCategory');
+ if(focus){const business=Array.from(focus.options).find(o=>o.value==='Negocio');if(business)business.textContent='Oro Laminado';if(!Array.from(focus.options).some(o=>o.value==='Medicina')){const o=document.createElement('option');o.value='Medicina';o.textContent='Medicina';focus.append(o)}}
  simplifyRoutine();simplifyTraining();addFuelGuide();
  document.addEventListener('click',e=>{
   if(e.target.closest('[data-page="routine"]'))setTimeout(simplifyRoutine,100);
