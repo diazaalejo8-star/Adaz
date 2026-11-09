@@ -8,10 +8,11 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const dateText=s=>{try{return new Date((s||today())+'T12:00:00').toLocaleDateString('es-CO',{day:'numeric',month:'short'})}catch{return s||''}};
 const read=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return v&&typeof v==='object'?v:f}catch{return f}};
-const initial={done:{},lastCourse:'icfes',current:null,drafts:{}};
+const initial={done:{},lastCourse:'icfes',current:null,drafts:{},working:{}};
 let state=read(KEY,initial);
 state.done=state.done&&typeof state.done==='object'?state.done:{};
 state.drafts=state.drafts&&typeof state.drafts==='object'?state.drafts:{};
+state.working=state.working&&typeof state.working==='object'?state.working:{};
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){console.warn('No se pudo guardar el avance de Estudio',e)}}
 const courses=[
 {id:'business',title:'Negocio · Oro Laminado',short:'Oro Laminado',icon:'✧',desc:'Aprende a elegir mejor, calcular costos, vender con claridad y cuidar cada pedido.',goal:'Convertir tu negocio en un proceso ordenado, rentable y confiable.',lessons:[
@@ -114,10 +115,12 @@ function completedCount(c){return c.lessons.filter(l=>state.done[l.id]).length}
 function nextLesson(c){return c.lessons.find(l=>!state.done[l.id])||c.lessons[c.lessons.length-1]}
 function totalDone(){return courses.reduce((n,c)=>n+completedCount(c),0)}
 function home(){
- const last=course(state.lastCourse)||course('icfes'),next=last?nextLesson(last):null;
+ const active=state.current&&lesson(state.current.courseId,state.current.lessonId)?state.current:null;
+ const activeCourse=active?course(active.courseId):null;
+ const last=activeCourse||(course(state.lastCourse)||course('icfes')),next=active?lesson(active.courseId,active.lessonId):(last?nextLesson(last):null);
  const done=totalDone(),total=courses.reduce((n,c)=>n+c.lessons.length,0);
  page.innerHTML='<div class="ss-wrap"><div class="ss-kicker">ADAZ · TU AULA</div><h1 class="ss-title">Aprende algo importante hoy.</h1><p class="ss-sub">Cuatro caminos. Lecciones breves. Todo ocurre aquí, dentro de ADAZ.</p>'+
- '<section class="ss-hero"><div class="ss-kicker">TU SIGUIENTE PASO</div><h2>'+(next?esc(next.title):'Elige qué quieres aprender')+'</h2><p>'+(next?'Continúa en '+esc(last.title)+' · '+next.time+' minutos aproximados.':'Selecciona una de las cuatro rutas para comenzar.')+'</p>'+(next?'<button class="ss-primary" data-studio-open="'+last.id+'" data-studio-lesson="'+next.id+'">Continuar aprendiendo →</button>':'')+'</section>'+
+ '<section class="ss-hero"><div class="ss-kicker">TU SIGUIENTE PASO</div><h2>'+(next?esc(next.title):'Elige qué quieres aprender')+'</h2><p>'+(next?(active?'Retoma donde lo dejaste en ':'Continúa en ')+esc(last.title)+' · '+next.time+' minutos aproximados.':'Selecciona una de las cuatro rutas para comenzar.')+'</p>'+(next?'<button class="ss-primary" data-studio-open="'+last.id+'" data-studio-lesson="'+next.id+'">'+(active?'Continuar lección →':'Empezar →')+'</button>':'')+'</section>'+
  '<div class="ss-grid">'+courses.map(c=>{const n=completedCount(c),pct=Math.round(n/c.lessons.length*100);return '<button class="ss-course" data-studio-course="'+c.id+'"><span class="ss-icon">'+c.icon+'</span><b>'+esc(c.title)+'</b><small>'+esc(c.desc)+'</small><div class="ss-course-foot">'+n+' de '+c.lessons.length+' lecciones</div><div class="ss-bar"><i style="width:'+pct+'%"></i></div></button>'}).join('')+'</div>'+
  '<section class="ss-panel"><div class="ss-top"><b>Tu avance</b><span class="ss-meta">'+done+' / '+total+' lecciones</span></div><div class="ss-bar"><i style="width:'+Math.round(done/total*100)+'%"></i></div><p class="ss-small">Tus prácticas anteriores siguen guardadas en ADAZ. Este nuevo espacio guarda el avance por separado para no alterar tu historial.</p></section>'+
  '<p class="ss-note">Las actividades de esta aula son material original de ADAZ. Las preguntas oficiales y los simulacros completos se consultan en sus plataformas de origen; nunca se presentan ejercicios inventados como oficiales.</p></div>';
@@ -135,12 +138,13 @@ function courseView(id){
 }
 function lessonView(cid,lid){
  const c=course(cid),l=lesson(cid,lid);if(!c||!l){courseView(cid);return}
- state.current=state.current&&state.current.courseId===cid&&state.current.lessonId===lid?state.current:{courseId:cid,lessonId:lid,answers:{},checked:false,result:null};
+ if(!(state.current&&state.current.courseId===cid&&state.current.lessonId===lid))state.current=state.working[lid]||{courseId:cid,lessonId:lid,answers:{},checked:false,result:null};
+ state.current.courseId=cid;state.current.lessonId=lid;state.working[lid]=state.current;
  state.lastCourse=cid;save();
  const current=state.current,done=!!state.done[lid];
  const index=c.lessons.indexOf(l)+1;
  const blocks=l.blocks.map(b=>'<div class="ss-block"><h3>'+esc(b[0])+'</h3><p>'+esc(b[1])+'</p></div>').join('');
- const questions=l.quiz.map((q,qi)=>'<div class="ss-q" data-ss-question="'+qi+'"><b>'+(qi+1)+'. '+esc(q.q)+'</b><div class="ss-options">'+q.opts.map((o,oi)=>'<button class="ss-choice '+(current.answers[qi]===oi?'selected':'')+'" data-studio-answer="'+qi+'" data-choice="'+oi+'">'+String.fromCharCode(65+oi)+'. '+esc(o)+'</button>').join('')+'</div>'+(current.checked?'<div class="ss-feedback">'+(current.answers[qi]===q.a?'✓ Correcto. ':'Revisa esta idea. ')+esc(q.why)+'</div>':'')+'</div>').join('');
+ const questions=l.quiz.map((q,qi)=>'<div class="ss-q" data-ss-question="'+qi+'"><b>'+(qi+1)+'. '+esc(q.q)+'</b><div class="ss-options">'+q.opts.map((o,oi)=>'<button class="ss-choice '+(current.answers[qi]===oi?'selected':'')+(current.checked&&oi===q.a?' correct':current.checked&&current.answers[qi]===oi&&oi!==q.a?' wrong':'')+'" data-studio-answer="'+qi+'" data-choice="'+oi+'">'+String.fromCharCode(65+oi)+'. '+esc(o)+'</button>').join('')+'</div>'+(current.checked?'<div class="ss-feedback">'+(current.answers[qi]===q.a?'✓ Correcto. ':'Revisa esta idea. ')+esc(q.why)+'</div>':'')+'</div>').join('');
  const result=current.checked?'<div class="ss-result">Resultado: '+current.result+'/'+l.quiz.length+' correctas. '+(current.result===l.quiz.length?'¡Muy bien! Ya puedes guardar esta lección.':'Lee las explicaciones, cambia tus respuestas si hace falta y vuelve a comprobarlas.')+'</div>':'';
  const activity=l.audio?'<div class="ss-panel"><h3>Escucha y responde</h3><p>Este audio utiliza voz sintética del teléfono y un guion original de ADAZ; no es una grabación oficial del IELTS.</p><div class="ss-audio"><button class="ss-secondary" data-studio-speak>▶ Escuchar</button><button class="ss-secondary" data-studio-transcript>Ver el texto</button></div><p class="ss-small" id="ss-transcript" hidden>'+esc(l.audio)+'</p></div>':'';
  const writing=l.write?'<div class="ss-panel"><h3>Ahora te toca a ti</h3><p>Escribe unas ideas o una respuesta corta. Tu texto queda guardado en este dispositivo para que puedas volver a revisarlo.</p><textarea class="ss-task" data-studio-draft="'+lid+'" placeholder="Escribe aquí tu respuesta o tus ideas...">'+esc(state.drafts[lid]||'')+'</textarea><p class="ss-small">Revisa: ¿respondiste la consigna?, ¿las ideas están conectadas?, ¿usaste ejemplos o detalles precisos?</p></div>':'';
@@ -155,7 +159,7 @@ function checkAnswers(){
  const cur=state.current;if(!cur)return;
  const l=lesson(cur.courseId,cur.lessonId);if(!l)return;
  let score=0;for(let i=0;i<l.quiz.length;i++)if(cur.answers[i]===l.quiz[i].a)score++;
- cur.checked=true;cur.result=score;save();lessonView(cur.courseId,cur.lessonId);
+ cur.checked=true;cur.result=score;state.working[cur.lessonId]=cur;save();lessonView(cur.courseId,cur.lessonId);
 }
 function syncMainStudy(cid,lid,mins,score,max){
  const form=document.getElementById('studyForm');if(!form)return;
@@ -175,18 +179,18 @@ function completeLesson(){
  const l=lesson(cur.courseId,cur.lessonId);if(!l)return;
  const cid=cur.courseId,score=cur.result;
  state.done[l.id]={date:today(),score:score,attempts:(state.done[l.id]?.attempts||0)+1};
- state.current=null;save();
- syncMainStudy(cid,l.id,l.time,score,l.quiz.length);
+ delete state.working[l.id];state.current=null;save();
+ syncMainStudy(cid,l.id,score,l.quiz.length);
  courseView(cid);
  const toast=document.getElementById('toast');if(toast){toast.textContent='Lección guardada. Tu avance quedó registrado.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}
 }
 function handleClick(e){
- const homeBtn=e.target.closest('[data-studio-home]');if(homeBtn){state.current=null;save();home();return}
- const cBtn=e.target.closest('[data-studio-course]');if(cBtn){state.current=null;save();courseView(cBtn.dataset.studioCourse);return}
+ const homeBtn=e.target.closest('[data-studio-home]');if(homeBtn){save();home();return}
+ const cBtn=e.target.closest('[data-studio-course]');if(cBtn){courseView(cBtn.dataset.studioCourse);return}
  const open=e.target.closest('[data-studio-open]');if(open){lessonView(open.dataset.studioOpen,open.dataset.studioLesson);return}
- const choice=e.target.closest('[data-studio-answer]');if(choice&&state.current){const qi=Number(choice.dataset.studioAnswer),oi=Number(choice.dataset.choice);state.current.answers[qi]=oi;state.current.checked=false;state.current.result=null;save();const group=choice.closest('[data-ss-question]');group.querySelectorAll('[data-studio-answer]').forEach(b=>b.classList.toggle('selected',b===choice));page.querySelector('.ss-result')?.remove();page.querySelectorAll('.ss-feedback').forEach(n=>n.remove());const complete=page.querySelector('[data-studio-complete]');if(complete)complete.remove();return}
+ const choice=e.target.closest('[data-studio-answer]');if(choice&&state.current){const qi=Number(choice.dataset.studioAnswer),oi=Number(choice.dataset.choice);state.current.answers[qi]=oi;state.current.checked=false;state.current.result=null;state.working[state.current.lessonId]=state.current;save();const group=choice.closest('[data-ss-question]');group.querySelectorAll('[data-studio-answer]').forEach(b=>b.classList.toggle('selected',b===choice));page.querySelector('.ss-result')?.remove();page.querySelectorAll('.ss-feedback').forEach(n=>n.remove());const complete=page.querySelector('[data-studio-complete]');if(complete)complete.remove();return}
  const check=e.target.closest('[data-studio-check]');if(check){const l=state.current&&lesson(state.current.courseId,state.current.lessonId);if(!l)return;if(l.quiz.some((q,i)=>state.current.answers[i]===undefined)){const toast=document.getElementById('toast');if(toast){toast.textContent='Responde todas las preguntas primero.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800)}return}checkAnswers();return}
- const reset=e.target.closest('[data-studio-reset]');if(reset&&state.current){state.current.answers={};state.current.checked=false;state.current.result=null;save();lessonView(state.current.courseId,state.current.lessonId);return}
+ const reset=e.target.closest('[data-studio-reset]');if(reset&&state.current){state.current.answers={};state.current.checked=false;state.current.result=null;state.working[state.current.lessonId]=state.current;save();lessonView(state.current.courseId,state.current.lessonId);return}
  const complete=e.target.closest('[data-studio-complete]');if(complete){completeLesson();return}
  const speak=e.target.closest('[data-studio-speak]');if(speak&&state.current){const l=lesson(state.current.courseId,state.current.lessonId);if(l?.audio&&'speechSynthesis'in window){window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(l.audio);utterance.lang='en-US';utterance.rate=.88;window.speechSynthesis.speak(utterance)}else{const transcript=$('#ss-transcript');if(transcript)transcript.hidden=false}return}
  const transcript=e.target.closest('[data-studio-transcript]');if(transcript){const t=$('#ss-transcript');if(t)t.hidden=!t.hidden;return}
