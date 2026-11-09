@@ -113,24 +113,28 @@ function course(id){return courses.find(c=>c.id===id)}
 function lesson(courseId,lessonId){const c=course(courseId);return c&&c.lessons.find(l=>l.id===lessonId)}
 function completedCount(c){return c.lessons.filter(l=>state.done[l.id]).length}
 function nextLesson(c){return c.lessons.find(l=>!state.done[l.id])||null}
+function pauseLesson(){if(state.current&&state.current.activeSince){state.current.activeSince=null;state.working[state.current.lessonId]=state.current;save()}}
+function reviewDate(record){if(!record||!record.date)return '';const rate=Number(record.score||0)/Math.max(1,Number(record.max||1));const gap=rate<.5?1:rate<.8?3:7;const d=new Date(record.date+'T12:00:00');d.setDate(d.getDate()+gap);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function totalDone(){return courses.reduce((n,c)=>n+completedCount(c),0)}
 function home(){
- if(state.current&&state.current.activeSince){state.current.activeSince=null;state.working[state.current.lessonId]=state.current;save()}
+ pauseLesson();
  const active=state.current&&lesson(state.current.courseId,state.current.lessonId)?state.current:null;
  const activeCourse=active?course(active.courseId):null;
  let last=activeCourse||(course(state.lastCourse)||course('icfes'));
  let next=active?lesson(active.courseId,active.lessonId):(last?nextLesson(last):null);
  if(!active&&!next){const other=courses.find(c=>completedCount(c)<c.lessons.length);if(other){last=other;next=nextLesson(other)}}
  const done=totalDone(),total=courses.reduce((n,c)=>n+c.lessons.length,0);
+ const due=[];courses.forEach(c=>c.lessons.forEach(l=>{const r=state.done[l.id];if(r&&reviewDate(r)<=today())due.push({course:c,lesson:l})}));
  page.innerHTML='<div class="ss-wrap"><div class="ss-kicker">ADAZ · TU AULA</div><h1 class="ss-title">Aprende algo importante hoy.</h1><p class="ss-sub">Cuatro caminos. Lecciones breves. Todo ocurre aquí, dentro de ADAZ.</p>'+
  '<section class="ss-hero"><div class="ss-kicker">TU SIGUIENTE PASO</div><h2>'+(next?esc(next.title):'Elige qué quieres aprender')+'</h2><p>'+(next?(active?'Retoma donde lo dejaste en ':'Continúa en ')+esc(last.title)+' · '+next.time+' minutos aproximados.':'Selecciona una de las cuatro rutas para comenzar.')+'</p>'+(next?'<button class="ss-primary" data-studio-open="'+last.id+'" data-studio-lesson="'+next.id+'">'+(active?'Continuar lección →':'Empezar →')+'</button>':'')+'</section>'+
  '<div class="ss-grid">'+courses.map(c=>{const n=completedCount(c),pct=Math.round(n/c.lessons.length*100);return '<button class="ss-course" data-studio-course="'+c.id+'"><span class="ss-icon">'+c.icon+'</span><b>'+esc(c.title)+'</b><small>'+esc(c.desc)+'</small><div class="ss-course-foot">'+n+' de '+c.lessons.length+' lecciones</div><div class="ss-bar"><i style="width:'+pct+'%"></i></div></button>'}).join('')+'</div>'+
+ (due.length?'<section class="ss-panel"><div class="ss-top"><b>Un repaso breve te puede ayudar</b><span class="ss-meta">'+due.length+' pendientes</span></div>'+due.slice(0,3).map(x=>'<button class="ss-lesson" data-studio-open="'+x.course.id+'" data-studio-lesson="'+x.lesson.id+'"><span class="ss-lesson-num">↻</span><span><b>'+esc(x.lesson.title)+'</b><small>'+esc(x.course.short)+'</small></span><span class="ss-lesson-status">Repasar ›</span></button>').join('')+'</section>':'')+
  '<section class="ss-panel"><div class="ss-top"><b>Tu avance</b><span class="ss-meta">'+done+' / '+total+' lecciones</span></div><div class="ss-bar"><i style="width:'+Math.round(done/total*100)+'%"></i></div><p class="ss-small">Tus prácticas anteriores siguen guardadas en ADAZ. Este nuevo espacio guarda el avance por separado para no alterar tu historial.</p></section>'+
  '<p class="ss-note">Las actividades de esta aula son material original de ADAZ. Las preguntas oficiales y los simulacros completos se consultan en sus plataformas de origen; nunca se presentan ejercicios inventados como oficiales.</p></div>';
 }
 function courseView(id){
  const c=course(id);if(!c){home();return}
- if(state.current&&state.current.activeSince){state.current.activeSince=null;state.working[state.current.lessonId]=state.current}
+ pauseLesson();
  state.lastCourse=id;save();
  const n=completedCount(c),pct=Math.round(n/c.lessons.length*100),next=nextLesson(c);
  page.innerHTML='<div class="ss-wrap"><div class="ss-top"><button class="ss-back" data-studio-home>← Estudio</button><span class="ss-meta">'+n+' / '+c.lessons.length+' lecciones</span></div><div class="ss-kicker">TU RUTA DE APRENDIZAJE</div><h1 class="ss-title">'+esc(c.title)+'</h1><p class="ss-sub">'+esc(c.goal)+'</p>'+
@@ -145,7 +149,7 @@ function lessonView(cid,lid){
  const c=course(cid),l=lesson(cid,lid);if(!c||!l){courseView(cid);return}
  const same=!!(state.current&&state.current.courseId===cid&&state.current.lessonId===lid);
  if(!same){state.current=state.working[lid]||{courseId:cid,lessonId:lid,answers:{},checked:false,result:null};state.current.activeSince=null}
- state.current.courseId=cid;state.current.lessonId=lid;if(!state.current.activeSince)state.current.activeSince=Date.now();state.working[lid]=state.current;
+ state.current.courseId=cid;state.current.lessonId=lid;if(!state.current.checked&&!state.current.activeSince)state.current.activeSince=Date.now();state.working[lid]=state.current;
  state.lastCourse=cid;save();
  const current=state.current,done=!!state.done[lid];
  const index=c.lessons.indexOf(l)+1;
@@ -192,8 +196,8 @@ function completeLesson(){
  const toast=document.getElementById('toast');if(toast){toast.textContent='Lección guardada. Tu avance quedó registrado.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}
 }
 function handleClick(e){
- const homeBtn=e.target.closest('[data-studio-home]');if(homeBtn){if(state.current){state.current.activeSince=null;state.working[state.current.lessonId]=state.current}save();home();return}
- const cBtn=e.target.closest('[data-studio-course]');if(cBtn){if(state.current){state.current.activeSince=null;state.working[state.current.lessonId]=state.current}courseView(cBtn.dataset.studioCourse);return}
+ const homeBtn=e.target.closest('[data-studio-home]');if(homeBtn){pauseLesson();home();return}
+ const cBtn=e.target.closest('[data-studio-course]');if(cBtn){pauseLesson();courseView(cBtn.dataset.studioCourse);return}
  const open=e.target.closest('[data-studio-open]');if(open){lessonView(open.dataset.studioOpen,open.dataset.studioLesson);return}
  const choice=e.target.closest('[data-studio-answer]');if(choice&&state.current){const qi=Number(choice.dataset.studioAnswer),oi=Number(choice.dataset.choice);state.current.answers[qi]=oi;state.current.checked=false;state.current.result=null;state.working[state.current.lessonId]=state.current;save();const group=choice.closest('[data-ss-question]');group.querySelectorAll('[data-studio-answer]').forEach(b=>b.classList.toggle('selected',b===choice));page.querySelector('.ss-result')?.remove();page.querySelectorAll('.ss-feedback').forEach(n=>n.remove());const complete=page.querySelector('[data-studio-complete]');if(complete)complete.remove();return}
  const check=e.target.closest('[data-studio-check]');if(check){const l=state.current&&lesson(state.current.courseId,state.current.lessonId);if(!l)return;if(l.quiz.some((q,i)=>state.current.answers[i]===undefined)){const toast=document.getElementById('toast');if(toast){toast.textContent='Responde todas las preguntas primero.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800)}return}checkAnswers();return}
@@ -204,7 +208,8 @@ function handleClick(e){
 }
 page.addEventListener('click',handleClick);
 page.addEventListener('input',e=>{const draft=e.target.closest('[data-studio-draft]');if(draft){state.drafts[draft.dataset.studioDraft]=draft.value;save()}});
-document.addEventListener('click',e=>{if(e.target.closest('[data-page="academy"]'))setTimeout(home,130)});
+document.addEventListener('click',e=>{const nav=e.target.closest('[data-page]');if(!nav)return;if(nav.dataset.page==='academy')setTimeout(home,130);else pauseLesson()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseLesson()});
 window.addEventListener('adaz-data-updated',()=>{if(page.classList.contains('active')&&!state.current)home()});
 window.addEventListener('adaz-experience-updated',()=>{if(page.classList.contains('active')&&!state.current)home()});
 function simplifyRoutine(){
