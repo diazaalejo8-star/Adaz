@@ -59,7 +59,7 @@
       ['06:30–13:45*','Colegio','Bloque escolar de referencia; ajusta si ya cambió.'],
       ['35 min','IELTS · Reading o Writing','Alterna habilidades por semana. Resuelve con tiempo y evalúa la calidad, no solo la cantidad.'],
       ['Según calendario real','Entrenamiento planificado','Fuerza, natación o recuperación según tu plan vigente.'],
-      ['10 min','Repaso de finanzas','Actualiza caja, costos, encargos o pagos pendientes; no tomes decisiones con cifras estimadas.'],
+      ['15 min','Medicina · bases biológicas','Repasa un concepto de células, tejidos o fisiología y responde una pregunta de memoria.'],
       ['Noche','Tiempo libre sin culpa','El ocio también tiene lugar en una semana equilibrada.']
     ],
     5: [
