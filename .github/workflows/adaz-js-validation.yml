@@ -73,7 +73,7 @@ jobs:
               raise SystemExit("The one-step-at-a-time experience is missing")
           if "home-extra-row" not in html or "home-stats" not in html:
               raise SystemExit("The simplified home layout is missing")
-          if "adaz-shell-v30" not in sw:
+          if "adaz-shell-v31" not in sw:
               raise SystemExit("Service worker cache version was not refreshed")
 
           academy = Path("adaz-academy.js").read_text(encoding="utf-8")
@@ -85,5 +85,17 @@ jobs:
           if "Ingeniería Financiera" in academy:
               raise SystemExit("The removed study path reappeared")
 
-          print("Navigation, simplified layout and 4 study paths passed.")
+          for track in ["business", "medicine", "icfes", "ielts"]:
+              test = re.search(rf"tracks\.{track}\.test=\[(.*?)\];", academy, re.S)
+              review = re.search(rf"tracks\.{track}\.review=\[(.*?)\];", academy, re.S)
+              if not test or len(re.findall(r"\{tag:", test.group(1))) < 8:
+                  raise SystemExit(f"The {track} challenge test is incomplete")
+              if not review or len(re.findall(r"\{title:", review.group(1))) < 5:
+                  raise SystemExit(f"The {track} review guide is incomplete")
+          if "adaz-commercial-theme" not in html:
+              raise SystemExit("The commercial visual theme is missing")
+          if "spotifyClientId" in html or "connectSpotify" in html:
+              raise SystemExit("Spotify developer controls should not be exposed in the personal app")
+
+          print("Navigation, commercial theme, 4 study paths, review guides and 32 challenge questions passed.")
           PY
