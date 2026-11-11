@@ -431,3 +431,21 @@ body{background:var(--bg)!important;color:var(--ink)!important}
 .yp-week-plan{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.yp-week-plan article{padding:11px;border:1px solid #34312b;border-radius:11px;background:#1c1b18;display:grid;gap:4px}.yp-week-plan b{font-size:12px}.yp-week-plan span{font-size:10px;color:#a9a194;line-height:1.5}
 .yp-exams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.yp-exams article{padding:13px;border:1px solid #34312b;border-radius:12px;background:#1c1b18}.yp-exams h3{margin:0 0 7px;font-size:14px}.yp-exams p,.yp-note,.yp-endnotes p{font-size:11px;line-height:1.65;color:#b4ada2}.yp-exams a{color:#d1b895;font-size:11px;font-weight:750}.yp-note{margin:12px 0 0}.yp-endnotes{border-color:#4a4033}.yp-endnotes>b{font-size:12px;color:#d7c2a4}
 @media(max-width:760px){.yp-grid-layout{grid-template-columns:1fr}.yp-header{flex-direction:column}.yp-open{margin:12px 0 0}.yp-week-plan,.yp-exams{grid-template-columns:1fr}.yp-day{min-height:49px}.yp-day-card{min-width:0}.yp-task{flex-wrap:wrap}.yp-task em{margin-left:25px}}
+
+/* Health module follows the same graphite-and-stone palette */
+#page-training .health-cover{background:linear-gradient(120deg,#24221e,#171715 70%,#121210)!important;border-color:#39332a!important}
+#page-training .health-eyebrow,#page-training .health-label{color:#c5b49b!important}
+#page-training .health-stat,#page-training .health-library-card,#page-training .routine-day,#page-training .routine-swim,#page-training .health-progress{background:#1c1b18!important;border-color:#34312b!important}
+#page-training .health-tab{background:#1c1b18!important;border-color:#34312b!important;color:#d6d0c6!important}
+#page-training .health-tab.active{background:#b9a184!important;border-color:#b9a184!important;color:#17140f!important}
+#page-training .routine-note,#page-training .routine-tip{background:#1c1b18!important;border-color:#34312b!important;color:#d9d3c9!important}
+#page-training .routine-note b,#page-training .routine-blocktitle,#page-training .routine-day summary:after,#page-training .routine-exercise summary{color:#c5b49b!important}
+#page-training .routine-chip{border-color:#514638!important;color:#d1c1a8!important}
+#page-training .routine-swim{background:#1c1b18!important;border-color:#34312b!important}
+#page-training .routine-source,#page-training .routine-source a{color:#d1b895!important}
+#page-training .routine-row{border-color:#34312b!important}
+#page-training .routine-tip{background:#151513!important}
+.yp-result-card label{display:grid;gap:6px;margin:10px 0;color:#d9d3c9;font-size:11px;font-weight:700}
+.yp-result-card input,.yp-result-card textarea{width:100%;background:#11110f;border:1px solid #39352e;border-radius:10px;padding:10px;color:#eeeae3;font:inherit}
+.yp-save-result{border:1px solid #b9a184;background:#b9a184;color:#17140f;border-radius:10px;padding:9px 13px;font-weight:800;cursor:pointer}
+.yp-result-card>p{font-size:10px;color:#9e968b;margin:9px 0 0}
