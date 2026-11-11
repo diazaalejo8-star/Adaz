@@ -133,44 +133,54 @@ const css=document.createElement('style');css.id='adaz-study-v2-style';css.textC
 #page-academy .s2-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin:3px 0 16px}
 #page-academy .s2-head h1{font-size:clamp(26px,4vw,34px);margin:3px 0;letter-spacing:-1.2px}
 #page-academy .s2-head p{color:#a8b7c9;font-size:12px;margin:5px 0;max-width:620px}
-#page-academy .s2-kicker{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#b7f36b;font-weight:900}
-#page-academy .s2-points{font-size:11px;color:#b7f36b;border:1px solid #34485f;background:#132237;padding:8px 11px;border-radius:999px;white-space:nowrap}
+#page-academy .s2-kicker{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#a58bff;font-weight:900}
+#page-academy .s2-points{font-size:11px;color:#a58bff;border:1px solid #34485f;background:#132237;padding:8px 11px;border-radius:999px;white-space:nowrap}
 #page-academy .s2-tracks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
 #page-academy .s2-track{min-height:84px;text-align:left;padding:12px;border:1px solid #2c4057;border-radius:14px;background:#111e2e;color:#edf3fb;cursor:pointer}
-#page-academy .s2-track.active{border-color:#b7f36b;background:#1c2b3c;box-shadow:inset 0 0 0 1px #b7f36b}
+#page-academy .s2-track.active{border-color:#a58bff;background:#292342;box-shadow:inset 0 0 0 1px #a58bff}
 #page-academy .s2-track .s2-icon{font-size:18px;display:block;margin-bottom:5px}
 #page-academy .s2-track b{display:block;font-size:11px}
 #page-academy .s2-track small{display:block;color:#a8b7c9;font-size:9px;margin-top:3px}
 #page-academy .s2-next{padding:18px;border:1px solid #344b65;border-radius:18px;background:linear-gradient(130deg,#192b40,#101a29);margin:12px 0}
 #page-academy .s2-next h2{font-size:19px;margin:5px 0}
 #page-academy .s2-next p{color:#b5c3d4;font-size:11px;line-height:1.55;margin:4px 0}
-#page-academy .s2-button{border:0;background:#b7f36b;color:#101827;border-radius:11px;padding:11px 15px;font-size:11px;font-weight:900;cursor:pointer;margin-top:10px}
+#page-academy .s2-button{border:0;background:#a58bff;color:#101827;border-radius:11px;padding:11px 15px;font-size:11px;font-weight:900;cursor:pointer;margin-top:10px}
 #page-academy .s2-muted{color:#9eafc4;font-size:10px}
 #page-academy .s2-lessons{display:grid;gap:7px;margin-top:10px}
 #page-academy .s2-lesson{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid #2a3e55;border-radius:13px;background:#111e2e;color:#edf3fb;text-align:left;cursor:pointer;width:100%}
 #page-academy .s2-lesson .num{width:30px;height:30px;border-radius:10px;background:#1d3046;display:grid;place-items:center;font-size:11px;font-weight:900}
-#page-academy .s2-lesson.done .num{background:#284333;color:#b7f36b}
+#page-academy .s2-lesson.done .num{background:#17382f;color:#a58bff}
 #page-academy .s2-lesson div:nth-child(2){flex:1;min-width:0}
 #page-academy .s2-lesson b{font-size:11px;display:block}
 #page-academy .s2-lesson small{font-size:9px;color:#a8b7c9}
-#page-academy .s2-lesson .arrow{color:#b7f36b}
+#page-academy .s2-lesson .arrow{color:#a58bff}
 #page-academy .s2-card{background:#111e2e;border:1px solid #2a4058;border-radius:16px;padding:16px;margin:10px 0}
 #page-academy .s2-card h2{font-size:20px;margin:5px 0}
 #page-academy .s2-card p{font-size:12px;line-height:1.65;color:#c1cddd}
 #page-academy .s2-steps{display:grid;gap:8px;margin:13px 0}
 #page-academy .s2-step{display:flex;gap:9px;font-size:11px;line-height:1.5;color:#d9e3ef}
-#page-academy .s2-step span{flex:0 0 23px;width:23px;height:23px;border-radius:8px;background:#20344a;display:grid;place-items:center;color:#b7f36b;font-weight:900}
+#page-academy .s2-step span{flex:0 0 23px;width:23px;height:23px;border-radius:8px;background:#20344a;display:grid;place-items:center;color:#a58bff;font-weight:900}
 #page-academy .s2-question{font-size:14px!important;font-weight:800;color:#f2f6fb!important}
 #page-academy .s2-options{display:grid;gap:7px}
 #page-academy .s2-option{padding:12px;border:1px solid #34485f;border-radius:11px;background:#0d1725;color:#e7eef7;text-align:left;font-size:11px;cursor:pointer}
-#page-academy .s2-option.selected{border-color:#b7f36b;background:#1b2e3c}
+#page-academy .s2-option.selected{border-color:#a58bff;background:#292342}
 #page-academy .s2-feedback{border-radius:12px;padding:12px;margin-top:10px;background:#1b2e26;border:1px solid #41694e;color:#e2f5e6;font-size:11px;line-height:1.55}
 #page-academy .s2-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 #page-academy .s2-secondary{padding:10px 12px;border:1px solid #3a5069;border-radius:10px;background:#17273a;color:#dce7f4;font-size:10px;font-weight:800;cursor:pointer}
 #page-academy .s2-bar{height:5px;background:#293b50;border-radius:99px;overflow:hidden;margin:10px 0}
-#page-academy .s2-bar i{display:block;height:100%;background:#b7f36b}
+#page-academy .s2-bar i{display:block;height:100%;background:#a58bff}
 #page-academy .s2-resource{font-size:10px;color:#c9d8e8;text-decoration:underline}
 #page-academy .s2-resources{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+#page-academy .s2-tools{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0 16px}
+#page-academy .s2-review-list{display:grid;gap:8px;margin:14px 0}
+#page-academy .s2-review-card{padding:12px 14px;border:1px solid #39364f;border-radius:14px;background:#191b2a}
+#page-academy .s2-review-card summary{cursor:pointer;font-size:12px;font-weight:800;color:#e6ddff}
+#page-academy .s2-review-card p{font-size:12px;line-height:1.65;color:#d0cede;margin:10px 0 0}
+#page-academy .s2-test-score{font-size:54px;font-weight:900;letter-spacing:-2px;color:#bbaaff;margin:12px 0}
+#page-academy .s2-test-score span{font-size:22px;color:#aaa6bd}
+#page-academy .s2-option:disabled{opacity:.9;cursor:default}
+#page-academy .s2-button:disabled{opacity:.4;cursor:not-allowed}
+
 @media(max-width:620px){#page-academy .s2-tracks{grid-template-columns:repeat(2,minmax(0,1fr))}#page-academy .s2-head{align-items:center}#page-academy .s2-next{padding:15px}}
 `;
 if(!document.getElementById(css.id))document.head.append(css);
@@ -182,7 +192,7 @@ function nextLesson(t){return tracks[t].lessons.find(l=>{const d=state.done[less
 function renderHome(){
  const t=state.track,info=tracks[t],next=nextLesson(t),done=countDone(t),pct=Math.round(done/info.lessons.length*100),active=state.active;
  const cards=Object.entries(tracks).map(([k,v])=>'<button class="s2-track '+(k===t?'active':'')+'" data-s2-track="'+k+'"><span class="s2-icon">'+v.icon+'</span><b>'+v.name+'</b><small>'+esc(v.goal)+' · '+countDone(k)+'/'+v.lessons.length+' lecciones</small></button>').join('');
- page.innerHTML='<div class="s2-wrap"><div class="s2-head"><div><div class="s2-kicker">ADAZ · APRENDE HACIENDO</div><h1>¿Qué quieres aprender?</h1><p>Lecciones cortas, ejercicios y explicaciones. Todo empieza y termina aquí.</p></div><div class="s2-points">✦ '+points()+' puntos</div></div><div class="s2-tracks">'+cards+'</div><div class="s2-tools"><button class="s2-secondary" data-s2-review="'+t+'">Repasar lo importante</button><button class="s2-button" data-s2-start-test="'+t+'">Hacer test desafiante · '+info.test.length+' preguntas</button></div>'+(active?'<section class="s2-next"><div class="s2-kicker">TU LECCIÓN ABIERTA</div><h2>'+esc((tracks[active.track]?.lessons.find(x=>x.id===active.id)||{}).title||'Lección')+'</h2><p>Puedes continuar donde lo dejaste.</p><button class="s2-button" data-s2-continue>Continuar →</button></section>':'<section class="s2-next"><div class="s2-kicker">'+(state.done[lessonKey(t,next.id)]&&state.done[lessonKey(t,next.id)].reviewAt<=date()?'ES HORA DE REPASAR':'SIGUIENTE PASO')+' · '+done+'/'+info.lessons.length+' LECCIONES</div><h2>'+esc(done===info.lessons.length&&!(state.done[lessonKey(t,next.id)]&&state.done[lessonKey(t,next.id)].reviewAt<=date())?'¡Terminaste este primer recorrido!':(state.done[lessonKey(t,next.id)]?'Repasa '+next.title:'Empieza por '+next.title))+'</h2><p>'+esc(info.sub)+' · '+next.time+' de práctica.</p><button class="s2-button" data-s2-open="'+t+':'+next.id+'">Empezar lección →</button></section>')+'<div class="s2-muted">'+pct+'% de este primer recorrido completado. Puedes cambiar de área cuando quieras.</div><div class="s2-bar"><i style="width:'+pct+'%"></i></div><div class="s2-lessons">'+info.lessons.map((l,i)=>'<button class="s2-lesson '+(state.done[lessonKey(t,l.id)]?'done':'')+'" data-s2-open="'+t+':'+l.id+'"><span class="num">'+(state.done[lessonKey(t,l.id)]?'✓':i+1)+'</span><div><b>'+esc(l.title)+'</b><small>'+esc(l.tag)+' · '+l.time+'</small></div><span class="arrow">›</span></button>').join('')+'</div><div class="s2-resources">'+(t==='icfes'?'<a class="s2-resource" href="'+sources.icfes+'" target="_blank" rel="noopener">Material oficial ICFES ↗</a>':t==='ielts'?'<a class="s2-resource" href="'+sources.ielts+'" target="_blank" rel="noopener">Muestras oficiales IELTS ↗</a>':t==='medicine'?'<a class="s2-resource" href="'+sources.med500+'" target="_blank" rel="noopener">Temario público de PreMed MED500 ↗</a><a class="s2-resource" href="'+sources.med+'" target="_blank" rel="noopener">Libro gratuito de Anatomía y Fisiología ↗</a>':'<span class="s2-resource">Contenido formativo propio para organizar tu negocio.</span>')+'</div></div>';
+ page.innerHTML='<div class="s2-wrap"><div class="s2-head"><div><div class="s2-kicker">ADAZ · APRENDE HACIENDO</div><h1>¿Qué quieres aprender?</h1><p>Lecciones cortas, ejercicios y explicaciones. Todo empieza y termina aquí.</p></div><div class="s2-points">✦ '+points()+' puntos</div></div><div class="s2-tracks">'+cards+'</div><div class="s2-tools"><button class="s2-secondary" data-s2-review="'+t+'">Repasar lo importante</button><button class="s2-button" data-s2-start-test="'+t+'">Hacer test desafiante · '+info.test.length+' preguntas</button>'+(state.activeTest?'<button class="s2-secondary" data-s2-resume-test>Continuar tu test</button>':'')+'</div>'+(active?'<section class="s2-next"><div class="s2-kicker">TU LECCIÓN ABIERTA</div><h2>'+esc((tracks[active.track]?.lessons.find(x=>x.id===active.id)||{}).title||'Lección')+'</h2><p>Puedes continuar donde lo dejaste.</p><button class="s2-button" data-s2-continue>Continuar →</button></section>':'<section class="s2-next"><div class="s2-kicker">'+(state.done[lessonKey(t,next.id)]&&state.done[lessonKey(t,next.id)].reviewAt<=date()?'ES HORA DE REPASAR':'SIGUIENTE PASO')+' · '+done+'/'+info.lessons.length+' LECCIONES</div><h2>'+esc(done===info.lessons.length&&!(state.done[lessonKey(t,next.id)]&&state.done[lessonKey(t,next.id)].reviewAt<=date())?'¡Terminaste este primer recorrido!':(state.done[lessonKey(t,next.id)]?'Repasa '+next.title:'Empieza por '+next.title))+'</h2><p>'+esc(info.sub)+' · '+next.time+' de práctica.</p><button class="s2-button" data-s2-open="'+t+':'+next.id+'">Empezar lección →</button></section>')+'<div class="s2-muted">'+pct+'% de este primer recorrido completado. Puedes cambiar de área cuando quieras.</div><div class="s2-bar"><i style="width:'+pct+'%"></i></div><div class="s2-lessons">'+info.lessons.map((l,i)=>'<button class="s2-lesson '+(state.done[lessonKey(t,l.id)]?'done':'')+'" data-s2-open="'+t+':'+l.id+'"><span class="num">'+(state.done[lessonKey(t,l.id)]?'✓':i+1)+'</span><div><b>'+esc(l.title)+'</b><small>'+esc(l.tag)+' · '+l.time+'</small></div><span class="arrow">›</span></button>').join('')+'</div><div class="s2-resources">'+(t==='icfes'?'<a class="s2-resource" href="'+sources.icfes+'" target="_blank" rel="noopener">Material oficial ICFES ↗</a>':t==='ielts'?'<a class="s2-resource" href="'+sources.ielts+'" target="_blank" rel="noopener">Muestras oficiales IELTS ↗</a>':t==='medicine'?'<a class="s2-resource" href="'+sources.med500+'" target="_blank" rel="noopener">Temario público de PreMed MED500 ↗</a><a class="s2-resource" href="'+sources.med+'" target="_blank" rel="noopener">Libro gratuito de Anatomía y Fisiología ↗</a>':'<span class="s2-resource">Contenido formativo propio para organizar tu negocio.</span>')+'</div></div>';
 }
 function renderLesson(t,id,selected=null,feedback=false){
  const l=tracks[t]?.lessons.find(x=>x.id===id);if(!l){renderHome();return}
@@ -228,6 +238,7 @@ function syncLegacy(l,t){
  set('studySkill',l.tag);set('studyDate',date());set('studyMinutes',Math.max(5,parseInt(l.time,10)||8));set('studyAccuracy','');set('studyBand','');set('studyMethod','Lección y práctica de recuperación');set('studyGoal',l.title);set('studyResult','Lección interactiva completada en ADAZ.');form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
 }
 page.addEventListener('click',e=>{
+ if(e.target.closest('[data-s2-resume-test]')){if(state.activeTest){state.track=state.activeTest.track;renderTest()}return}
  const review=e.target.closest('[data-s2-review]');if(review){state.track=review.dataset.s2Review;renderReview(state.track);return}
  const startTest=e.target.closest('[data-s2-start-test]');if(startTest){state.track=startTest.dataset.s2StartTest;startTestFlow(state.track);return}
  const testAnswer=e.target.closest('[data-s2-test-answer]');if(testAnswer&&state.activeTest&&!state.activeTest.checked){state.activeTest.answers[state.activeTest.index]=Number(testAnswer.dataset.s2TestAnswer);save();renderTest();return}
