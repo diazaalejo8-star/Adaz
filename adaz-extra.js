@@ -28,55 +28,44 @@
     else window.alert(message);
   };
   const week = {
-    0: [
-      ['Mañana flexible','Descanso y vida personal','Duerme lo necesario y reserva tiempo libre sin convertirlo en otra obligación.'],
-      ['10–20 min','Revisión semanal','Mira lo que sí hiciste, elige de una a tres prioridades y ajusta lo que no sea realista.'],
-      ['Bloque corto','Preparar la semana','Deja lista la mochila/materiales y define la primera tarea de lunes.'],
-      ['Noche','Cierre tranquilo','Evita llenar el domingo de trabajo pendiente; procura acostarte a una hora razonable.']
+    0:[
+      ['Día flexible','Descanso y vida personal','Reserva tiempo para descansar, compartir y hacer algo que disfrutes.'],
+      ['20 min','Revisión de la semana','Mira qué funcionó y elige hasta tres prioridades para la semana que empieza.'],
+      ['Después','Preparar el lunes','Deja listos tus materiales y la primera tarea.']
     ],
-    1: [
-      ['06:30–13:45*','Colegio','Horario de referencia registrado en tu plan; comprueba si sigue vigente.'],
-      ['Después de clases','Comer y recuperar energía','Haz una pausa antes del siguiente bloque exigente.'],
-      ['35 min','IELTS · Listening','Haz una práctica oficial breve y revisa cada error, distractor y paráfrasis.'],
-      ['Según calendario real','Fuerza / gimnasio','Usa tu rutina vigente y solo si toca esa sesión; no añadas volumen por compensar.'],
-      ['10–15 min','Aestel Lux · control diario','Revisa pedidos, anticipos y mensajes importantes con un objetivo definido.'],
-      ['Noche','Preparar mañana','Deja anotada la prioridad del martes y haz un cierre breve.']
+    1:[
+      ['Colegio','Clases y traslados','Este bloque ocupa la prioridad del día. Ajusta la hora de salida a tu horario vigente.'],
+      ['25–35 min','IELTS · Listening o Reading','Haz una lección en ADAZ y revisa por qué una respuesta es correcta.'],
+      ['Según tu entrenador','Natación, gimnasio o recuperación','Respeta el calendario real de piscina y fuerza; no acumules sesiones perdidas.']
     ],
-    2: [
-      ['06:30–13:45*','Colegio','Bloque escolar de referencia; ajústalo si cambió tu horario.'],
-      ['30 min','ICFES · área prioritaria','Resuelve preguntas y escribe por qué descartaste las opciones incorrectas.'],
-      ['Según entrenador','Natación / deporte planificado','Registra duración, distancia si aplica y cómo te sentiste. La indicación del entrenador tiene prioridad.'],
-      ['10 min','Repaso espaciado','Intenta recordar cinco conceptos antes de volver a mirar los apuntes.'],
-      ['Noche','Desconexión','Tiempo personal, alimentación y sueño; evita duplicar tareas si el día fue pesado.']
+    2:[
+      ['Colegio','Clases y traslados','Mantén este bloque como prioridad y deja espacio para comer y descansar.'],
+      ['25–35 min','ICFES · área que más te cuesta','Resuelve una práctica, explica tu razonamiento y guarda el error que quieras corregir.'],
+      ['15 min','Aestel · pedidos y mensajes','Revisa solo los pedidos activos y responde lo importante.']
     ],
-    3: [
-      ['06:30–16:30*','Colegio · jornada larga','Miércoles figura como la jornada más larga en el horario provisional. Verifica si sigue vigente.'],
-      ['15 min','Mínimo académico viable','Repasa tres errores o cinco ideas de memoria; no fuerces una sesión extensa.'],
-      ['Según calendario real','Entrenamiento o recuperación','Sigue el plan del entrenador y cómo te encuentras ese día.'],
-      ['Noche','Dejar listo mañana','Materiales preparados y cierre temprano para proteger el descanso.']
+    3:[
+      ['Colegio','Jornada larga o compromiso escolar','No añadas una sesión extensa si sales cansado. Actualiza el horario real cuando cambie.'],
+      ['10–15 min','Medicina · recordar lo aprendido','Repasa una idea de biología, anatomía o fisiología sin mirar primero tus notas.'],
+      ['Noche','Recuperación','Cena, tiempo personal y sueño. Hoy no hace falta recuperar tareas atrasadas.']
     ],
-    4: [
-      ['06:30–13:45*','Colegio','Bloque escolar de referencia; ajusta si ya cambió.'],
-      ['35 min','IELTS · Reading o Writing','Alterna habilidades por semana. Resuelve con tiempo y evalúa la calidad, no solo la cantidad.'],
-      ['Según calendario real','Entrenamiento planificado','Fuerza, natación o recuperación según tu plan vigente.'],
-      ['10 min','Repaso de finanzas','Actualiza caja, costos, encargos o pagos pendientes; no tomes decisiones con cifras estimadas.'],
-      ['Noche','Tiempo libre sin culpa','El ocio también tiene lugar en una semana equilibrada.']
+    4:[
+      ['Colegio','Clases y traslados','Deja margen entre colegio, alimentación y entrenamiento.'],
+      ['25–35 min','IELTS · Writing o Speaking','Practica una parte corta y usa la lista de revisión de ADAZ.'],
+      ['Según tu entrenador','Natación, gimnasio o descanso','Elige según el trabajo hecho en piscina durante la semana.']
     ],
-    5: [
-      ['06:30–13:45*','Colegio','Horario escolar de referencia.'],
-      ['30 min','ICFES o IELTS Speaking','Practica un área prioritaria y apunta un ajuste concreto para la próxima vez.'],
-      ['15 min','Cierre Aestel Lux','Revisa entregas, cobros y una publicación o idea de contenido medible.'],
-      ['Según entrenador','Natación / deporte planificado','No compenses sesiones perdidas con trabajo extra automático.'],
-      ['Noche','Recuperación y relaciones','Reserva tiempo para descansar y estar con tu gente.']
+    5:[
+      ['Colegio','Clases y cierre de semana','Termina las prioridades escolares y no llenes la tarde de pendientes.'],
+      ['25–35 min','ICFES o Medicina','Alterna las dos áreas según tus resultados y lo que necesites reforzar.'],
+      ['15–20 min','Aestel · revisar la semana','Comprueba ventas, costos, pedidos y una idea de contenido.']
     ],
-    6: [
-      ['30 min','Estudio a elección','Escoge la habilidad más débil según tus registros; puedes alternar IELTS e ICFES.'],
-      ['40 min','Bloque de negocio','Catálogo, costos, contenido, servicio al cliente o revisión de proveedores; una tarea por bloque.'],
-      ['Según calendario real','Entrenamiento','Mantén el calendario real y la recuperación; no agregues dobles sesiones por defecto.'],
-      ['Después','Actividad elegida','Algo creativo, social, cultural o simplemente entretenido.']
+    6:[
+      ['30 min','Negocio · Aestel','Trabaja una sola mejora: catálogo, proveedor, costos o atención al cliente.'],
+      ['25–35 min','Medicina o repaso ICFES','Elige la lección pendiente o el tema que más necesite práctica.'],
+      ['Después','Entrenamiento o actividad personal','Sigue el plan real de natación y fuerza, o reserva tiempo para disfrutar.']
     ]
   };
   const dayNames = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  let scheduleExpanded=false,tasksExpanded=false;
   function currentSchedule() {
     const d = new Date();
     const num = d.getDay();
@@ -89,14 +78,17 @@
     if (heading) heading.textContent = 'Tu plan de ' + dayNames[num];
     if (dateNode) dateNode.textContent = d.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     if (note) note.textContent = today() <= '2026-11-13'
-      ? '* Las horas escolares son una referencia provisional guardada previamente y solo aplican si siguen vigentes. El resto son bloques flexibles, no citas con hora fija.'
-      : 'El horario escolar provisional de octubre–noviembre ya expiró. Confirma tu horario actual antes de convertirlo en horas fijas. Los demás bloques son orientativos.';
+      ? 'El horario escolar registrado es temporal. Ajusta la hora de salida a tus clases reales; los otros bloques son orientativos.'
+      : 'El horario escolar anterior ya pasó. Actualiza la nueva hora de entrada y salida antes de convertir otros bloques en citas fijas.';
     const timeline = $('#routineTimeline');
-    if (timeline) timeline.innerHTML = plan.map(item => '<article class="routine-item"><div class="routine-time">' + escapeHTML(item[0]) + '</div><div class="routine-body"><h3>' + escapeHTML(item[1]) + '</h3><p>' + escapeHTML(item[2]) + '</p></div></article>').join('');
+    if (timeline) {
+      const visible = scheduleExpanded ? plan : plan.slice(0,1);
+      timeline.innerHTML = visible.map(item => '<article class="routine-item"><div class="routine-time">' + escapeHTML(item[0]) + '</div><div class="routine-body"><h3>' + escapeHTML(item[1]) + '</h3><p>' + escapeHTML(item[2]) + '</p></div></article>').join('') + (plan.length>1 ? '<button class="btn small routine-more" type="button" data-routine-expand>' + (scheduleExpanded ? 'Mostrar menos' : 'Ver las otras ' + (plan.length-1) + ' actividades') + '</button>' : '');
+    }
     const taskList = $('#routineTaskList');
     if (taskList) taskList.innerHTML = tasks.length
-      ? tasks.map(t => '<div class="list-item"><span class="bullet">' + (t.done?'✓':'○') + '</span><div style="flex:1"><b class="smalltext">' + escapeHTML(t.title) + '</b><div class="muted smalltext">' + escapeHTML(t.desc||'') + '</div><div class="muted smalltext">' + escapeHTML(t.category||'General') + ' · ' + (Number(t.minutes)||0) + ' min</div></div></div>').join('')
-      : '<div class="empty">Las tareas de hoy todavía no se han creado. Entra al Panel del día para generarlas y editarlas.</div>';
+      ? tasks.slice(0,tasksExpanded?tasks.length:2).map(t => '<div class="list-item"><span class="bullet">' + (t.done?'✓':'○') + '</span><div style="flex:1"><b class="smalltext">' + escapeHTML(t.title) + '</b><div class="muted smalltext">' + escapeHTML(t.desc||'') + '</div></div></div>').join('') + (tasks.length>2 ? '<button class="btn small" type="button" data-routine-tasks-expand>' + (tasksExpanded?'Mostrar menos':'Ver '+(tasks.length-2)+' tareas más') + '</button>' : '')
+      : '<div class="empty">Todavía no hay tareas guardadas para hoy. Puedes añadir solo lo que realmente necesitas hacer.</div>';
     const count = tasks.filter(t=>t.done).length;
     const summary = $('#routineTaskSummary');
     if (summary) summary.textContent = tasks.length ? count + ' de ' + tasks.length + ' tareas completadas en el Panel del día.' : 'Aún no hay tareas registradas para hoy.';
@@ -257,6 +249,8 @@
     }
     if (e.target.closest('[data-action="enableNotifications"]')) { enableNotifications(); return; }
     if (e.target.closest('[data-action="exportReminderCalendar"]')) { exportReminderCalendar(); return; }
+    if (e.target.closest('[data-routine-expand]')) { scheduleExpanded=!scheduleExpanded; currentSchedule(); return; }
+    if (e.target.closest('[data-routine-tasks-expand]')) { tasksExpanded=!tasksExpanded; currentSchedule(); return; }
     if (e.target.closest('[data-leisure-next]')) { showNextLeisure(); return; }
     const done=e.target.closest('[data-leisure-done]');
     if (done) {
