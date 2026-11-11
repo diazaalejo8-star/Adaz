@@ -37,6 +37,21 @@
     6: [['30 min','Estudio a elección','Escoge una lección de Medicina, ICFES o IELTS.'],['30 min','Oro Laminado','Mejora una ficha, costo o idea de contenido.'],['Según entrenador','Entrenamiento o descanso','No acumules sesiones para compensar.']]
   };
   const dayNames = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  function compactReminderCard() {
+    const form = $('#reminderForm');
+    const card = form && form.closest('.card');
+    if (!card || card.querySelector('.routine-reminder-details')) return;
+    const heading = card.querySelector('h2');
+    if (heading) heading.textContent = 'Avisos (opcional)';
+    const details = document.createElement('details');
+    details.className = 'routine-reminder-details';
+    const summary = document.createElement('summary');
+    summary.textContent = 'Configurar recordatorios';
+    const body = document.createElement('div');
+    while (card.children.length > 1) body.append(card.children[1]);
+    details.append(summary, body);
+    card.append(details);
+  }
   function currentSchedule() {
     const d = new Date();
     const num = d.getDay();
