@@ -342,7 +342,7 @@
     if(event.target.id==='spotifySettingsForm') {
       event.preventDefault();
       readSpotifyForm();
-      renderSpotifyStatus('Configuración Spotify guardada en este dispositivo. Redirect URI: '+spotifyRedirect());
+      renderSpotifyStatus('Tu lista quedó guardada en este dispositivo. Cuando quieras, abre Spotify desde ADAZ.');
       notify('Configuración Spotify guardada.');
       return;
     }
