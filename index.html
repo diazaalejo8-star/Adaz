@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#111827" />
+  <meta name="theme-color" content="#0b0d14" />
   <meta name="description" content="ADAZ: sistema personal de estudio, negocio, entrenamiento y revisión semanal." />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="adaz-apple.css" />
@@ -149,6 +149,56 @@
     @media(max-width:600px){.spotify-hero{grid-template-columns:1fr}.ai-transcript{max-height:360px}}
 
   </style>
+
+  <style id="adaz-commercial-theme">
+    :root{color-scheme:dark;--bg:#0b0d14;--paper:#151824;--ink:#f5f4fb;--muted:#a5a5b8;--line:#303044;--navy:#111321;--navy2:#1c1e30;--lime:#a58bff;--green:#45d6a5;--green-bg:#15372f;--blue:#a58bff;--blue-bg:#292342;--orange:#ffb66e;--orange-bg:#3c2b1e;--purple:#c4a5ff;--purple-bg:#302344;--red:#ff8291;--red-bg:#3c202a;--shadow:0 16px 42px rgba(0,0,0,.25)}
+    body{background:radial-gradient(ellipse at 85% -18%,rgba(142,111,255,.20),transparent 38%),radial-gradient(ellipse at 4% 30%,rgba(57,210,165,.07),transparent 35%),var(--bg);color:var(--ink)}
+    .sidebar{background:#0d101a;border-right:1px solid rgba(255,255,255,.08)}
+    .brand-mark,.mobile-mark{background:linear-gradient(145deg,#c1adff,#8267f5)!important;color:#111321!important;box-shadow:0 6px 20px rgba(135,105,255,.26)}
+    .nav-btn.active{background:rgba(165,139,255,.17)!important;color:#e4dcff!important;border-color:rgba(165,139,255,.3)!important}
+    .topbar{background:rgba(11,13,20,.84)!important;border-color:rgba(255,255,255,.08)!important}
+    .today-pill{background:#171a27!important;color:#e2e2ed!important;border-color:#34364a!important}
+    .hero{background:linear-gradient(118deg,#25203d 0%,#171a2b 58%,#121722 100%)!important;border:1px solid rgba(165,139,255,.23)!important}
+    .hero .eyebrow{color:#c1b3ff!important}.hero p{color:#d1cee0!important}
+    .card{background:linear-gradient(180deg,#181b29,#141722)!important;border-color:rgba(255,255,255,.08)!important}
+    .card h2,.card h3,.task-title{color:#f4f1fc!important}
+    .btn.primary{background:linear-gradient(110deg,#9b82ff,#7b69ed)!important;border-color:#9b82ff!important;color:#fff!important;box-shadow:0 7px 20px rgba(130,103,245,.22)}
+    .btn.lime{background:linear-gradient(110deg,#55dfb0,#32c69c)!important;border-color:#55dfb0!important;color:#08251c!important}
+    .task,.routine-item,.leisure-choice{background:#171b28!important;border-color:#303448!important}
+    .tag{background:#262a3b!important;color:#d8d6e5!important}
+    .tag.blue,.tag.purple{background:#2d2547!important;color:#d4c6ff!important}
+    .tag.green{background:#17382f!important;color:#91edc9!important}
+    .tag.orange{background:#3c2b1e!important;color:#ffd0a1!important}
+    .progress{background:#303247!important}.progress>span,.progress.blue>span,.bar{background:linear-gradient(90deg,#9b82ff,#55d9ad)!important}
+    .stat-icon{background:#292541!important;color:#c8b8ff!important}
+    .field input,.field select,.field textarea{background:#10131e!important;color:#f3f1fa!important;border-color:#34364b!important}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#a58bff!important;box-shadow:0 0 0 3px rgba(165,139,255,.16)!important}
+    .note{background:#1c2030!important;color:#ddd9ed!important;border-color:#494365!important}
+    .note.green{background:#142e27!important;border-color:#347e65!important;color:#c6f4e3!important}
+    .note.warn{background:#34271e!important;border-color:#946b45!important;color:#f8dfc6!important}
+    .bottom-nav{background:rgba(14,16,26,.92)!important}
+    .bottom-nav .nav-btn.active{background:rgba(165,139,255,.16)!important;color:#e4dcff!important}
+    a{color:#b9a8ff}
+    .adaz-journey{background:linear-gradient(135deg,#211d37,#151a27)!important;border-color:rgba(165,139,255,.2)!important}
+    .adaz-journey-go{background:linear-gradient(100deg,#a58bff,#7c6af0)!important;border-color:#a58bff!important;color:white!important}
+    .adaz-hub-card{background:#181b2a!important;border-color:#34334c!important}
+    #page-academy .s2-wrap{color:#f4f1fc}
+    #page-academy .s2-track.active{border-color:#a58bff!important;background:#292342!important}
+    #page-academy .s2-button{background:linear-gradient(105deg,#9b82ff,#7868ed)!important;color:#fff!important;border-color:#9b82ff!important}
+    #page-academy .s2-option.selected{border-color:#a58bff!important;background:#292342!important}
+    #page-academy .s2-feedback{background:#17372f!important;border-color:#39866c!important}
+    #page-academy .s2-tools{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0 16px}
+    #page-academy .s2-review-list{display:grid;gap:8px;margin:14px 0}
+    #page-academy .s2-review-card{padding:12px 14px;border:1px solid #39364f;border-radius:14px;background:#191b2a}
+    #page-academy .s2-review-card summary{cursor:pointer;font-size:12px;font-weight:800;color:#e6ddff}
+    #page-academy .s2-review-card p{font-size:12px;line-height:1.65;color:#d0cede;margin:10px 0 0}
+    #page-academy .s2-test-score{font-size:54px;font-weight:900;letter-spacing:-2px;color:#bbaaff;margin:12px 0}
+    #page-academy .s2-test-score span{font-size:22px;color:#aaa6bd}
+    #page-academy .s2-option:disabled{opacity:.9;cursor:default}
+    #page-academy .s2-button:disabled{opacity:.4;cursor:not-allowed}
+    @media(max-width:620px){#page-academy .s2-tools{display:grid;grid-template-columns:1fr}#page-academy .s2-review-card{padding:12px}}
+  </style>
+
 </head>
 <body>
 <div class="app-shell">
@@ -513,26 +563,16 @@
           <div class="grid" style="align-content:start">
             <div class="card">
               <div class="spotify-hero">
-                <div><div class="eyebrow">Música de entrenamiento</div><h3>Spotify</h3><p class="muted smalltext">La opción rápida abre Spotify. La conexión avanzada puede controlar la reproducción de una lista si la cuenta y los permisos lo permiten.</p></div>
+                <div><div class="eyebrow">Música de entrenamiento</div><h3>Spotify</h3><p class="muted smalltext">Guarda tu lista favorita y abre Spotify desde ADAZ. La reproducción se controla directamente en Spotify.</p></div>
                 <span style="font-size:32px">♫</span>
               </div>
               <form id="spotifySettingsForm" class="form-grid section-gap">
-                <div class="field full"><label for="spotifyPlaylistUrl">Enlace de lista, álbum o búsqueda de entrenamiento</label><input id="spotifyPlaylistUrl" type="url" placeholder="https://open.spotify.com/playlist/…" /></div>
-                <div class="field full"><label for="spotifyClientId">Spotify Client ID (opcional, para control avanzado)</label><input id="spotifyClientId" autocomplete="off" placeholder="Pega solo el Client ID público" /></div>
-                <div class="field full"><label for="spotifyRedirectUri">Redirect URI registrada en Spotify Developer Dashboard</label><input id="spotifyRedirectUri" type="url" readonly /></div>
-                <div class="form-actions"><button class="btn primary" type="submit">Guardar configuración Spotify</button></div>
+                <div class="field full"><label for="spotifyPlaylistUrl">Tu lista de música</label><input id="spotifyPlaylistUrl" type="url" placeholder="Pega el enlace de una lista de Spotify" /></div>
+                <div class="form-actions"><button class="btn primary" type="submit">Guardar mi lista</button><button class="btn" type="button" data-action="openSpotify">Abrir en Spotify ↗</button></div>
               </form>
-              <div class="integration-actions section-gap">
-                <button class="btn primary" type="button" data-action="openSpotify">Abrir música en Spotify</button>
-                <button class="btn" type="button" data-action="connectSpotify">Conectar control de Spotify</button>
-                <button class="btn" type="button" data-action="refreshSpotify">Actualizar dispositivo / canción</button>
-                <button class="btn" type="button" data-action="playSpotify">Reproducir esta lista</button>
-                <button class="btn danger" type="button" data-action="disconnectSpotify">Desconectar Spotify</button>
-              </div>
-              <div id="spotifyStatus" class="integration-status section-gap" role="status" aria-live="polite">Spotify aún no está configurado.</div>
-              <div class="field section-gap"><label for="spotifyDeviceSelect">Dispositivo de reproducción (para control avanzado)</label><select id="spotifyDeviceSelect"><option value="">Conecta Spotify y actualiza dispositivos</option></select></div>
-              <div class="integration-note section-gap">Importante: abrir una lista suele funcionar sin conectar la API. El control remoto por API requiere un Spotify Premium activo y una app de desarrollador registrada; en el modo de desarrollo actual Spotify limita la app a un máximo de cinco usuarios autorizados. El control funciona sobre un dispositivo Spotify Connect activo; ADAZ no reproduce ni altera el audio por su cuenta.</div>
-              <div class="source-row"><h3>Documentación oficial</h3><p>Spotify Web API y flujo de autorización PKCE.</p><a href="https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow" target="_blank" rel="noopener noreferrer">Abrir guía de Spotify ↗</a></div>
+              <div id="spotifyStatus" class="integration-status section-gap" role="status" aria-live="polite">Spotify se abrirá en su propia aplicación.</div>
+              <div class="integration-note section-gap">Tu música, cuenta y reproducción se administran directamente en Spotify. ADAZ no pide tu contraseña ni guarda datos de tu cuenta.</div>
+              <div class="source-row"><h3>Spotify</h3><p>Abre tu música en la aplicación oficial.</p><a href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer">Abrir Spotify ↗</a></div>
             </div>
           </div>
           <div class="grid" style="align-content:start">

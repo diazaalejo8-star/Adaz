@@ -86,23 +86,13 @@
   }
   function renderSpotifyConfig() {
     const playlist=$('#spotifyPlaylistUrl');
-    const client=$('#spotifyClientId');
-    const redirect=$('#spotifyRedirectUri');
-    if (playlist) playlist.value=spotifyConfig.playlistUrl||'https://open.spotify.com/search/workout%20music';
-    if (client) client.value=spotifyConfig.clientId||'';
-    if (redirect) {
-      redirect.value=spotifyConfig.redirectUri||appBaseUri();
-      redirect.title='Registra esta URI exactamente en Spotify Developer Dashboard';
-    }
+    if (playlist) playlist.value=spotifyConfig.playlistUrl||'https://open.spotify.com/search/focus%20music';
     renderSpotifyStatus();
   }
   function renderSpotifyStatus(message) {
     const status=$('#spotifyStatus');
     if (!status) return;
-    if (message) { status.textContent=message; return; }
-    const playlist=spotifyConfig.playlistUrl?'Lista configurada.':'No hay lista guardada.';
-    const auth=spotifySession&&spotifySession.access_token?'Control API conectado en este dispositivo.':'Control API no conectado. Puedes abrir Spotify sin conectar la API.';
-    status.textContent=playlist+' '+auth;
+    status.textContent=message||'ADAZ abre Spotify por separado. Tu cuenta, listas y reproducción se administran directamente en Spotify.';
   }
   function renderCloudConfig() {
     const values={
@@ -334,198 +324,25 @@
     downloadJSON(packageForChatGPT,'ADAZ-resumen-para-ChatGPT.json');
     setStatus('aiStatus','Archivo de contexto creado. Adjunta ese JSON manualmente en tu conversación de ChatGPT; la app no puede leer ni escribir el historial de tu cuenta ChatGPT automáticamente.');
   }
-  function spotifyBase64URL(buffer) {
-    const bytes=new Uint8Array(buffer);
-    let binary='';
-    bytes.forEach(b=>binary+=String.fromCharCode(b));
-    return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-  }
-  function spotifyRedirect() { return spotifyConfig.redirectUri||appBaseUri(); }
   function readSpotifyForm() {
-    spotifyConfig.playlistUrl=($('#spotifyPlaylistUrl')?.value||'').trim()||'https://open.spotify.com/search/workout%20music';
-    spotifyConfig.clientId=($('#spotifyClientId')?.value||'').trim();
-    spotifyConfig.redirectUri=($('#spotifyRedirectUri')?.value||appBaseUri()).trim();
+    spotifyConfig.playlistUrl=($('#spotifyPlaylistUrl')?.value||'').trim()||'https://open.spotify.com/search/focus%20music';
     saveLocal(SPOTIFY_KEY,spotifyConfig);
   }
-  async function connectSpotify() {
-    readSpotifyForm();
-    if (!spotifyConfig.clientId) throw new Error('Para conectar el control avanzado, crea una app en Spotify Developer Dashboard y pega aquí su Client ID. Para abrir música no necesitas ese paso.');
-    if (!/^https:\/\//i.test(spotifyRedirect())) throw new Error('La Redirect URI debe usar HTTPS.');
-    if (!crypto?.subtle) throw new Error('Este navegador no admite el cálculo seguro PKCE; abre ADAZ desde GitHub Pages por HTTPS.');
-    const bytes=crypto.getRandomValues(new Uint8Array(64));
-    const verifier=Array.from(bytes,b=>('0'+b.toString(16)).slice(-2)).join('');
-    const state=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>('0'+b.toString(16)).slice(-2)).join('');
-    const challenge=spotifyBase64URL(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)));
-    saveLocal(SPOTIFY_PKCE_KEY,{verifier,state});
-    const params=new URLSearchParams({
-      client_id:spotifyConfig.clientId,
-      response_type:'code',
-      redirect_uri:spotifyRedirect(),
-      code_challenge_method:'S256',
-      code_challenge:challenge,
-      state,
-      scope:'user-read-playback-state user-modify-playback-state user-read-currently-playing'
-    });
-    location.assign('https://accounts.spotify.com/authorize?'+params.toString());
-  }
-  async function spotifyTokenRequest(params) {
-    const response=await fetch('https://accounts.spotify.com/api/token',{
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body:new URLSearchParams(params)
-    });
-    const payload=await response.json().catch(()=>({}));
-    if (!response.ok) throw new Error(payload.error_description||payload.error||('Spotify token error '+response.status));
-    return payload;
-  }
-  async function handleSpotifyCallback() {
-    const url=new URL(location.href);
-    const code=url.searchParams.get('code');
-    const returnedState=url.searchParams.get('state');
-    const error=url.searchParams.get('error');
-    if (!code&&!error) return;
-    if (error) {
-      history.replaceState(null,'',appBaseUri());
-      renderSpotifyStatus('Spotify canceló la autorización: '+error+'. Puedes abrir las listas sin conectar la API.');
-      return;
-    }
-    const pkce=readJSON(SPOTIFY_PKCE_KEY,null);
-    if (!pkce?.verifier||!pkce?.state||pkce.state!==returnedState) {
-      history.replaceState(null,'',appBaseUri());
-      renderSpotifyStatus('No coincide la verificación de seguridad de Spotify. Vuelve a iniciar la conexión desde ADAZ.');
-      return;
-    }
-    try {
-      const payload=await spotifyTokenRequest({
-        client_id:spotifyConfig.clientId,
-        grant_type:'authorization_code',
-        code,
-        redirect_uri:spotifyRedirect(),
-        code_verifier:pkce.verifier
-      });
-      spotifySession={
-        access_token:payload.access_token,
-        refresh_token:payload.refresh_token||'',
-        expires_at:Date.now()+Number(payload.expires_in||3600)*1000,
-        scope:payload.scope||''
-      };
-      localStorage.removeItem(SPOTIFY_SESSION_KEY); // Remove legacy persistent token, if one exists.
-      localStorage.removeItem(SPOTIFY_PKCE_KEY);
-      history.replaceState(null,'',appBaseUri());
-      renderSpotifyStatus('Spotify conectado. Pulsa “Actualizar dispositivo / canción” para revisar el dispositivo activo.');
-    } catch(e) {
-      history.replaceState(null,'',appBaseUri());
-      renderSpotifyStatus('No se pudo completar el acceso Spotify: '+e.message+'. Comprueba el Client ID y que la Redirect URI registrada sea idéntica.');
-    }
-  }
-  async function refreshSpotifySession(force) {
-    spotifySession=null;
-    if (spotifySession?.access_token&&!force&&spotifySession.expires_at>Date.now()+60000) return spotifySession.access_token;
-    if (!spotifySession?.refresh_token) throw new Error('Conecta de nuevo Spotify: no hay un token de refresco disponible.');
-    if (!spotifyConfig.clientId) throw new Error('Falta el Client ID público de Spotify.');
-    const payload=await spotifyTokenRequest({
-      client_id:spotifyConfig.clientId,
-      grant_type:'refresh_token',
-      refresh_token:spotifySession.refresh_token
-    });
-    spotifySession={
-      access_token:payload.access_token,
-      refresh_token:payload.refresh_token||spotifySession.refresh_token,
-      expires_at:Date.now()+Number(payload.expires_in||3600)*1000,
-      scope:payload.scope||spotifySession.scope||''
-    };
-    // Keep the refresh token in memory only; never persist OAuth tokens in browser storage.
-    return spotifySession.access_token;
-  }
-  async function spotifyRequest(path,method,body,retried) {
-    const accessToken=await refreshSpotifySession(false);
-    const response=await fetch('https://api.spotify.com/v1'+path,{
-      method:method||'GET',
-      headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'},
-      body:body===undefined?undefined:JSON.stringify(body)
-    });
-    if (response.status===401&&!retried) {
-      await refreshSpotifySession(true);
-      return spotifyRequest(path,method,body,true);
-    }
-    return response;
-  }
-  function parseSpotifyContext(url) {
-    const value=String(url||'').trim();
-    const uri=value.match(/^spotify:(playlist|album|artist):([A-Za-z0-9]+)$/);
-    if (uri) return 'spotify:'+uri[1]+':'+uri[2];
-    const match=value.match(/open\.spotify\.com\/(playlist|album|artist)\/([A-Za-z0-9]+)/i);
-    return match?'spotify:'+match[1]+':'+match[2]:null;
-  }
-  async function openSpotify() {
+  function openSpotify() {
     readSpotifyForm();
     let url=spotifyConfig.playlistUrl;
-    if (!/^https:\/\/open\.spotify\.com\//i.test(url)&&!/^spotify:/i.test(url)) url='https://open.spotify.com/search/workout%20music';
-    if (/^spotify:/i.test(url)) {
-      const parsed=url.match(/^spotify:(playlist|album|artist):([A-Za-z0-9]+)$/);
-      if (parsed) url='https://open.spotify.com/'+parsed[1]+'/'+parsed[2];
-      else throw new Error('Ese URI no parece una lista, álbum o artista de Spotify.');
+    if (/^spotify:(playlist|album|artist):[A-Za-z0-9]+$/i.test(url)) {
+      const parts=url.split(':');url='https://open.spotify.com/'+parts[1]+'/'+parts[2];
     }
-    renderSpotifyStatus('Abriendo Spotify. En Android, el sistema puede abrir la app instalada o la página web.');
+    if (!/^https:\/\/open\.spotify\.com\//i.test(url)) url='https://open.spotify.com/search/focus%20music';
+    renderSpotifyStatus('Abriendo Spotify. La música seguirá bajo el control de la aplicación Spotify.');
     location.assign(url);
-  }
-  async function refreshSpotifyPlayback() {
-    if (!spotifySession?.access_token) throw new Error('Conecta primero el control avanzado de Spotify.');
-    const devicesResponse=await spotifyRequest('/me/player/devices','GET');
-    const devicesJson=devicesResponse.status===204?{}:await devicesResponse.json().catch(()=>({}));
-    if (!devicesResponse.ok) throw new Error(devicesJson.error?.message||'No se pudieron leer los dispositivos. Comprueba Premium, permisos y la configuración de Spotify.');
-    const select=$('#spotifyDeviceSelect');
-    const devices=Array.isArray(devicesJson.devices)?devicesJson.devices:[];
-    if (select) {
-      select.innerHTML='<option value="">Seleccionar dispositivo</option>'+devices.map(d=>'<option value="'+escapeHTML(d.id)+'">'+escapeHTML(d.name)+(d.is_active?' · activo':'')+'</option>').join('');
-      const active=devices.find(d=>d.is_active);
-      if (active) select.value=active.id;
-    }
-    let currently='';
-    const nowResponse=await spotifyRequest('/me/player','GET');
-    if (nowResponse.status===204) currently='No se detecta reproducción activa en este momento.';
-    else if (nowResponse.ok) {
-      const now=await nowResponse.json().catch(()=>({}));
-      const item=now.item;
-      currently=item?('Sonando: '+item.name+' — '+(item.artists||[]).map(a=>a.name).join(', ')):'Spotify está conectado, pero no hay información de canción disponible.';
-    } else currently='No se pudo consultar la reproducción actual.';
-    renderSpotifyStatus('Control Spotify conectado. Dispositivos encontrados: '+devices.length+'. '+currently+(devices.length?'':' Abre Spotify en el teléfono y reproduce algo una vez, luego actualiza.'));
-  }
-  async function playSpotifyContext() {
-    if (!spotifySession?.access_token) throw new Error('Conecta primero el control avanzado de Spotify.');
-    readSpotifyForm();
-    const context=parseSpotifyContext(spotifyConfig.playlistUrl);
-    if (!context) throw new Error('Para iniciar una lista desde ADAZ, pega un enlace de una playlist, álbum o artista. Un enlace de búsqueda solo sirve para abrir Spotify.');
-    let deviceId=$('#spotifyDeviceSelect')?.value||'';
-    const devRes=await spotifyRequest('/me/player/devices','GET');
-    const devJson=devRes.status===204?{}:await devRes.json().catch(()=>({}));
-    if (!devRes.ok) throw new Error(devJson.error?.message||'No se pudieron consultar dispositivos. Comprueba Spotify Premium.');
-    const devices=devJson.devices||[];
-    if (!devices.length) throw new Error('No hay un dispositivo Spotify Connect disponible. Abre Spotify en tu móvil o computador e inicia la reproducción una vez; después vuelve a intentar.');
-    if (!deviceId) deviceId=(devices.find(d=>d.is_active)||devices[0]).id;
-    const response=await spotifyRequest('/me/player/play?device_id='+encodeURIComponent(deviceId),'PUT',{context_uri:context});
-    if (response.status===204||response.ok) {
-      renderSpotifyStatus('Solicitud enviada a Spotify. La música se reproducirá en el dispositivo seleccionado si está disponible.');
-      notify('Solicitud de reproducción enviada a Spotify.');
-    } else {
-      const err=await response.json().catch(()=>({}));
-      throw new Error(err.error?.message||'Spotify no pudo iniciar la reproducción. Confirma que la cuenta sea Premium y que el dispositivo esté activo.');
-    }
-  }
-  function disconnectSpotify() {
-    localStorage.removeItem(SPOTIFY_SESSION_KEY);
-    localStorage.removeItem(SPOTIFY_PKCE_KEY);
-    spotifySession=null;
-    const select=$('#spotifyDeviceSelect');
-    if(select) select.innerHTML='<option value="">Conecta Spotify y actualiza dispositivos</option>';
-    renderSpotifyStatus('Se borró la sesión local de Spotify. Para revocar el acceso del lado de Spotify, revisa también la página de apps conectadas de tu cuenta.');
-    notify('Sesión local de Spotify borrada.');
   }
   document.addEventListener('submit',event=>{
     if(event.target.id==='spotifySettingsForm') {
       event.preventDefault();
       readSpotifyForm();
-      renderSpotifyStatus('Configuración Spotify guardada en este dispositivo. Redirect URI: '+spotifyRedirect());
+      renderSpotifyStatus('Tu lista quedó guardada en este dispositivo. Cuando quieras, abre Spotify desde ADAZ.');
       notify('Configuración Spotify guardada.');
       return;
     }
@@ -563,10 +380,6 @@
     const action=event.target.closest('[data-action]')?.dataset.action;
     try {
       if(action==='openSpotify') await openSpotify();
-      else if(action==='connectSpotify') await connectSpotify();
-      else if(action==='refreshSpotify') await refreshSpotifyPlayback();
-      else if(action==='playSpotify') await playSpotifyContext();
-      else if(action==='disconnectSpotify') disconnectSpotify();
       else if(action==='testCloud') await testCloud();
       else if(action==='cloudSignOut') await signOutCloud();
       else if(action==='syncNow') await syncSnapshot(false);
@@ -582,7 +395,7 @@
         localStorage.removeItem(AI_HISTORY_KEY);renderAIHistory();notify('Conversación local eliminada.');
       } else if(action==='exportAiSummary') exportChatGPTSummary();
     } catch(error) {
-      if(['openSpotify','connectSpotify','refreshSpotify','playSpotify','disconnectSpotify'].includes(action)) renderSpotifyStatus('No se pudo completar la acción: '+error.message);
+      if(action==='openSpotify') renderSpotifyStatus('No se pudo abrir Spotify: '+error.message);
       else renderCloudStatus('Error: '+error.message);
     }
   });
@@ -600,8 +413,6 @@
   async function initial() {
     if(!$('#page-integrations')) return;
     renderIntegrationPage();
-    await handleSpotifyCallback();
-    // The Spotify session is intentionally ephemeral and is not restored from localStorage.
     if(cloudConfig.supabaseUrl&&cloudConfig.supabaseKey) {
       try { await ensureSupabaseClient(); }
       catch(error) {renderCloudStatus('No se pudo iniciar Supabase ahora: '+error.message);}
