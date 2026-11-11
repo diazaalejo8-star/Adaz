@@ -1,352 +1,153 @@
 (()=>{'use strict';
-const page=document.querySelector('#page-academy');
-if(!page||window.__adazAcademyCompact)return;
-window.__adazAcademyCompact=true;
+const page=document.querySelector('#page-academy');if(!page||window.__adazAcademy360)return;window.__adazAcademy360=true;
 const KEY='adaz-learning-flow-v1',LEGACY='adaz-academy-v1';
 const $=(s,r=page)=>r.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const localDate=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-const today=()=>localDate(new Date());
-const plusDays=(n)=>{const d=new Date();d.setDate(d.getDate()+n);return localDate(d)};
-function mainStudy(){const d=read('adaz-data-v1',{});return {rows:Array.isArray(d.study)?d.study:[],target:Math.max(30,Number(d.prefs?.weeklyTargetMinutes)||150)}}
-function studyWeekStart(){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return localDate(d)}
-function studyMetrics(){const data=mainStudy(),rows=data.rows.filter(x=>x.date>=studyWeekStart()&&x.date<=today()),minutes=rows.reduce((a,x)=>a+Math.max(0,Number(x.minutes)||0),0),measured=rows.filter(x=>x.accuracy!==''&&x.accuracy!==null&&x.accuracy!==undefined&&Number.isFinite(Number(x.accuracy))),accuracy=measured.length?Math.round(measured.reduce((a,x)=>a+Number(x.accuracy),0)/measured.length):null;return {...data,weekRows:rows,minutes,accuracy,sessions:rows.length}}
-
-const read=(key,fallback)=>{try{const v=JSON.parse(localStorage.getItem(key)||'null');return v&&typeof v==='object'?v:fallback}catch{return fallback}};
-function overallPoints(){const app=read('adaz-experience-v1',{});return store.xp+(Number(app.points)||0)}
+const key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>key(new Date()),afterDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return key(d)};
+const read=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return v&&typeof v==='object'?v:d}catch{return d}};
 const legacy=read(LEGACY,{});
 let store=read(KEY,{track:'icfes',xp:Number(legacy.xp)||0,streak:Number(legacy.streak)||0,last:legacy.last||'',subjects:{},history:[],active:null});
-store.track=store.track==='ielts'?'ielts':'icfes';
+store.track=['business','medicine','icfes','ielts'].includes(store.track)?store.track:'icfes';
+store.xp=Number(store.xp)||0;store.streak=Number(store.streak)||0;store.last=store.last||'';
 store.subjects=store.subjects&&typeof store.subjects==='object'?store.subjects:{};
 store.history=Array.isArray(store.history)?store.history:[];
-store.xp=Number(store.xp)||0;store.streak=Number(store.streak)||0;store.last=store.last||'';
-const urls={
- icfesHub:'https://www.icfes.gov.co/caja-de-herramientas-saber-11/practica/',
- icfesGuide:'https://www.icfes.gov.co/evaluaciones-icfes/saber-11/guia-de-orientacion-examen-saber-11/',
- ieltsSamples:'https://www.ielts.org/take-a-test/preparation-resources/sample-test-questions/academic-test',
- ieltsListening:'https://demo-ielts.inspera.com/player/?assessmentRunId=131012334&context=exam',
- ieltsReading:'https://demo-ielts.inspera.com/player/?assessmentRunId=131013388&context=exam',
- ieltsWriting:'https://demo-ielts.inspera.com/player/?assessmentRunId=131013741&context=exam'
+store.curriculum=store.curriculum&&typeof store.curriculum==='object'?store.curriculum:{};
+store.drafts=store.drafts&&typeof store.drafts==='object'?store.drafts:{};
+const courses={
+business:{name:'Negocio · oro laminado',goal:'Aprende a gestionar Aestel: materiales, costos, pedidos, catálogo y ventas.',source:'https://betowa-sena-edu.co/curso/costos-y-precios-de-un-producto/',resources:[['Costos y precio de un producto · SENA','https://betowa-sena-edu.co/curso/costos-y-precios-de-un-producto/']],topics:[
+{id:'materials',title:'Conoce exactamente tu producto',time:15,skill:'Producto y materiales',content:['Antes de ofrecer una pieza, confirma con el proveedor qué metal sirve de base, qué recubrimiento tiene y qué garantía cubre realmente. “Oro laminado”, “baño” y “micras” no son expresiones intercambiables.','No prometas duración, resistencia al agua ni composición si la ficha del proveedor no lo demuestra. Guarda referencia, material, medidas, cuidados y condiciones de garantía.'],question:'¿Qué haces antes de publicar que una pieza es resistente al agua?',options:['Lo afirmo porque se ve dorada.','Compruebo la ficha y la garantía escrita del proveedor.','Uso la promesa de otra tienda.','Evito mencionar el material.'],answer:1,why:'La información al cliente debe corresponder a la ficha real del proveedor. No se deben inventar características.'},
+{id:'costs',title:'Calcula cuánto te cuesta vender',time:20,skill:'Costos y precio',content:['El costo de una pieza no es solo lo que pagaste al proveedor. Considera también el envío prorrateado, empaque y comisiones relacionados con esa venta.','Ejemplo educativo: si todos los costos suman $40.000 y vendes a $80.000, quedan $40.000 antes de otros gastos. El margen sobre el precio es 50%. No son cifras de tu negocio.'],question:'Una pieza cuesta $32.000, el envío asignado $4.000 y el empaque $2.000. ¿Cuál es su costo total?',options:['$32.000','$34.000','$38.000','$42.000'],answer:2,why:'32.000 + 4.000 + 2.000 = 38.000. Calcula el costo completo antes de decidir el precio.'},
+{id:'margin',title:'Diferencia ganancia y margen',time:15,skill:'Precio y margen',content:['Ganancia bruta = precio de venta − costo total. Margen = ganancia bruta ÷ precio de venta. Son medidas distintas.','No confundas el dinero recibido con utilidad: un anticipo puede seguir comprometido con la compra al proveedor. Separa ventas, costos, anticipos pendientes y dinero disponible.'],question:'Vendes una pieza en $90.000 y su costo total es $54.000. ¿Cuál es la ganancia bruta?',options:['$36.000','$54.000','$90.000','$144.000'],answer:0,why:'90.000 − 54.000 = 36.000. Para calcular el margen, divide esa ganancia por el precio de venta.'},
+{id:'orders',title:'Organiza un pedido por encargo',time:15,skill:'Pedidos y servicio',content:['Un pedido claro tiene referencia y descripción, precio total, anticipo y saldo, plazo estimado, método de entrega y condiciones de garantía. Confirma todo por escrito antes de pedir la pieza.','Al recibirla, revisa que referencia, acabado y cantidad coincidan. Registra la entrega y el saldo. No presentes un plazo del proveedor como fecha garantizada si puede cambiar.'],question:'¿Qué conviene confirmar antes de solicitar la pieza al proveedor?',options:['Solo el color.','Referencia, precio, anticipo, plazo y entrega con el cliente.','Que el cliente pague todo sin ver el pedido.','Nada: se aclara después.'],answer:1,why:'Dejar las condiciones claras reduce errores y pedidos sin seguimiento.'},
+{id:'catalog',title:'Crea una ficha de catálogo que venda',time:20,skill:'Catálogo y presentación',content:['Una ficha útil responde: ¿qué pieza es?, ¿qué material está confirmado?, ¿qué medidas tiene?, ¿cuánto cuesta?, ¿cómo se pide? y ¿qué cuidados requiere?','Usa fotos propias y claras: vista general, detalle del acabado y una referencia de tamaño. Mantén iluminación consistente y no edites el color hasta que parezca otro material.'],question:'¿Cuál ficha ayuda más a un comprador?',options:['Una foto sin precio ni medidas.','Una foto fiel, nombre, medidas, material confirmado, precio y forma de pedir.','Una descripción con promesas sin fuente.','Una foto de proveedor sin verificar.'],answer:1,why:'La información concreta ayuda al cliente a comparar y tomar una decisión informada.'},
+{id:'content',title:'Publica con una intención',time:15,skill:'Contenido y ventas',content:['Cada publicación necesita un objetivo principal: presentar una pieza, resolver una duda, mostrar cómo se pide o invitar a consultar el catálogo.','Estructura simple: frase inicial, detalle real del producto, beneficio verificable e invitación concreta. Revisa consultas y pedidos confirmados, no solo “me gusta”.'],question:'¿Qué llamada a la acción es más clara?',options:['“Compra ya o te lo pierdes”.','“Escríbenos la referencia para consultar disponibilidad y plazo”.','“Somos los mejores”.','Deja al cliente adivinar.'],answer:1,why:'Indica qué debe hacer la persona y qué respuesta puede esperar.'},
+{id:'aftercare',title:'Cuida la venta después de entregarla',time:15,skill:'Garantía y posventa',content:['Entrega por escrito los cuidados recomendados por el proveedor, el alcance de la garantía y el canal para resolver dudas. Conserva comprobantes y la referencia exacta que recibió el cliente.','Si llega una reclamación, escucha, registra fecha y evidencia y compara el caso con la garantía aplicable. No prometas un cambio o una reparación hasta revisar las condiciones acordadas.'],question:'Un cliente reporta un problema con una pieza. ¿Cuál es el primer paso responsable?',options:['Ignorar el mensaje.','Revisar pedido, evidencia y garantía antes de ofrecer una solución.','Prometer una reparación sin revisar nada.','Borrar la conversación.'],answer:1,why:'La atención posventa requiere revisar los hechos y las condiciones reales para responder con claridad.'}
+]},
+medicine:{name:'Medicina · bases preuniversitarias',goal:'Construye fundamentos de biología, anatomía, histología, fisiología y bioquímica.',source:'https://hotmart.com/es/marketplace/productos/premedico-med500/J106297653T',resources:[['Temario público MED500','https://hotmart.com/es/marketplace/productos/premedico-med500/J106297653T'],['Biología 2e · OpenStax','https://openstax.org/books/biology-2e/pages/preface'],['Anatomía y fisiología · OpenStax','https://openstax.org/new-subjects/science-books']],topics:[
+{id:'cell',title:'Biología celular: la célula',time:18,skill:'Biología celular',content:['La célula es la unidad básica de los seres vivos. La membrana plasmática regula el intercambio con el entorno; el citoplasma contiene estructuras celulares y el núcleo guarda la mayor parte del ADN en células eucariotas.','Las mitocondrias participan en la producción de ATP. Los ribosomas ensamblan proteínas. El retículo endoplasmático y el aparato de Golgi ayudan a producir, modificar y distribuir moléculas.'],question:'¿Qué estructura participa directamente en la síntesis de proteínas?',options:['Ribosoma','Lisosoma','Membrana plasmática','Centriolo'],answer:0,why:'Los ribosomas leen la información del ARN mensajero y unen aminoácidos para formar proteínas.'},
+{id:'transport',title:'Cómo se mueve la materia por la membrana',time:18,skill:'Biología celular',content:['La difusión mueve partículas desde una zona de mayor concentración hacia otra de menor concentración. La ósmosis es el movimiento neto de agua a través de una membrana selectivamente permeable.','El transporte activo requiere energía para mover sustancias contra su gradiente. La bomba sodio-potasio ayuda a mantener diferencias de concentración a ambos lados de la membrana.'],question:'Una sustancia pasa a favor de su gradiente sin gasto directo de ATP. ¿Qué tipo de transporte puede ser?',options:['Transporte activo primario','Difusión facilitada','Endocitosis','Bomba sodio-potasio'],answer:1,why:'La difusión facilitada utiliza proteínas de membrana, pero el movimiento sigue el gradiente y no requiere gasto directo de ATP.'},
+{id:'anatomy',title:'Anatomía: posiciones y direcciones',time:15,skill:'Anatomía',content:['La posición anatómica es una referencia común para describir el cuerpo. “Superior” significa hacia la cabeza; “inferior”, hacia los pies; “anterior”, hacia el frente; y “posterior”, hacia atrás.','“Medial” se acerca a la línea media; “lateral” se aleja de ella. “Proximal” se acerca al origen de una extremidad y “distal” se aleja. Estos términos describen ubicación, no diagnósticos.'],question:'En posición anatómica, el codo está ______ respecto a la muñeca.',options:['Distal','Proximal','Inferior','Posterior'],answer:1,why:'El codo está más cerca del tronco que la muñeca, por eso es proximal respecto a ella.'},
+{id:'tissues',title:'Histología: cuatro tejidos básicos',time:18,skill:'Histología',content:['El tejido epitelial recubre superficies y forma glándulas. El conectivo brinda soporte y unión; incluye hueso, cartílago, sangre y tejido adiposo.','El tejido muscular se contrae para producir movimiento. El tejido nervioso recibe, procesa y transmite señales. Los órganos combinan varios tipos de tejido.'],question:'¿Qué tejido se especializa en recibir y transmitir señales?',options:['Epitelial','Conectivo','Nervioso','Adiposo'],answer:2,why:'Las neuronas y células de apoyo forman el tejido nervioso, especializado en comunicación.'},
+{id:'homeostasis',title:'Fisiología: mantener el equilibrio',time:20,skill:'Fisiología',content:['La homeostasis mantiene condiciones internas dentro de rangos compatibles con la vida. No significa que todo permanezca fijo: el cuerpo ajusta continuamente variables como temperatura y concentración de glucosa.','En la retroalimentación negativa, una variación desencadena respuestas que tienden a contrarrestarla. Cuando aumenta la temperatura corporal, la sudoración ayuda a disipar calor.'],question:'Si aumenta la temperatura y el organismo activa respuestas para reducirla, ¿qué mecanismo describe mejor el proceso?',options:['Retroalimentación positiva','Retroalimentación negativa','Mutación','Difusión simple'],answer:1,why:'La respuesta contrarresta el cambio inicial y ayuda a volver al intervalo regulado.'},
+{id:'biochem',title:'Bioquímica: enzimas y ATP',time:20,skill:'Bioquímica',content:['Las enzimas son catalizadores biológicos: aceleran reacciones al disminuir la energía de activación, sin consumirse permanentemente. Su actividad depende de factores como temperatura, pH y concentración.','El ATP funciona como una forma inmediata de transferencia de energía en muchas actividades celulares. Su hidrólisis puede acoplarse a procesos que requieren energía.'],question:'¿Cuál es una función principal de una enzima?',options:['Aumentar la energía de activación','Acelerar una reacción al reducir la energía de activación','Convertirse siempre en el producto final','Almacenar toda la información hereditaria'],answer:1,why:'Las enzimas facilitan la reacción al reducir la barrera energética; no cambian el balance energético global.'},
+{id:'genetics',title:'Genética: ADN, genes y herencia',time:18,skill:'Genética',content:['El ADN almacena información hereditaria. Un gen es una región de ADN que contribuye a producir un ARN funcional o un producto proteico. Los cromosomas organizan el ADN junto con proteínas.','La información puede expresarse mediante transcripción (ADN a ARN) y traducción (ARN a proteína). La herencia depende de variantes genéticas y de su interacción con el ambiente.'],question:'¿Qué proceso produce una molécula de ARN usando ADN como molde?',options:['Traducción','Transcripción','Replicación del ATP','Difusión'],answer:1,why:'En la transcripción, una secuencia de ADN sirve de molde para sintetizar ARN.'},
+{id:'microbiology',title:'Microbiología: bacterias y virus',time:18,skill:'Microbiología',content:['Las bacterias son organismos celulares procariotas. Muchas viven sin causar enfermedad y algunas cumplen funciones útiles; otras pueden producir infecciones.','Los virus no son células y necesitan una célula huésped para replicarse. Los antibióticos actúan contra bacterias específicas, no contra virus. La prevención y el tratamiento dependen del agente y de la orientación sanitaria.'],question:'¿Cuál afirmación distingue correctamente a los virus?',options:['Son células procariotas completas.','Necesitan células huésped para replicarse.','Siempre se tratan con antibióticos.','Todos producen enfermedad.'],answer:1,why:'Los virus dependen de la maquinaria de una célula huésped para producir nuevas partículas virales.'}
+]},
+icfes:{name:'ICFES · Saber 11',goal:'Fortalece las cinco pruebas: lectura, matemáticas, sociales, ciencias e inglés.',source:'https://www.icfes.gov.co/evaluaciones-icfes/saber-11/guia-de-orientacion-examen-saber-11/',resources:[['Guía de orientación Saber 11 · ICFES','https://www.icfes.gov.co/evaluaciones-icfes/saber-11/guia-de-orientacion-examen-saber-11/'],['Caja de herramientas y prácticas oficiales','https://www.icfes.gov.co/caja-de-herramientas-saber-11/practica/']],topics:[
+{id:'reading',title:'Lectura crítica: encuentra la evidencia',time:18,skill:'Lectura Crítica',content:['Una respuesta sólida se apoya en lo que el texto afirma o permite inferir. Distingue la idea central de los ejemplos y detalles secundarios.','Evita añadir información que no aparece. Si una opción usa palabras absolutas (“siempre”, “todos”, “nunca”), comprueba si el texto permite esa conclusión.'],question:'Un informe dice que después de ampliar el horario de una biblioteca aumentaron las visitas. No midió las calificaciones. ¿Qué conclusión está respaldada?',options:['La ampliación mejoró las notas.','Aumentaron las visitas después del cambio.','Todos los estudiantes usan la biblioteca.','La ampliación fue la única causa posible.'],answer:1,why:'Solo se midió un aumento de visitas. Las otras opciones añaden afirmaciones no evaluadas.'},
+{id:'math',title:'Matemáticas: porcentajes y proporciones',time:20,skill:'Matemáticas',content:['Un porcentaje expresa una parte de cada cien. Para hallar el 15% de 80, calcula 0,15 × 80 = 12. Para comparar porcentajes, revisa el total de referencia.','En una razón 2:3 hay cinco partes. Si el total es 40, cada parte vale 8 y la segunda cantidad vale 3 × 8 = 24.'],question:'Una chaqueta cuesta $120.000 y tiene un descuento del 25%. ¿Cuánto se descuenta?',options:['$12.000','$20.000','$30.000','$90.000'],answer:2,why:'25% de 120.000 es 0,25 × 120.000 = 30.000. El precio final sería $90.000.'},
+{id:'science',title:'Ciencias: variables y experimentos',time:20,skill:'Ciencias Naturales',content:['En un experimento, la variable independiente es la que se modifica; la dependiente es la que se mide. Las variables controladas se mantienen iguales para hacer la comparación más justa.','Una correlación no demuestra por sí sola causalidad. Revisa el diseño, el tamaño de muestra y otras explicaciones posibles antes de aceptar una conclusión.'],question:'Se quiere investigar si la luz afecta el crecimiento de plantas. ¿Qué diseño permite una comparación más justa?',options:['Cambiar luz, agua y suelo a la vez.','Usar la misma especie y condiciones, variar solo la luz y medir igual.','Medir plantas distintas una sola vez.','Elegir únicamente la planta más alta.'],answer:1,why:'Al mantener las demás condiciones comparables y variar la luz, se evalúa mejor su relación con el crecimiento.'},
+{id:'social',title:'Sociales: contrasta fuentes y perspectivas',time:18,skill:'Sociales y Ciudadanas',content:['Para evaluar una afirmación histórica o social, identifica quién la produce, cuándo, con qué propósito y qué evidencia utiliza. Una fuente puede aportar información y aun así tener un punto de vista.','Compara fuentes independientes y distingue hechos, interpretaciones y opiniones. En preguntas ciudadanas, analiza actores, derechos, deberes, instituciones y consecuencias.'],question:'Dos fuentes explican de forma distinta una reducción en el uso del transporte público. ¿Qué harías primero?',options:['Aceptar la fuente más segura de sí misma.','Comparar datos, fechas, metodología y contexto de ambas.','Elegir la que coincide con tu opinión.','Ignorar los datos y usar solo un testimonio.'],answer:1,why:'Comparar origen y evidencia permite evaluar la solidez de cada explicación sin decidir por intuición.'},
+{id:'english',title:'Inglés: deduce palabras por contexto',time:15,skill:'Inglés ICFES',content:['Usa conectores, contrastes y ejemplos para deducir vocabulario. “Although” introduce contraste; “therefore” señala consecuencia; “however” presenta una idea opuesta o una limitación.','Lee la oración completa y sustituye mentalmente la palabra por una opción. Comprueba si mantiene el sentido global.'],question:'“Although Maya was reluctant at first, she eventually volunteered.” ¿Qué significa “reluctant” aquí?',options:['Entusiasmada desde el principio','Poco dispuesta o dudosa','Muy experta','Completamente segura'],answer:1,why:'El contraste entre la duda inicial y ofrecerse finalmente indica que al principio no estaba muy dispuesta.'}
+]},
+ielts:{name:'IELTS · Academic',goal:'Prepara Listening, Reading, Writing y Speaking con meta de banda 8.',source:'https://www.ielts.org/take-a-test/preparation-resources/sample-test-questions/academic-test',resources:[['Muestras oficiales IELTS Academic','https://www.ielts.org/take-a-test/preparation-resources/sample-test-questions/academic-test'],['Preparación IELTS · British Council Colombia','https://www.britishcouncil.co/examen-ingles/ielts']],topics:[
+{id:'listening',title:'Listening: anticipa y detecta cambios',time:20,skill:'Listening',content:['Antes de escuchar, lee la instrucción y predice qué tipo de respuesta necesitas: nombre, fecha, número o idea. El audio puede usar sinónimos y paráfrasis.','Presta atención a autocorrecciones. Si alguien menciona Tuesday y luego dice “actually, Thursday works better”, la respuesta final es Thursday. Cuida ortografía, singular/plural y límites de palabras.'],question:'Alguien dice: “I planned to meet on Tuesday, but actually Thursday is better.” ¿Qué día elige finalmente?',options:['Monday','Tuesday','Thursday','Saturday'],answer:2,why:'“Actually” introduce la corrección: la elección final es Thursday. Esta práctica usa texto, no audio oficial.'},
+{id:'reading',title:'Reading: True, False o Not Given',time:20,skill:'Reading',content:['TRUE: el texto confirma la afirmación. FALSE: el texto la contradice. NOT GIVEN: no hay información suficiente para decidir. No uses conocimiento externo para completar lo que el texto no dice.','Busca la frase que respalda tu decisión. Comprueba cifras, comparaciones y palabras como “some”, “most” o “all”, que cambian el alcance de una afirmación.'],question:'Texto: “The school extended library hours. Visitor numbers increased, but exam results were not studied.” Afirmación: “The change improved exam results.”',options:['True','False','Not Given','Both True and False'],answer:2,why:'El texto no confirma ni contradice una mejora en calificaciones. Dice que no se estudió ese resultado.'},
+{id:'writing',title:'Writing Task 2: construye un argumento',time:30,skill:'Writing',type:'write',content:['Primero identifica exactamente qué pide la consigna. Define una postura clara y organiza dos ideas que puedas explicar con ejemplos pertinentes. Cada párrafo debe contribuir a responder la pregunta.','No uses vocabulario complejo solo por impresionar. La claridad, la progresión lógica, la precisión gramatical y responder toda la consigna importan más que memorizar plantillas.'],prompt:'Some people believe that schools should teach practical life skills. To what extent do you agree or disagree?',checklist:['Mi postura responde directamente a la pregunta.','Cada párrafo desarrolla una idea principal.','Incluí ejemplos concretos y pertinentes.','Revisé coherencia, gramática y vocabulario.'],why:'Writing evalúa respuesta a la tarea, coherencia y cohesión, recursos léxicos y rango/precisión gramatical. Esta auto-revisión no predice una banda oficial.'},
+{id:'speaking',title:'Speaking: desarrolla respuestas naturales',time:15,skill:'Speaking',type:'write',content:['IELTS Speaking tiene tres partes: preguntas sobre temas cotidianos, una intervención más extensa y una conversación que profundiza ideas.','Evita memorizar un discurso completo. Responde, explica por qué, aporta un ejemplo y añade un matiz. Si te falta una palabra, reformula con naturalidad y continúa.'],prompt:'Describe a subject you would like to study in the future. Explain why it interests you, how you would prepare and what you hope to learn.',checklist:['Respondí todas las partes de la pregunta.','Desarrollé ideas con razones y ejemplos.','Usé vocabulario preciso sin forzarlo.','Revisé fluidez, pronunciación y gramática.'],why:'La práctica se autoevalúa con criterios orientativos. Para conocer tu nivel real, usa tareas oficiales y retroalimentación cualificada.'}
+]}
 };
-const tracks={
- icfes:[
-  {id:'lectura',title:'Lectura crítica',desc:'Interpretar, inferir y evaluar textos.',skill:'Lectura Crítica',url:'https://www.icfes.gov.co/wp-content/uploads/2026/10/09-Sept-cuadernillo-preguntas-lectura-critica-saber-11-2026.pdf',hint:'Cuadernillo ICFES 2026 · respuestas y orientaciones al final.'},
-  {id:'matematicas',title:'Matemáticas',desc:'Resolver situaciones con datos, modelos y razonamiento.',skill:'Matemáticas',url:'https://www.icfes.gov.co/wp-content/uploads/2026/04/09-Marzo_Cuadernillo-de-Preguntas-Matematicas-Saber-11-2026.pdf',hint:'Cuadernillo ICFES 2026 · revisa la clave al final.'},
-  {id:'sociales',title:'Sociales y ciudadanas',desc:'Contrastar fuentes, perspectivas y problemas sociales.',skill:'Sociales y Ciudadanas',url:'https://icfes.acendra.com.co/wp-content/uploads/2024/12/06_PRACTICA_SOCIALES.pdf',hint:'Material de práctica enlazado desde la Caja de Herramientas ICFES.'},
-  {id:'ciencias',title:'Ciencias naturales',desc:'Interpretar fenómenos, variables y evidencia científica.',skill:'Ciencias Naturales',url:'https://www.icfes.gov.co/wp-content/uploads/2026/03/24-feb-cuadernillo-preguntas-ciencias-naturales-saber-11-2026.pdf',hint:'Cuadernillo ICFES 2026 · revisa la clave al final.'},
-  {id:'ingles',title:'Inglés',desc:'Comprender textos, situaciones y mensajes en contexto.',skill:'Inglés ICFES',url:'https://www.icfes.gov.co/wp-content/uploads/2025/12/16-octubre-cuadernillo-ingles-saber-11-2024.pdf',hint:'Cuadernillo de práctica publicado por el ICFES.'}
- ],
- ielts:[
-  {id:'listening',title:'Listening',desc:'Comprender conversaciones, monólogos y detalles.',skill:'Listening',url:urls.ieltsListening,resource:urls.ieltsSamples,kind:'web',time:'30 min',hint:'Prueba de muestra oficial en formato web. La demo puede no estar cronometrada.'},
-  {id:'reading',title:'Academic Reading',desc:'Encontrar evidencia, interpretar ideas y reconocer paráfrasis.',skill:'Reading',url:urls.ieltsReading,resource:urls.ieltsSamples,kind:'web',time:'60 min',hint:'Muestra oficial de Academic Reading. La demo puede no estar cronometrada.'},
-  {id:'writing',title:'Academic Writing',desc:'Describir información y desarrollar argumentos con claridad.',skill:'Writing',url:urls.ieltsWriting,resource:urls.ieltsSamples,kind:'web',time:'60 min',hint:'Muestra oficial de Academic Writing con dos tareas.'},
-  {id:'speaking',title:'Speaking',desc:'Desarrollar respuestas claras y sostener una conversación.',skill:'Speaking',url:urls.ieltsSamples,resource:urls.ieltsSamples,kind:'guide',time:'11–14 min',hint:'Muestras oficiales y ejemplos para familiarizarte con las tres partes.'}
- ]
-};
-const css=document.createElement('style');
-css.id='adaz-academy-compact-style';
-css.textContent=[
-'#page-study #studyMaterial{display:none!important}',
-'#page-academy{--ac-bg:#0b1220;--ac-card:#121e2e;--ac-soft:#17263a;--ac-border:#2a3d55;--ac-text:#edf3fb;--ac-muted:#a7b5c8;--ac-accent:#b7f36b}',
-'#page-academy .ac-wrap{max-width:880px;margin:0 auto}',
-'#page-academy .ac-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:4px 0 15px}',
-'#page-academy .ac-kicker{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ac-accent);font-weight:900}',
-'#page-academy .ac-head h1{margin:4px 0 2px;font-size:clamp(25px,4vw,33px);letter-spacing:-1px;color:var(--ac-text)}',
-'#page-academy .ac-head p{margin:4px 0 0;color:var(--ac-muted);font-size:11px}',
-'#page-academy .ac-stats{display:flex;align-items:center;gap:7px;flex-wrap:wrap}',
-'#page-academy .ac-stat{border:1px solid var(--ac-border);background:var(--ac-card);padding:7px 10px;border-radius:999px;color:var(--ac-muted);font-size:10px;white-space:nowrap}',
-'#page-academy .ac-stat b{color:var(--ac-text)}',
-'#page-academy .ac-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#0a1422;border:1px solid var(--ac-border);border-radius:13px;margin:12px 0}',
-'#page-academy .ac-switch button{border:0;background:transparent;color:var(--ac-muted);padding:9px;border-radius:9px;font-size:11px;font-weight:850}',
-'#page-academy .ac-switch button.active{background:#24364d;color:#fff;box-shadow:0 1px 5px #0004}',
-'#page-academy .ac-next{background:linear-gradient(125deg,#17283e,#111d2d);border:1px solid #344a64;border-radius:18px;padding:17px;margin:12px 0}',
-'#page-academy .ac-next h2{font-size:18px;margin:5px 0 5px;letter-spacing:-.5px;color:var(--ac-text)}',
-'#page-academy .ac-next p{margin:0;color:var(--ac-muted);font-size:11px;line-height:1.55}',
-'#page-academy .ac-primary{display:inline-flex;align-items:center;justify-content:center;gap:7px;margin-top:13px;background:var(--ac-accent);color:#101827;border:0;border-radius:11px;padding:11px 15px;font-size:11px;font-weight:900;cursor:pointer}',
-'#page-academy .ac-primary:disabled{opacity:.5}',
-'#page-academy .ac-sectionline{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:19px 1px 8px}',
-'#page-academy .ac-sectionline b{font-size:11px;color:var(--ac-text)}',
-'#page-academy .ac-sectionline span{font-size:9px;color:var(--ac-muted)}',
-'#page-academy .ac-progress{height:5px;border-radius:99px;background:#26364b;overflow:hidden;margin:10px 0 0}',
-'#page-academy .ac-progress i{display:block;height:100%;background:var(--ac-accent);border-radius:99px}',
-'#page-academy .ac-list{display:grid;gap:6px}',
-'#page-academy .ac-row{display:grid;grid-template-columns:31px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;text-align:left;background:var(--ac-card);border:1px solid var(--ac-border);border-radius:13px;padding:10px 11px;color:var(--ac-text);cursor:pointer}',
-'#page-academy .ac-num{width:29px;height:29px;border-radius:9px;background:var(--ac-soft);display:grid;place-items:center;color:#c5d7ee;font-size:10px;font-weight:900}',
-'#page-academy .ac-row.done .ac-num{background:#254331;color:#b7f36b}',
-'#page-academy .ac-row h3{font-size:11px;margin:0 0 3px;font-weight:850}',
-'#page-academy .ac-row p{font-size:9px;line-height:1.4;color:var(--ac-muted);margin:0}',
-'#page-academy .ac-row .ac-state{font-size:9px;color:var(--ac-muted);white-space:nowrap}',
-'#page-academy .ac-foot{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 2px}',
-'#page-academy .ac-quiet{border:1px solid var(--ac-border);background:transparent;color:#cbd6e5;border-radius:10px;padding:9px 11px;font-size:10px;font-weight:800;cursor:pointer}',
-'#page-academy .ac-panel{background:var(--ac-card);border:1px solid var(--ac-border);border-radius:16px;padding:15px;margin:10px 0}',
-'#page-academy .ac-panel h2{font-size:19px;margin:4px 0 6px;letter-spacing:-.5px;color:var(--ac-text)}',
-'#page-academy .ac-panel h3{font-size:12px;margin:0 0 7px;color:var(--ac-text)}',
-'#page-academy .ac-panel p,#page-academy .ac-panel li{font-size:10px;line-height:1.6;color:#bdc9d9}',
-'#page-academy .ac-panel ul{margin:6px 0;padding-left:18px}',
-'#page-academy .ac-toolbar{display:flex;justify-content:space-between;align-items:center;gap:9px;margin:0 0 12px}',
-'#page-academy .ac-back{border:1px solid var(--ac-border);background:var(--ac-card);color:var(--ac-text);border-radius:10px;padding:8px 10px;font-size:10px;font-weight:800;cursor:pointer}',
-'#page-academy .ac-note{font-size:9px;line-height:1.55;color:var(--ac-muted);margin:10px 1px}',
-'#page-academy .ac-link{display:inline-flex;align-items:center;justify-content:center;background:#1a2b40;border:1px solid #364c65;color:#d9e8fa;border-radius:10px;padding:10px 12px;font-size:10px;font-weight:850;text-decoration:none}',
-'#page-academy .ac-link.primary{background:var(--ac-accent);border-color:var(--ac-accent);color:#101827}',
-'#page-academy .ac-links{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}',
-'#page-academy .ac-field{display:grid;gap:5px;margin:11px 0}',
-'#page-academy .ac-field label{font-size:9px;color:var(--ac-muted);font-weight:800}',
-'#page-academy .ac-field select,#page-academy .ac-field input,#page-academy .ac-field textarea{width:100%;background:#0d1726;color:var(--ac-text);border:1px solid #354962;border-radius:10px;padding:10px;font:inherit;font-size:11px}',
-'#page-academy .ac-examhead{display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:61px;z-index:8;background:#0b1220f2;border-bottom:1px solid var(--ac-border);padding:9px 0}',
-'#page-academy .ac-clock{font-variant-numeric:tabular-nums;font-size:11px;color:var(--ac-accent);font-weight:900}',
-'#page-academy .ac-qgrid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin:10px 0}',
-'#page-academy .ac-qnum{border:1px solid #354a63;background:#101c2b;color:#c4d2e4;border-radius:8px;min-height:32px;font-size:9px;font-weight:850;cursor:pointer}',
-'#page-academy .ac-qnum.active{border-color:var(--ac-accent);color:var(--ac-accent)}',
-'#page-academy .ac-qnum.answered{background:#233f32;color:#d9f7e3;border-color:#46785a}',
-'#page-academy .ac-qnum.flagged:after{content:" •";color:#ffd27d}',
-'#page-academy .ac-qtitle{font-size:18px;margin:13px 0 5px;color:var(--ac-text)}',
-'#page-academy .ac-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:13px 0}',
-'#page-academy .ac-option{background:#101c2b;border:1px solid #354a63;border-radius:11px;padding:12px 6px;color:#d8e4f4;font-weight:900;font-size:11px;cursor:pointer}',
-'#page-academy .ac-option.selected{background:#2c4735;border-color:var(--ac-accent);color:#e7ffd0}',
-'#page-academy .ac-examnav{display:flex;justify-content:space-between;gap:8px;margin:12px 0}',
-'#page-academy .ac-examnav button{flex:1}',
-'#page-academy .ac-review{border:1px solid #5b4b31;background:#292316;color:#f3d69d;border-radius:10px;padding:9px 11px;font-size:10px;font-weight:800;cursor:pointer}',
-'#page-academy .ac-success{background:#122a20;border:1px solid #2f6b50;border-radius:13px;padding:12px;color:#d5f6e3;font-size:10px;line-height:1.5}',
-'#page-academy .ac-meter{display:flex;justify-content:space-between;gap:8px;font-size:9px;color:var(--ac-muted)}',
-'#page-academy .ac-empty{border:1px dashed var(--ac-border);border-radius:12px;padding:13px;color:var(--ac-muted);font-size:10px}',
-'#page-academy .ac-mini{font-size:9px;color:var(--ac-muted);line-height:1.5}',
-'#page-academy .ac-resultgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}',
-'#page-academy .ac-study-overview{background:linear-gradient(140deg,#17283c,#101925);border:1px solid #2d425b;border-radius:16px;padding:14px;margin:13px 0}',
-'#page-academy .ac-study-overview-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}',
-'#page-academy .ac-study-overview h2{font-size:13px;margin:0;color:var(--ac-text)}',
-'#page-academy .ac-study-overview button{border:1px solid #405a79;background:#1b2d43;color:#d6e6fa;border-radius:9px;padding:8px 10px;font-size:9px;font-weight:850}',
-'#page-academy .ac-study-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}',
-'#page-academy .ac-study-kpi{background:#0d1725;border:1px solid #293d55;border-radius:11px;padding:10px;min-width:0}',
-'#page-academy .ac-study-kpi b{font-size:17px;display:block;color:#f0f5fb}',
-'#page-academy .ac-study-kpi span{font-size:9px;color:var(--ac-muted);line-height:1.3;display:block}',
-'#page-academy .ac-target{height:6px;background:#28394f;border-radius:99px;overflow:hidden;margin-top:10px}',
-'#page-academy .ac-target i{height:100%;display:block;background:#9fc5ff;border-radius:99px}',
-'#page-academy .ac-wide{width:100%}',
-'#page-academy .ac-log-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}',
-'#page-academy .ac-log-form label{display:grid;gap:5px;font-size:10px;color:#c8d4e3;font-weight:800}',
-'#page-academy .ac-log-form input,#page-academy .ac-log-form select,#page-academy .ac-log-form textarea{width:100%;min-width:0;background:#0d1726;color:var(--ac-text);border:1px solid #354962;border-radius:10px;padding:10px;font:inherit;font-size:11px}',
-'#page-academy .ac-log-full{grid-column:1/-1}',
-'#page-academy .ac-progress-table{display:grid;gap:7px}',
-'#page-academy .ac-progress-item{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#0d1726;border:1px solid var(--ac-border);border-radius:12px;padding:11px;color:var(--ac-text)}',
-'#page-academy .ac-progress-item b{font-size:11px}',
-'#page-academy .ac-progress-item small{display:block;color:var(--ac-muted);font-size:9px;margin-top:3px}',
-'@media(max-width:560px){#page-academy .ac-log-form{grid-template-columns:1fr}#page-academy .ac-log-full{grid-column:1}#page-academy .ac-study-kpi{padding:8px}#page-academy .ac-study-kpi b{font-size:15px}}',
-'@media(max-width:560px){#page-academy .ac-head{flex-direction:column}#page-academy .ac-stats{width:100%}#page-academy .ac-row{grid-template-columns:29px minmax(0,1fr) auto;padding:9px}#page-academy .ac-qgrid{grid-template-columns:repeat(5,minmax(0,1fr))}#page-academy .ac-panel{padding:13px}}'
+const css=document.createElement('style');css.id='adaz-academy-360-style';css.textContent=[
+'#page-study{display:none!important}',
+'#page-academy{--ac-card:#111c2b;--ac-panel:#0e1725;--ac-line:#293a50;--ac-ink:#eef3fb;--ac-muted:#aab7c9;--ac-lime:#b7f36b}',
+'#page-academy .ac-wrap{max-width:850px;margin:0 auto}',
+'#page-academy .ac-head{margin:4px 0 16px}',
+'#page-academy .ac-kicker{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ac-lime);font-weight:900}',
+'#page-academy .ac-head h1{font-size:clamp(25px,4vw,32px);letter-spacing:-1px;margin:5px 0;color:var(--ac-ink)}',
+'#page-academy .ac-head p{font-size:11px;color:var(--ac-muted);margin:0;line-height:1.5}',
+'#page-academy .ac-summary{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}',
+'#page-academy .ac-chip{background:#152338;border:1px solid var(--ac-line);padding:7px 10px;border-radius:99px;font-size:10px;color:#c8d5e6}',
+'#page-academy .ac-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}',
+'#page-academy .ac-track{min-height:130px;text-align:left;background:linear-gradient(145deg,#17283d,#101927);border:1px solid var(--ac-line);border-radius:16px;padding:15px;color:var(--ac-ink);display:flex;flex-direction:column;gap:7px;cursor:pointer}',
+'#page-academy .ac-track b{font-size:14px}#page-academy .ac-track small{font-size:10px;color:var(--ac-muted);line-height:1.4}',
+'#page-academy .ac-track .ac-count{font-size:9px;color:var(--ac-lime);font-weight:800;margin-top:auto}',
+'#page-academy .ac-trackbar{height:4px;background:#28384c;border-radius:99px;overflow:hidden}#page-academy .ac-trackbar i{display:block;height:100%;background:var(--ac-lime)}',
+'#page-academy .ac-panel{background:var(--ac-card);border:1px solid var(--ac-line);border-radius:16px;padding:15px;margin:10px 0;color:var(--ac-ink)}',
+'#page-academy .ac-panel h2{font-size:19px;letter-spacing:-.4px;margin:4px 0 7px}#page-academy .ac-panel h3{font-size:12px;margin:0 0 7px}',
+'#page-academy .ac-panel p,#page-academy .ac-panel li{font-size:11px;line-height:1.6;color:#c0ccdc}#page-academy .ac-panel p{margin:7px 0}',
+'#page-academy .ac-topbar{display:flex;align-items:center;justify-content:space-between;gap:9px;margin:3px 0 12px}',
+'#page-academy .ac-back{background:#17263a;border:1px solid #34465e;color:#d8e4f4;border-radius:10px;padding:8px 11px;font-size:10px;font-weight:850;cursor:pointer}',
+'#page-academy .ac-topic{display:flex;align-items:center;gap:10px;width:100%;background:var(--ac-card);border:1px solid var(--ac-line);border-radius:13px;padding:12px;margin:7px 0;text-align:left;color:var(--ac-ink);cursor:pointer}',
+'#page-academy .ac-topic .ac-num{width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;border-radius:9px;background:#1b2a3e;color:#d4e2f5;font-size:10px;font-weight:900}',
+'#page-academy .ac-topic.done .ac-num{background:#1e3b2c;color:var(--ac-lime)}#page-academy .ac-topic b{font-size:11px;display:block}#page-academy .ac-topic small{font-size:9px;color:var(--ac-muted);display:block;margin-top:3px}#page-academy .ac-topic .ac-arrow{margin-left:auto;font-size:10px;color:var(--ac-muted)}',
+'#page-academy .ac-copy{background:var(--ac-panel);border:1px solid var(--ac-line);border-radius:12px;padding:12px;margin:8px 0}#page-academy .ac-copy b{font-size:11px}#page-academy .ac-copy p{margin:5px 0;font-size:11px;line-height:1.65;color:#c6d2e1}',
+'#page-academy .ac-question{padding:13px;background:#15243a;border:1px solid #344b66;border-radius:14px;margin:12px 0}',
+'#page-academy .ac-option{display:block;width:100%;text-align:left;background:#101a29;color:#dce6f4;border:1px solid #34465e;border-radius:10px;padding:10px;margin:7px 0;font-size:11px;cursor:pointer}',
+'#page-academy .ac-option.selected{border-color:#b7f36b;background:#20352a;color:#efffe4}#page-academy .ac-option:disabled{opacity:.8}',
+'#page-academy .ac-primary{background:var(--ac-lime);color:#0e1722;border:0;border-radius:11px;padding:11px 14px;font-size:11px;font-weight:900;cursor:pointer;margin-top:10px}#page-academy .ac-primary:disabled{opacity:.45;cursor:not-allowed}',
+'#page-academy .ac-secondary{background:transparent;color:#cbd8e8;border:1px solid #3a4d66;border-radius:10px;padding:9px 12px;font-size:10px;font-weight:800;cursor:pointer}',
+'#page-academy .ac-feedback{margin:10px 0;padding:12px;border-radius:12px;background:#183426;border:1px solid #326344;color:#d9f4e2;font-size:11px;line-height:1.55}#page-academy .ac-feedback.bad{background:#382a1c;border-color:#73542b;color:#ffe3bc}',
+'#page-academy .ac-progress{height:5px;background:#29384c;border-radius:99px;overflow:hidden;margin:9px 0}#page-academy .ac-progress i{display:block;height:100%;background:var(--ac-lime)}',
+'#page-academy .ac-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}#page-academy .ac-links a{display:inline-flex;background:#17283e;color:#d4e2f4;border:1px solid #3b526d;border-radius:9px;padding:9px 11px;font-size:10px;font-weight:800}',
+'#page-academy .ac-muted{font-size:9px;color:var(--ac-muted);line-height:1.55}#page-academy .ac-writing{width:100%;min-height:120px;background:#0b1421;border:1px solid #354962;border-radius:10px;color:var(--ac-ink);padding:11px;font:inherit;font-size:11px;resize:vertical}',
+'#page-academy .ac-checks{display:grid;gap:7px;margin:10px 0}#page-academy .ac-checks label{font-size:10px;color:#c4d0df;display:flex;gap:7px;align-items:flex-start}',
+'#page-academy .ac-history{display:grid;gap:7px}#page-academy .ac-history-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px;border:1px solid var(--ac-line);border-radius:11px;background:var(--ac-panel)}#page-academy .ac-history-item b{font-size:10px}#page-academy .ac-history-item small{display:block;font-size:9px;color:var(--ac-muted);margin-top:3px}',
+'@media(max-width:560px){#page-academy .ac-grid{grid-template-columns:1fr 1fr;gap:8px}#page-academy .ac-track{padding:12px;min-height:144px}#page-academy .ac-panel{padding:13px}#page-academy .ac-writing{min-height:100px}}'
 ].join('');
 if(!document.getElementById(css.id))document.head.append(css);
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){console.warn('ADAZ Academy: no se pudo guardar el progreso.',e)}}
-function findTopic(track,id){return (tracks[track]||[]).find(x=>x.id===id)}
-function keyFor(track,id){return track+':'+id}
-function stats(){const count=Object.keys(store.subjects).filter(k=>store.subjects[k]&&store.subjects[k].sessions>0).length;return count}
-function dueTopics(){const due=[];Object.keys(store.subjects).forEach(k=>{const v=store.subjects[k];if(v&&v.nextReview&&v.nextReview<=today()){const parts=k.split(':');const t=findTopic(parts[0],parts.slice(1).join(':'));if(t)due.push({track:parts[0],topic:t})}});return due}
-function progressFor(track,id){return store.subjects[keyFor(track,id)]||{sessions:0,lastScore:null,nextReview:null}}
-function updateStreak(){const t=today();if(store.last!==t){const y=new Date();y.setDate(y.getDate()-1);const yesterday=localDate(y);store.streak=store.last===yesterday?store.streak+1:1;store.last=t}}
-function titleTrack(t){return t==='icfes'?'Saber 11':'IELTS Academic'}
-function home(){
- const track=store.track,items=tracks[track],due=dueTopics(),active=store.active;
- const completed=items.filter(x=>progressFor(track,x.id).sessions>0).length;
- const pct=Math.round(completed/items.length*100);
- const next=due.find(x=>x.track===track)?.topic||items.find(x=>progressFor(track,x.id).sessions===0)||items[0];
- const sm=studyMetrics(),targetPct=Math.min(100,Math.round(sm.minutes/sm.target*100));
- const overview='<section class="ac-study-overview"><div class="ac-study-overview-head"><h2>Tu estudio y tus resultados</h2><div style="display:flex;gap:6px;flex-wrap:wrap"><button data-study-progress>Ver mi progreso →</button><button data-open-manual>＋ Registrar práctica</button></div></div><div class="ac-study-kpis"><div class="ac-study-kpi"><b>'+sm.minutes+'</b><span>minutos esta semana</span></div><div class="ac-study-kpi"><b>'+sm.sessions+'</b><span>prácticas registradas</span></div><div class="ac-study-kpi"><b>'+(sm.accuracy===null?'—':sm.accuracy+'%')+'</b><span>promedio de aciertos</span></div></div><div class="ac-target"><i style="width:'+targetPct+'%"></i></div><p style="margin-top:7px">Llevas '+sm.minutes+' de '+sm.target+' minutos de tu meta semanal. Es una referencia flexible, no una obligación.</p></section>';
- page.innerHTML='<div class="ac-wrap">'+
- '<div class="ac-head"><div><div class="ac-kicker">ADAZ · ACADEMY</div><h1>¿Qué quieres estudiar hoy?</h1><p>Te mostramos qué hacer, paso a paso. Tú eliges el tema y empiezas.</p></div><div class="ac-stats"><span class="ac-stat">🔥 <b>'+store.streak+'</b> días seguidos</span><span class="ac-stat">✦ <b>'+overallPoints()+'</b> puntos ADAZ</span></div></div>'+
- '<div class="ac-switch"><button data-track="icfes" class="'+(track==='icfes'?'active':'')+'">Saber 11</button><button data-track="ielts" class="'+(track==='ielts'?'active':'')+'">IELTS Academic</button></div>'+
- overview+
- (active?'<section class="ac-next"><div class="ac-kicker">TU PRÁCTICA</div><h2>'+esc((findTopic(active.track,active.topicId)||{}).title||'Práctica')+'</h2><p>Guardamos dónde ibas. Puedes continuar desde aquí.</p><button class="ac-primary" data-resume>Continuar práctica →</button></section>':'<section class="ac-next"><div class="ac-kicker">'+(due.some(x=>x.track===track)?'HOY VAMOS A REPASAR':'PARA HOY')+'</div><h2>'+(due.find(x=>x.track===track)?'Volvamos a '+esc(next.title):'Empieza por '+esc(next.title))+'</h2><p>'+esc(next.desc)+' · Puedes dedicarle unos 15 a 25 minutos.</p><button class="ac-primary" data-topic="'+track+':'+next.id+'">Empezar ahora →</button></section>')+
- '<div class="ac-sectionline"><b>Así vas en '+titleTrack(track)+'</b><span>'+completed+'/'+items.length+' áreas practicadas · '+pct+'%</span></div><div class="ac-progress"><i style="width:'+pct+'%"></i></div>'+
- '<div class="ac-list" style="margin-top:9px">'+items.map((x,i)=>{const p=progressFor(track,x.id);return '<button class="ac-row '+(p.sessions?'done':'')+'" data-topic="'+track+':'+x.id+'"><span class="ac-num">'+(p.sessions?'✓':String(i+1).padStart(2,'0'))+'</span><span><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p></span><span class="ac-state">'+(p.nextReview&&p.nextReview<=today()?'Repasar':p.sessions?'Repetir':'Empezar')+' ›</span></button>'}).join('')+'</div>'+
- '<div class="ac-foot">'+(due.length?'<button class="ac-quiet" data-review-list>↻ Ver mis temas para repasar ('+due.length+')</button>':'<span class="ac-mini">Cuando termines una práctica, te diremos cuándo conviene repetirla.</span>')+'<button class="ac-quiet" data-history>Ver mis prácticas</button></div>'+
- '<p class="ac-note">Usamos preguntas y materiales de fuentes oficiales. Por eso, algunas pruebas se abren fuera de ADAZ.</p></div>';
-}
-function toolbar(label){return '<div class="ac-toolbar"><button class="ac-back" data-home>← Volver a Academy</button><span class="ac-kicker">'+esc(label)+'</span></div>'}
-function topicView(track,id){
- const t=findTopic(track,id);if(!t){home();return}
- const isI=track==='icfes',p=progressFor(track,id);
- const resource=isI?'<a class="ac-link primary" href="'+t.url+'" target="_blank" rel="noopener">Ver preguntas oficiales ↗</a><a class="ac-link" href="'+urls.icfesHub+'" target="_blank" rel="noopener">Ver explicaciones y más preguntas ↗</a><a class="ac-link" href="'+urls.icfesGuide+'" target="_blank" rel="noopener">Guía Saber 11 2026 ↗</a>':'<a class="ac-link primary" href="'+t.url+'" target="_blank" rel="noopener">'+(t.kind==='guide'?'Abrir muestras oficiales ↗':'Abrir prueba de muestra ↗')+'</a><a class="ac-link" href="'+urls.ieltsSamples+'" target="_blank" rel="noopener">Todas las muestras y claves ↗</a>';
- const links=isI?'<div class="ac-note">'+esc(t.hint)+' El PDF se abre en otra pestaña. Léelo allí y vuelve a ADAZ para marcar tus respuestas. No podemos copiar las preguntas oficiales dentro de la app.</div>':'<div class="ac-note">'+esc(t.hint)+' La prueba de ejemplo te ayuda a conocer el formato. Puede funcionar un poco distinto al examen real.</div>';
- page.innerHTML='<div class="ac-wrap">'+toolbar(isI?'SABER 11':'IELTS ACADEMIC')+
- '<section class="ac-panel"><div class="ac-kicker">ESTA PARTE DEL EXAMEN · '+(isI?'ICFES':'IELTS')+'</div><h2>'+esc(t.title)+'</h2><p>'+esc(t.desc)+'</p><div class="ac-stats"><span class="ac-stat">'+(p.sessions||0)+' prácticas realizadas</span><span class="ac-stat">'+(p.lastScore===null||p.lastScore===undefined?'Sin resultado':'Último resultado: '+p.lastScore+'%')+'</span></div></section>'+
- '<section class="ac-panel"><h3>Abre el material para practicar</h3><div class="ac-links">'+resource+'</div>'+links+'</section>'+
- (isI?'<section class="ac-panel"><h3>Marca aquí tus respuestas</h3><p>Primero abre el PDF y lee la pregunta. Después vuelve a esta pantalla y marca A, B, C o D. Al terminar, revisa las respuestas correctas al final del PDF.</p><div class="ac-field"><label for="ac-count">¿Cuántas preguntas quieres hacer hoy?</label><select id="ac-count"><option value="10">10 preguntas · sesión corta</option><option value="20">20 preguntas · sesión media</option><option value="30">30 preguntas · sesión larga</option><option value="40">40 preguntas</option><option value="50">50 preguntas</option></select></div><button class="ac-primary" data-start-icfes="'+id+'">Empezar →</button></section>':'<section class="ac-panel"><h3>Haz una prueba de ejemplo</h3><p>La prueba se abrirá en la página oficial. Cuando termines, vuelve aquí y cuéntame cómo te fue.</p><div class="ac-links"><button class="ac-primary" data-start-ielts="'+id+'">Abrir la prueba oficial →</button></div></section>')+
- '<section class="ac-panel"><h3>Consejos para hacerlo mejor</h3><ul>'+(isI?['Resuelve primero sin mirar la clave.','Después de elegir A, B, C o D en el PDF, marca la misma letra aquí en ADAZ.','Al final, compara tus respuestas con la clave del cuadernillo.','Al terminar, piensa qué fue lo que más te costó.']:t.id==='writing'?['Responde todos los puntos de la consigna.','Organiza las ideas en párrafos claros.','Revisa coherencia, vocabulario y gramática.']:t.id==='speaking'?['Responde con desarrollo, no con frases memorizadas.','Explica, ejemplifica y conecta tus ideas.','Evalúa fluidez, vocabulario, gramática y pronunciación.']:['Sigue las instrucciones y el límite de palabras.','Responde antes de consultar las claves.','Revisa cada error y localiza la evidencia.']).map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></section></div>';
-}
-function openOfficial(url){try{return window.open(url,'_blank','noopener')}catch(e){return null}}
-function startIcfes(id){
- const t=findTopic('icfes',id),count=Math.max(1,Math.min(60,Number($('#ac-count')?.value)||10));
- if(!t)return;
- openOfficial(t.url);
- store.active={program:'ICFES',track:'icfes',topicId:id,count:count,answers:{},flagged:[],startedAt:Date.now(),sourceUrl:t.url};
- persist();examView();
-}
-function startIelts(id){
- const t=findTopic('ielts',id);if(!t)return;
- openOfficial(t.url);
- store.active={program:'IELTS',track:'ielts',topicId:id,count:0,answers:{},flagged:[],startedAt:Date.now(),sourceUrl:t.url};
- persist();ieltsSessionView();
-}
-let tick=null;
-function stopTick(){if(tick){clearInterval(tick);tick=null}}
-function elapsed(start){const sec=Math.max(0,Math.floor((Date.now()-Number(start||Date.now()))/1000));const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return (h?String(h).padStart(2,'0')+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
-function examView(){
- stopTick();const a=store.active;if(!a){home();return}
- const t=findTopic('icfes',a.topicId);if(!t){store.active=null;persist();home();return}
- const n=Number(a.current||1),answered=Object.keys(a.answers||{}).length,percent=Math.round(answered/a.count*100);
- page.innerHTML='<div class="ac-wrap">'+
- '<div class="ac-examhead"><button class="ac-back" data-home>← Guardar y salir</button><div><div class="ac-kicker">SABER 11 · '+esc(t.title.toUpperCase())+'</div><div class="ac-mini">Aquí marcas las respuestas que elegiste en el PDF</div></div><span class="ac-clock" id="ac-clock">'+elapsed(a.startedAt)+'</span></div>'+
- '<div class="ac-meter"><span>Ya respondiste '+answered+' de '+a.count+' preguntas</span><span>'+percent+'% completado</span></div><div class="ac-progress"><i style="width:'+percent+'%"></i></div>'+
- '<section class="ac-panel"><div class="ac-toolbar"><h3 style="margin:0">Ir a otra pregunta</h3><span class="ac-mini">Toca un número para ir a esa pregunta</span></div><div class="ac-qgrid">'+Array.from({length:a.count},(_,i)=>{const q=i+1,cl=(q===n?'active ':'')+(a.answers[q]?'answered ':'')+((a.flagged||[]).includes(q)?'flagged':'');return '<button class="ac-qnum '+cl+'" data-q="'+q+'">'+q+'</button>'}).join('')+'</div></section>'+
- '<section class="ac-panel"><div class="ac-kicker">PREGUNTA '+n+' DE '+a.count+'</div><h2 class="ac-qtitle">¿Qué opción elegiste?</h2><p>Lee la pregunta en el PDF que se abrió y luego toca A, B, C o D aquí. ¿No encuentras el PDF? Toca «Volver al cuadernillo».</p><div class="ac-options">'+['A','B','C','D'].map(x=>'<button class="ac-option '+(a.answers[n]===x?'selected':'')+'" data-answer="'+x+'">'+x+'</button>').join('')+'</div><button class="ac-review" data-flag>'+(a.flagged.includes(n)?'★ Marcada para revisar':'☆ Marcar para revisar')+'</button></section>'+
- '<div class="ac-examnav"><button class="ac-quiet" data-prev '+(n<=1?'disabled':'')+'>← Anterior</button><button class="ac-quiet" data-next '+(n>=a.count?'disabled':'')+'>Siguiente →</button></div>'+
- '<div class="ac-foot"><button class="ac-quiet" data-open-source>Volver al cuadernillo ↗</button><button class="ac-primary" data-finish>Terminar práctica</button></div></div>';
- const clock=$('#ac-clock');tick=setInterval(()=>{if(clock)clock.textContent=elapsed(a.startedAt);else stopTick()},1000);
-}
-function ieltsSessionView(){
- stopTick();const a=store.active;if(!a){home();return}
- const t=findTopic('ielts',a.topicId);if(!t){store.active=null;persist();home();return}
- page.innerHTML='<div class="ac-wrap">'+toolbar('IELTS · TU PRÁCTICA')+
- '<section class="ac-panel"><div class="ac-kicker">MUESTRA OFICIAL</div><h2>'+esc(t.title)+'</h2><p>La prueba se abrió en otra pestaña. Hazla allí y después vuelve a ADAZ para contarme cómo te fue.</p><div class="ac-stats"><span class="ac-stat">Tiempo que llevas <b id="ac-clock">'+elapsed(a.startedAt)+'</b></span><span class="ac-stat">Formato oficial</span></div><div class="ac-links"><a class="ac-link primary" href="'+esc(t.url)+'" target="_blank" rel="noopener">Abrir de nuevo ↗</a><a class="ac-link" href="'+urls.ieltsSamples+'" target="_blank" rel="noopener">Muestras y claves ↗</a></div></section>'+
- '<section class="ac-panel"><h3>Cuando termines la prueba</h3><ul>'+(t.id==='listening'||t.id==='reading'?['Registra cuántas respuestas acertaste de 40.','No conviertas este resultado directamente en una banda IELTS. La puntuación oficial depende de la prueba.','Anota el tipo de pregunta que más te costó.']:['Revisa tu trabajo con los criterios oficiales.','Anota dos cosas que hiciste bien y una que quieras mejorar.','Tu propia revisión no equivale a una banda oficial.']).map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></section><button class="ac-primary" data-finish>Terminar y registrar resultado →</button></div>';
- const clock=$('#ac-clock');tick=setInterval(()=>{if(clock)clock.textContent=elapsed(a.startedAt);else stopTick()},1000);
-}
-function resultView(){
- stopTick();const a=store.active;if(!a){home();return}
- const t=findTopic(a.track,a.topicId),isI=a.program==='ICFES',answered=Object.keys(a.answers||{}).length;
- const count=isI?a.count:40;
- page.innerHTML='<div class="ac-wrap">'+toolbar('TU RESULTADO')+
- '<section class="ac-panel"><div class="ac-kicker">¡TERMINASTE!</div><h2>'+esc(t.title)+'</h2><p>Revisa tus respuestas con el material oficial. Después anota aquí el resultado que comprobaste.</p><div class="ac-stats"><span class="ac-stat">Tiempo <b>'+elapsed(a.startedAt)+'</b></span>'+(isI?'<span class="ac-stat">'+answered+'/'+a.count+' marcadas</span>':'')+'</div></section>'+
- '<section class="ac-panel"><h3>¿Cómo te fue?</h3>'+(isI?'<div class="ac-field"><label for="ac-correct">¿Cuántas respuestas tuviste bien? Revisa la clave del PDF.</label><input id="ac-correct" type="number" min="0" max="'+a.count+'" placeholder="0 a '+a.count+'" required></div><div class="ac-field"><label for="ac-errors">¿En qué te equivocaste más?</label><select id="ac-errors"><option>Comprensión o interpretación</option><option>Concepto o conocimiento</option><option>Procedimiento o cálculo</option><option>Lectura de gráficas o datos</option><option>Gestión del tiempo</option><option>No hubo un error dominante</option></select></div>':(t.id==='writing'||t.id==='speaking'?'<div class="ac-field"><label for="ac-correct">Cuéntanos cómo te fue</label><textarea id="ac-correct" rows="3" placeholder="Anota qué salió bien y qué vas a mejorar. No es una banda oficial."></textarea></div><div class="ac-field"><label for="ac-errors">¿Qué te gustaría mejorar?</label><select id="ac-errors"><option>Coherencia y organización</option><option>Vocabulario o precisión</option><option>Gramática</option><option>Pronunciación o fluidez</option><option>Responder toda la consigna</option></select></div>':'<div class="ac-field"><label for="ac-correct">¿Cuántas respuestas tuviste bien?</label><input id="ac-correct" type="number" min="0" max="40" placeholder="0 a 40"></div><div class="ac-field"><label for="ac-errors">Qué quieres mejorar</label><select id="ac-errors"><option>Comprensión de instrucciones</option><option>Vocabulario o precisión</option><option>Paráfrasis e identificación de evidencia</option><option>Gestión del tiempo</option></select></div>'))+
- '<div class="ac-field"><label for="ac-notes">¿Qué quieres recordar para la próxima práctica?</label><textarea id="ac-notes" rows="3" placeholder="¿Qué te confundió y qué vas a practicar la próxima vez?"></textarea></div><button class="ac-primary" data-save-result>Guardar mi resultado →</button></section></div>';
-}
-function saveResult(){
- const a=store.active;if(!a)return;
- const t=findTopic(a.track,a.topicId),isI=a.program==='ICFES';
- const tIsProduction=a.program==='IELTS'&&['writing','speaking'].includes(a.topicId);
- const raw=$('#ac-correct')?.value??'',max=isI?a.count:40;
- let score=null,accuracy=null;
- if(!tIsProduction&&raw!==''){score=Math.max(0,Math.min(max,Number(raw)));accuracy=Math.round(score/max*100)}
- const minutes=Math.max(1,Math.round((Date.now()-a.startedAt)/60000));
- const userNote=$('#ac-notes')?.value?.trim()||'';
- const note=(tIsProduction&&raw.trim()?'Autoevaluación: '+raw.trim()+' ':'')+userNote;
- const error=$('#ac-errors')?.value||'';
- const record={id:Date.now().toString(36),track:a.track,topicId:a.topicId,title:t.title,program:a.program,date:today(),minutes,score,max,accuracy,error,note,answers:a.answers||{},flagged:a.flagged||[]};
- store.history.unshift(record);store.history=store.history.slice(0,100);
- const k=keyFor(a.track,a.topicId),p=progressFor(a.track,a.topicId);
- p.sessions=(p.sessions||0)+1;p.lastDate=today();p.lastScore=accuracy;
- if(accuracy!==null)p.nextReview=plusDays(accuracy<60?1:accuracy<80?3:7);
- else p.nextReview=plusDays(2);
- p.lastError=error;store.subjects[k]=p;
- store.xp+=15;updateStreak();store.active=null;
- persist();syncStudyHistory(record);
- page.innerHTML='<div class="ac-wrap">'+toolbar('TU AVANCE QUEDÓ GUARDADO')+'<section class="ac-panel"><div class="ac-kicker">¡BUEN TRABAJO!</div><h2>Hoy avanzaste en tu preparación.</h2><p>Guardamos tu resultado. Te recomendaremos cuándo volver a practicar esta parte.</p><div class="ac-stats"><span class="ac-stat">+15 puntos</span><span class="ac-stat">'+(accuracy===null?'Práctica guardada':accuracy+'% de respuestas correctas')+'</span><span class="ac-stat">Vuelve a practicar: '+new Date(store.subjects[k].nextReview+'T12:00:00').toLocaleDateString('es-CO',{day:'numeric',month:'long'})+'</span></div></section><button class="ac-primary" data-home>Volver a Academy →</button></div>';
-}
-function syncStudyHistory(record){
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){console.warn('ADAZ: no se pudo guardar el aprendizaje.',e)}}
+function done(track,id){if(store.curriculum[track]?.[id]?.done)return true;const map={icfes:{reading:'lectura',math:'matematicas',science:'ciencias',social:'sociales',english:'ingles'},ielts:{listening:'listening',reading:'reading',writing:'writing',speaking:'speaking'}};const oldId=map[track]?.[id];if(oldId&&Number(store.subjects?.[track+':'+oldId]?.sessions)>0)return true;return store.history.some(x=>x.track===track&&x.topicId===id)}
+function due(track,id){const x=store.curriculum[track]?.[id];return !!(x?.nextReview&&x.nextReview<=today())}
+function stats(track){const a=courses[track].topics,d=a.filter(x=>done(track,x.id)).length;return {done:d,total:a.length,pct:Math.round(d/a.length*100)}}
+function minutesWeek(){const d=read('adaz-data-v1',{}),rows=Array.isArray(d.study)?d.study:[],now=new Date();now.setHours(0,0,0,0);now.setDate(now.getDate()-((now.getDay()+6)%7));const from=key(now),to=today();return rows.filter(x=>x.date>=from&&x.date<=to).reduce((n,x)=>n+Math.max(0,Number(x.minutes)||0),0)}
+function updateStreak(){const now=today();if(store.last===now)return;const y=new Date();y.setDate(y.getDate()-1);store.streak=store.last===key(y)?store.streak+1:1;store.last=now}
+function syncMainStudy(track,topic,minutes,note,accuracy){
  const form=document.getElementById('studyForm');if(!form)return;
  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v};
- set('studyProgram',record.program);set('studySkill',findTopic(record.track,record.topicId)?.skill||'Otra');set('studyDate',record.date);set('studyMinutes',record.minutes);
- set('studyAccuracy',record.accuracy===null?'':record.accuracy);set('studyBand','');set('studyMethod','Práctica guiada');
- set('studyGoal','Práctica oficial: '+record.title);
- set('studyResult','Resultado verificado: '+(record.score===null?'sin puntuación':record.score+'/'+record.max)+'; error principal: '+(record.error||'no especificado')+'. '+(record.note||''));
- form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
+ set('studyProgram',track==='business'?'Negocios':track==='medicine'?'Medicina':track==='icfes'?'ICFES':'IELTS');set('studySkill',topic.skill);set('studyDate',today());set('studyMinutes',minutes);set('studyAccuracy',accuracy===null?'':accuracy);set('studyBand','');set('studyMethod','Práctica guiada');set('studyGoal',topic.title);set('studyResult',note);form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
 }
-function progressView(){
- const data=mainStudy(),rows=data.rows.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')),s=studyMetrics();
- const latestBand=skill=>rows.filter(x=>x.program==='IELTS'&&x.skill===skill&&x.band!==''&&x.band!==null&&x.band!==undefined).sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
- const bands=['Listening','Reading','Writing','Speaking'];
- const bandCards=bands.map(skill=>{const x=latestBand(skill);return '<div class="ac-row"><span class="ac-num">↗</span><span><h3>IELTS · '+skill+'</h3><p>'+(x?'Última banda registrada: '+Number(x.band).toFixed(1)+' · '+esc(x.date):'Aún no has registrado una banda')+'</p></span><span class="ac-state">Meta 8.0</span></div>'}).join('');
- page.innerHTML='<div class="ac-wrap">'+toolbar('TU PROGRESO')+
- '<div class="ac-head"><div><div class="ac-kicker">TU HISTORIAL Y TUS METAS</div><h1>Estás construyendo tu avance.</h1><p>Aquí se unen las prácticas de Academy y las sesiones de estudio que registras en ADAZ.</p></div></div>'+
- '<section class="ac-study-overview"><h2>Esta semana</h2><div class="ac-study-kpis"><div class="ac-study-kpi"><b>'+s.minutes+'</b><span>minutos de estudio</span></div><div class="ac-study-kpi"><b>'+s.sessions+'</b><span>sesiones registradas</span></div><div class="ac-study-kpi"><b>'+(s.accuracy===null?'—':s.accuracy+'%')+'</b><span>promedio de aciertos</span></div></div><div class="ac-target"><i style="width:'+Math.min(100,Math.round(s.minutes/s.target*100))+'%"></i></div><p style="margin-top:7px">'+s.minutes+' de '+s.target+' minutos de tu meta semanal. Ajusta la meta desde Configuración.</p></section>'+
- '<div class="ac-panel"><h3>Tus bandas de IELTS registradas</h3><div class="ac-list">'+bandCards+'</div><p class="ac-note">Solo se muestran resultados que hayas registrado. ADAZ no calcula ni predice una banda oficial.</p></div>'+
- '<div class="ac-panel"><div class="ac-sectionline"><b>Prácticas y sesiones recientes</b><span>'+rows.length+' registros</span></div>'+
- (rows.length?'<div class="ac-progress-table">'+rows.slice(0,10).map(x=>'<div class="ac-progress-item"><div><b>'+esc(x.program||'Estudio')+' · '+esc(x.skill||'General')+'</b><small>'+esc(x.date||'')+' · '+(Number(x.minutes)||0)+' min · '+esc(x.goal||'Práctica')+'</small></div><span class="ac-state">'+(x.accuracy!==''&&x.accuracy!=null?Number(x.accuracy)+'%':x.band!==''&&x.band!=null?'Band '+Number(x.band).toFixed(1):'Registrada')+'</span></div>').join('')+'</div>':'<div class="ac-empty">Todavía no hay prácticas registradas. Empieza con una actividad corta.</div>')+
- '<div class="ac-foot"><button class="ac-primary" data-open-manual>＋ Registrar una sesión de estudio</button><button class="ac-quiet" data-history>Ver todo el historial</button></div></div></div>';
+function home(){
+ const cards=Object.entries(courses).map(([id,t])=>{const p=stats(id);return '<button class="ac-track" data-track="'+id+'"><b>'+esc(t.name)+'</b><small>'+esc(t.goal)+'</small><span class="ac-count">'+p.done+' de '+p.total+' lecciones</span><span class="ac-trackbar"><i style="width:'+p.pct+'%"></i></span></button>'}).join('');
+ const recent=store.history.slice(0,3);
+ page.innerHTML='<div class="ac-wrap"><div class="ac-head"><div class="ac-kicker">ADAZ · APRENDER</div><h1>¿Qué quieres aprender hoy?</h1><p>Elige un camino y aprende aquí mismo. Cada lección tiene una explicación breve, una actividad y un resultado que se guarda.</p><div class="ac-summary"><span class="ac-chip">'+minutesWeek()+' min esta semana</span><span class="ac-chip">'+store.streak+' días de constancia</span></div></div><div class="ac-panel"><h3>Avanza a tu ritmo</h3><p>Una lección breve es suficiente para avanzar. No hace falta completar todo hoy.</p></div><div class="ac-grid">'+cards+'</div><div class="ac-panel"><div class="ac-topbar"><h3 style="margin:0">Tus últimas prácticas</h3><button class="ac-secondary" data-history>Ver historial</button></div>'+(recent.length?'<div class="ac-history">'+recent.map(x=>'<div class="ac-history-item"><div><b>'+esc(x.title||'Práctica')+'</b><small>'+esc(x.program||'Estudio')+' · '+esc(x.date||'')+' · '+(Number(x.minutes)||0)+' min</small></div><span class="ac-muted">'+(x.accuracy===null||x.accuracy===undefined?'Guardada':x.accuracy+'%')+'</span></div>').join('')+'</div>':'<p class="ac-muted">Aquí aparecerán las prácticas que termines.</p>')+'</div><p class="ac-muted">Material original de ADAZ, no un curso oficial de Grupo 500, MED500, ICFES o IELTS. Las fuentes oficiales y lecturas completas están como apoyo opcional.</p></div>';
 }
-function manualStudyView(prefill={}){
- const program=['IELTS','ICFES','Escolar','Otro'].includes(prefill.program)?prefill.program:(store.track==='ielts'?'IELTS':'ICFES');
- const skillOptions=['Listening','Reading','Writing','Speaking','Matemáticas','Lectura Crítica','Ciencias Naturales','Sociales y Ciudadanas','Inglés ICFES','Repaso espaciado','Otra'];
- const skill=skillOptions.includes(prefill.skill)?prefill.skill:(program==='IELTS'?'Listening':program==='ICFES'?'Lectura Crítica':'Otra');
- const methods=['Práctica de recuperación','Simulacro cronometrado','Repaso espaciado','Corrección de errores','Práctica guiada','Producción / feedback'];
- const method=methods.includes(prefill.method)?prefill.method:'Práctica guiada';
- page.innerHTML='<div class="ac-wrap">'+toolbar('REGISTRAR TU ESTUDIO')+
- '<section class="ac-panel"><div class="ac-kicker">GUARDA LO QUE HICISTE</div><h2>Una práctica también cuenta.</h2><p>Registra el tiempo real, qué trabajaste y qué aprendiste. No necesitas tener una puntuación para guardar el avance.</p>'+
- '<form id="acManualForm" class="ac-log-form"><label>¿Qué estás preparando?<select name="program"><option '+(program==='IELTS'?'selected':'')+'>IELTS</option><option '+(program==='ICFES'?'selected':'')+'>ICFES</option><option '+(program==='Escolar'?'selected':'')+'>Escolar</option><option '+(program==='Otro'?'selected':'')+'>Otro</option></select></label>'+
- '<label>¿Qué área trabajaste?<select name="skill">'+skillOptions.map(x=>'<option '+(x===skill?'selected':'')+'>'+esc(x)+'</option>').join('')+'</select></label>'+
- '<label>Fecha<input name="date" type="date" value="'+today()+'" required></label><label>Minutos reales<input name="minutes" type="number" min="1" max="600" value="'+Math.max(1,Math.min(600,Number(prefill.minutes)||25))+'" required></label>'+
- '<label>Resultado en porcentaje (opcional)<input name="accuracy" type="number" min="0" max="100" placeholder="Ej. 75"></label><label>Banda IELTS (opcional)<input name="band" type="number" min="0" max="9" step="0.5" placeholder="Ej. 7.0"></label>'+
- '<label class="ac-log-full">¿Qué hiciste?<input name="goal" maxlength="180" required value="'+esc(prefill.goal||'')+'" placeholder="Ej. Practiqué Reading y revisé las respuestas incorrectas"></label>'+
- '<label class="ac-log-full">¿Qué aprendiste o qué debes repasar?<textarea name="result" rows="3" placeholder="Anota una idea, un error o el siguiente paso."></textarea></label>'+
- '<label class="ac-log-full">Cómo estudiaste<select name="method">'+methods.map(x=>'<option '+(x===method?'selected':'')+'>'+esc(x)+'</option>').join('')+'</select></label>'+
- '<div class="ac-log-full ac-foot"><button class="ac-primary" type="submit">Guardar mi avance</button><button class="ac-quiet" type="button" data-home>Volver a Estudio</button></div></form></section></div>';
+function trackView(id){
+ const t=courses[id];if(!t){home();return}store.track=id;persist();const p=stats(id),next=t.topics.find(x=>due(id,x.id))||t.topics.find(x=>!done(id,x.id))||t.topics[0];
+ const resources=(t.resources||[['Ver material de referencia',t.source]]).map(x=>'<a href="'+x[1]+'" target="_blank" rel="noopener">'+esc(x[0])+' ↗</a>').join('');
+ page.innerHTML='<div class="ac-wrap"><div class="ac-topbar"><button class="ac-back" data-home>← Mis áreas</button><span class="ac-kicker">'+esc(t.name)+'</span></div><div class="ac-head"><div class="ac-kicker">TU CAMINO</div><h1>'+esc(t.name)+'</h1><p>'+esc(t.goal)+'</p><div class="ac-summary"><span class="ac-chip">'+p.done+' de '+p.total+' lecciones</span><span class="ac-chip">'+p.pct+'% completado</span></div><div class="ac-progress"><i style="width:'+p.pct+'%"></i></div></div><div class="ac-panel"><h3>Tu siguiente lección</h3><p>'+esc(next.title)+' · '+next.time+' minutos</p><button class="ac-primary" data-lesson="'+id+':'+next.id+'">'+(due(id,next.id)?'Repasar esta lección →':'Empezar aquí →')+'</button></div>'+t.topics.map((x,i)=>'<button class="ac-topic '+(done(id,x.id)?'done':'')+'" data-lesson="'+id+':'+x.id+'"><span class="ac-num">'+(done(id,x.id)?'✓':i+1)+'</span><span><b>'+esc(x.title)+'</b><small>'+x.time+' min · '+esc(x.skill)+'</small></span><span class="ac-arrow">'+(due(id,x.id)?'Repasar ›':done(id,x.id)?'Listo ✓':'Empezar ›')+'</span></button>').join('')+'<div class="ac-links">'+resources+'</div></div>';
 }
-function saveManualStudy(form){
- const values=new FormData(form),hidden=document.getElementById('studyForm');
- if(!hidden){alert('No encontramos el registro de estudio. Vuelve a cargar ADAZ.');return}
- const set=(id,value)=>{const field=document.getElementById(id);if(field)field.value=value};
- set('studyProgram',String(values.get('program')||'IELTS'));set('studySkill',String(values.get('skill')||'Otra'));set('studyDate',String(values.get('date')||today()));
- set('studyMinutes',String(values.get('minutes')||25));set('studyAccuracy',String(values.get('accuracy')??''));set('studyBand',String(values.get('band')??''));
- set('studyMethod',String(values.get('method')||'Práctica guiada'));set('studyGoal',String(values.get('goal')||'').trim());set('studyResult',String(values.get('result')||'').trim());
- hidden.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
- home();
- const toast=document.getElementById('toast');if(toast){toast.textContent='Tu sesión de estudio quedó guardada.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2400)}
+let currentLesson=null,selectedAnswer=null,checked=false,currentCorrect=null;
+function lessonView(track,id){
+ const t=courses[track],x=t?.topics.find(z=>z.id===id);if(!x){trackView(track);return}currentLesson=id;selectedAnswer=null;checked=false;currentCorrect=null;
+ const draft=store.drafts[track+':'+id]||'';
+ const body=x.content.map((s,i)=>'<div class="ac-copy"><b>'+(i===0?'Idea principal':'Qué debes recordar')+'</b><p>'+esc(s)+'</p></div>').join('');
+ const practice=x.type==='write'?'<div class="ac-question"><h3>Practica ahora</h3><p>'+esc(x.prompt)+'</p><textarea class="ac-writing" id="ac-draft" placeholder="Escribe aquí tu respuesta o tus ideas...">'+esc(draft)+'</textarea><div class="ac-checks">'+x.checklist.map((s,i)=>'<label><input type="checkbox" data-selfcheck="'+i+'"> '+esc(s)+'</label>').join('')+'</div><p class="ac-muted">ADAZ guarda tu texto y te ofrece una lista para revisarlo. No asigna una banda IELTS automática.</p></div>':'<div class="ac-question"><h3>Comprueba lo que aprendiste</h3><p>'+esc(x.question)+'</p>'+x.options.map((s,i)=>'<button class="ac-option" data-answer="'+i+'">'+String.fromCharCode(65+i)+'. '+esc(s)+'</button>').join('')+'<button class="ac-primary" data-check-answer disabled>Comprobar mi respuesta</button><div id="ac-feedback" aria-live="polite"></div></div>';
+ page.innerHTML='<div class="ac-wrap"><div class="ac-topbar"><button class="ac-back" data-track-back="'+track+'">← Volver a lecciones</button><span class="ac-kicker">'+esc(t.name)+' · '+x.time+' MIN</span></div><div class="ac-head"><div class="ac-kicker">LECCIÓN · '+esc(x.skill.toUpperCase())+'</div><h1>'+esc(x.title)+'</h1><p>Lee la explicación, haz la actividad y guarda lo que aprendiste.</p></div>'+body+practice+'<div class="ac-panel"><h3>Para recordar</h3><p>'+esc(x.why)+'</p><button class="ac-primary" data-complete="'+track+':'+id+'" '+(x.type==='write'?'disabled':'disabled id="ac-complete"')+'>Guardar y terminar →</button><p class="ac-muted">El progreso queda guardado en este dispositivo. Puedes volver a practicar más adelante.</p></div></div>';
+}
+function choose(btn){selectedAnswer=Number(btn.dataset.answer);page.querySelectorAll('[data-answer]').forEach(b=>b.classList.toggle('selected',b===btn));const check=$('[data-check-answer]');if(check)check.disabled=false}
+function check(){
+ const x=courses[store.track]?.topics.find(z=>z.id===currentLesson);if(!x||selectedAnswer===null)return;
+ checked=true;currentCorrect=selectedAnswer===x.answer;const box=$('#ac-feedback');if(box)box.innerHTML='<div class="ac-feedback '+(currentCorrect?'':'bad')+'"><b>'+(currentCorrect?'¡Correcto!':'Revisemos la idea.')+'</b><br>'+esc(x.why)+'</div>';
+ page.querySelectorAll('[data-answer]').forEach(b=>b.disabled=true);const checkBtn=$('[data-check-answer]');if(checkBtn)checkBtn.disabled=true;const finish=$('[data-complete]');if(finish)finish.disabled=false;
+}
+function complete(track,id){
+ const x=courses[track]?.topics.find(z=>z.id===id);if(!x)return;let accuracy=null,note='';
+ if(x.type==='write'){
+  const draft=$('#ac-draft')?.value?.trim()||'';if(draft.length<25){alert('Escribe un poco más para guardar tu práctica.');return}
+  store.drafts[track+':'+id]=draft;note='Práctica escrita guardada. Revisa: '+x.checklist.join(' · ')+' Texto: '+draft.slice(0,1200);
+ }else{if(!checked){alert('Primero comprueba tu respuesta.');return}accuracy=currentCorrect?100:0;note=(currentCorrect?'Respuesta correcta. ':'Respuesta por revisar. ')+x.why}
+ store.curriculum[track]=store.curriculum[track]||{};const old=store.curriculum[track][id]||{};
+ store.curriculum[track][id]={...old,done:true,completedAt:today(),nextReview:afterDays(accuracy===0?1:accuracy===100?7:3),lastAccuracy:accuracy,draft:store.drafts[track+':'+id]||old.draft||''};
+ const prog=courses[track];store.history.unshift({track,program:track==='business'?'Negocios':track==='medicine'?'Medicina':track==='icfes'?'ICFES':'IELTS',topicId:id,title:x.title,skill:x.skill,date:today(),minutes:x.time,accuracy,notes:note});store.history=store.history.slice(0,200);store.xp+=10;updateStreak();persist();
+ syncMainStudy(track,x,x.time,note,accuracy);trackView(track);const toast=document.getElementById('toast');if(toast){toast.textContent='Lección guardada. ¡Buen avance!';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}
 }
 function historyView(){
- const list=mainStudy().rows.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,30);
- page.innerHTML='<div class="ac-wrap">'+toolbar('TUS PRÁCTICAS')+'<div class="ac-head"><div><div class="ac-kicker">TU HISTORIAL</div><h1>Todo lo que has estudiado</h1><p>Se muestran juntas las prácticas de Academy y las sesiones que registraste manualmente.</p></div></div>'+
- (list.length?'<div class="ac-progress-table">'+list.map(x=>'<div class="ac-progress-item"><div><b>'+esc(x.program||'Estudio')+' · '+esc(x.skill||'General')+'</b><small>'+esc(x.date||'')+' · '+(Number(x.minutes)||0)+' minutos · '+esc(x.goal||'Práctica')+'</small></div><span class="ac-state">'+(x.accuracy!==''&&x.accuracy!=null?Number(x.accuracy)+'%':x.band!==''&&x.band!=null?'Band '+Number(x.band).toFixed(1):'Guardada')+'</span></div>').join('')+'</div>':'<div class="ac-empty">Todavía no hay prácticas registradas.</div>')+'<div class="ac-foot"><button class="ac-primary" data-open-manual>＋ Registrar una sesión</button><button class="ac-quiet" data-study-progress>Ver mi progreso</button></div></div>';
+ const rows=store.history.slice(0,40);
+ page.innerHTML='<div class="ac-wrap"><div class="ac-topbar"><button class="ac-back" data-home>← Mis áreas</button><span class="ac-kicker">TU HISTORIAL</span></div><div class="ac-head"><h1>Lo que ya has aprendido</h1><p>Un registro de tus lecciones y prácticas.</p></div>'+(rows.length?'<div class="ac-history">'+rows.map(x=>'<div class="ac-history-item"><div><b>'+esc(x.title||x.topic||'Práctica')+'</b><small>'+esc(x.program||'Estudio')+' · '+esc(x.date||'')+' · '+(Number(x.minutes)||0)+' min</small></div><span class="ac-muted">'+(x.accuracy===null||x.accuracy===undefined?'Guardada':x.accuracy+'%')+'</span></div>').join('')+'</div>':'<div class="ac-panel"><p>Todavía no has guardado una lección. Elige un tema y empieza con una práctica corta.</p></div>')+'</div>';
 }
-function reviewView(){
- const due=dueTopics();
- page.innerHTML='<div class="ac-wrap">'+toolbar('RECORDATORIO DE ESTUDIO')+'<div class="ac-head"><div><div class="ac-kicker">REVISIÓN</div><h1>Volvamos a practicar</h1><p>Te mostraremos los temas que ya estudiaste y que conviene volver a intentar. Es una recomendación para ayudarte a recordar, no una nota del examen.</p></div></div>'+
- (due.length?'<div class="ac-list">'+due.map(x=>'<button class="ac-row" data-topic="'+x.track+':'+x.topic.id+'"><span class="ac-num">↻</span><span><h3>'+esc(x.topic.title)+'</h3><p>'+esc(titleTrack(x.track))+' · '+esc(x.topic.desc)+'</p></span><span class="ac-state">Repasar ›</span></button>').join('')+'</div>':'<div class="ac-empty">Por ahora no tienes nada pendiente. Cuando termines una práctica, ADAZ te dirá cuándo conviene volver a intentarla.</div>')+
- '<p class="ac-note">Las preguntas y pruebas se consultan en los materiales oficiales. ADAZ te ayuda a organizar cuándo practicar y revisar tus avances.</p></div>';
-}
-function resume(){if(!store.active){home();return}store.active.program==='ICFES'?examView():ieltsSessionView()}
-function handleClick(e){
- const track=e.target.closest('[data-track]');if(track){store.track=track.dataset.track;persist();home();return}
- const topic=e.target.closest('[data-topic]');if(topic){const parts=topic.dataset.topic.split(':');topicView(parts[0],parts.slice(1).join(':'));return}
- if(e.target.closest('[data-home]')){stopTick();home();return}
+page.addEventListener('click',e=>{
+ const track=e.target.closest('[data-track]');if(track){trackView(track.dataset.track);return}
+ const lesson=e.target.closest('[data-lesson]');if(lesson){const a=lesson.dataset.lesson.split(':');store.track=a[0];trackView(a[0]);lessonView(a[0],a[1]);return}
+ const back=e.target.closest('[data-track-back]');if(back){trackView(back.dataset.trackBack);return}
+ const option=e.target.closest('[data-answer]');if(option){choose(option);return}
+ if(e.target.closest('[data-check-answer]')){check();return}
+ const finish=e.target.closest('[data-complete]');if(finish){const a=finish.dataset.complete.split(':');complete(a[0],a[1]);return}
+ if(e.target.closest('[data-home]')){home();return}
  if(e.target.closest('[data-history]')){historyView();return}
- if(e.target.closest('[data-study-progress]')){progressView();return}
- if(e.target.closest('[data-open-manual]')){manualStudyView();return}
- if(e.target.closest('[data-review-list]')){reviewView();return}
- if(e.target.closest('[data-resume]')){resume();return}
- const startI=e.target.closest('[data-start-icfes]');if(startI){startIcfes(startI.dataset.startIcfes);return}
- const startE=e.target.closest('[data-start-ielts]');if(startE){startIelts(startE.dataset.startIelts);return}
- const ans=e.target.closest('[data-answer]');if(ans&&store.active?.program==='ICFES'){const n=Number(store.active.current||1);store.active.answers[n]=ans.dataset.answer;persist();examView();return}
- const q=e.target.closest('[data-q]');if(q&&store.active?.program==='ICFES'){store.active.current=Number(q.dataset.q);persist();examView();return}
- if(e.target.closest('[data-prev]')&&store.active){store.active.current=Math.max(1,Number(store.active.current||1)-1);persist();examView();return}
- if(e.target.closest('[data-next]')&&store.active){store.active.current=Math.min(store.active.count,Number(store.active.current||1)+1);persist();examView();return}
- if(e.target.closest('[data-flag]')&&store.active){const n=Number(store.active.current||1);store.active.flagged=store.active.flagged||[];store.active.flagged=store.active.flagged.includes(n)?store.active.flagged.filter(x=>x!==n):store.active.flagged.concat(n);persist();examView();return}
- if(e.target.closest('[data-open-source]')&&store.active){openOfficial(store.active.sourceUrl);return}
- if(e.target.closest('[data-finish]')){resultView();return}
- if(e.target.closest('[data-save-result]')){saveResult();return}
-}
-page.addEventListener('click',handleClick);
-document.addEventListener('submit',e=>{if(e.target&&e.target.id==='acManualForm'){e.preventDefault();saveManualStudy(e.target)}});
-window.addEventListener('adaz-prepare-study',e=>{manualStudyView(e.detail||{})});
-window.addEventListener('adaz-data-updated',()=>{if(page.classList.contains('active')){const prog=page.querySelector('.ac-study-overview');if(prog)home()}});
-window.addEventListener('adaz-experience-updated',()=>{if(page.classList.contains('active'))home()});
-document.addEventListener('click',e=>{if(e.target.closest('[data-page="academy"]'))setTimeout(home,90)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&store.active){stopTick();home()}});
-function addGymLibrary(){
- const training=document.querySelector('#page-training');
- if(!training||training.querySelector('.gym-guide'))return;
- const box=document.createElement('section');box.className='card gym-guide section-gap';
- box.innerHTML='<h2>Biblioteca de máquinas</h2><p class="smalltext muted">Guía rápida de reconocimiento y ajustes generales. El equipo puede variar entre sedes.</p><div class="note warn">Antes de usar una máquina nueva, pide a un instructor que muestre los ajustes y compruebe la técnica. Empieza con una resistencia que puedas controlar.</div>'+[
- ['Chest press','Pectoral, tríceps y deltoides anterior','Ajusta el asiento; espalda apoyada y empuja sin bloquear los codos.'],
- ['Lat pulldown','Dorsal ancho y flexores del codo','Ajusta el apoyo de muslos y lleva la barra al pecho sin balancear el tronco.'],
- ['Seated row','Dorsales, romboides y trapecio medio','Columna neutra; lleva el agarre al torso sin impulsarte hacia atrás.'],
- ['Leg press','Cuádriceps y glúteos','Pies estables; baja solo mientras mantengas la pelvis apoyada.'],
- ['Leg extension','Cuádriceps','Alinea la rodilla con el eje de la máquina y mueve sin impulso.'],
- ['Seated leg curl','Isquiotibiales','Ajusta el rodillo y flexiona las rodillas con recorrido controlado.'],
- ['Hip abductor','Abductores de cadera','Espalda apoyada; apertura controlada y sin rebotes.'],
- ['Cable station','Depende del accesorio','Verifica el mosquetón y la altura del cable antes de empezar.'],
- ['Shoulder press','Deltoides y tríceps','Ajusta el asiento para empezar cerca de los hombros y evita arquear la espalda.'],
- ['Assisted pull-up / dip','Espalda y bíceps o pecho y tríceps','Ajusta la asistencia con un instructor antes de aumentar dificultad.']
- ].map(m=>'<details><summary>'+esc(m[0])+' · '+esc(m[1])+'</summary><p>'+esc(m[2])+'</p></details>').join('')+'<div class="note green">Biblioteca educativa: no sustituye la inducción presencial ni las indicaciones de tu entrenador.</div>';
- training.append(box);
-}
-function init(){home();if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addGymLibrary,{once:true});else addGymLibrary();}
-init();
+});
+page.addEventListener('input',e=>{if(e.target.id==='ac-draft'){store.drafts[store.track+':'+currentLesson]=e.target.value;persist();const finish=$('[data-complete]');if(finish)finish.disabled=e.target.value.trim().length<25}});
+document.addEventListener('click',e=>{if(e.target.closest('[data-page="academy"]'))setTimeout(home,80)});
+window.addEventListener('adaz-data-updated',()=>{if(page.classList.contains('active')&&page.querySelector('.ac-summary'))home()});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',home,{once:true});else home();
 })();
