@@ -35,7 +35,7 @@ const milestones={
 '2026-12-12':['IELTS · Listening + Reading integrado ADAZ','20 preguntas Listening con voz sintetizada y 20 Reading dentro de ADAZ. Después, 45–60 min para corregir y registrar errores.'],
 '2026-12-19':['ICFES · simulacro extenso ADAZ (60 preguntas)','12 preguntas por área. Aproximadamente 2 horas. Cierra con matriz de fortalezas, errores conceptuales, lectura apresurada y manejo del tiempo.'],
 '2027-01-09':['ICFES · simulacro extenso ADAZ (60 preguntas)','12 preguntas por área, cronómetro personal y hoja de respuestas. Aproximadamente 2 horas; corrección en bloque separado.'],
-'2027-01-16':['IELTS Academic · práctica extensa ADAZ','Listening 40, Reading 40, Writing 2 tareas y Speaking 11–14 min. 2 h 45 min aprox. Guarda Writing y Speaking para recibir feedback.'],
+'2027-01-16':['IELTS Academic · práctica extensa ADAZ','20 preguntas Listening con voz sintetizada, 20 Reading, dos tareas Writing y tres prompts Speaking. Reserva hasta 2 h 45 min y guarda tus textos para revisión.'],
 '2027-01-30':['ICFES · simulacro extenso ADAZ (60 preguntas)','12 preguntas por área. Aproximadamente 2 horas. Analiza desempeño por competencia, no solo porcentaje total.'],
 '2027-02-13':['IELTS Academic · práctica extensa ADAZ','20 Listening, 20 Reading, dos tareas Writing y tres prompts Speaking. Compara con el diagnóstico anterior.'],
 '2027-02-27':['ICFES · simulacro extenso ADAZ (60 preguntas)','12 preguntas por área. Aproximadamente 2 horas. Comprueba si mejoró el área más débil.'],
