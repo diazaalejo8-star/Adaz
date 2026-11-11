@@ -77,7 +77,7 @@ jobs:
               raise SystemExit("Service worker cache version was not refreshed")
 
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
-          if "adaz-calendar-exam-results-v1" not in calendar_tests or "Simulacro integrado ADAZ" not in calendar_tests:
+          if "adaz-calendar-exam-results-v1" not in calendar_tests or "ICFES Saber 11 · simulacro integrado ADAZ" not in calendar_tests:
               raise SystemExit("The integrated calendar exam player is missing")
 
           academy = Path("adaz-academy.js").read_text(encoding="utf-8")
