@@ -104,7 +104,8 @@ const css=document.createElement('style');css.id='adaz-study-v2-style';css.textC
 @media(max-width:620px){#page-academy .s2-tracks{grid-template-columns:repeat(2,minmax(0,1fr))}#page-academy .s2-head{align-items:center}#page-academy .s2-next{padding:15px}}
 `;
 if(!document.getElementById(css.id))document.head.append(css);
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){console.warn('No se pudo guardar el avance de Estudio',e)}}\nfunction points(){return state.points+Number(read('adaz-experience-v1',{}).points||0)}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){console.warn('No se pudo guardar el avance de Estudio',e)}}
+function points(){return state.points+Number(read('adaz-experience-v1',{}).points||0)}
 function lessonKey(t,l){return t+':'+l}
 function countDone(t){return tracks[t].lessons.filter(l=>state.done[lessonKey(t,l.id)]).length}
 function nextLesson(t){return tracks[t].lessons.find(l=>!state.done[lessonKey(t,l.id)])||tracks[t].lessons[0]}
