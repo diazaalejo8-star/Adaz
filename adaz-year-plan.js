@@ -108,6 +108,7 @@ function render(){
 let planMode=false,homeSnapshot='';
 function ensureButton(){if(planMode)return;const h=page.querySelector('.s2-head');if(!h||h.querySelector('[data-yp-open]'))return;homeSnapshot=page.innerHTML;const b=document.createElement('button');b.type='button';b.className='yp-open';b.dataset.ypOpen='1';b.textContent='Calendario 2026–2027 →';h.appendChild(b);} 
 page.addEventListener('click',e=>{const b=e.target.closest('[data-yp-open]');if(!b||planMode)return;homeSnapshot=page.innerHTML;planMode=true;let t=today();if(t<START)t=START;if(t>END)t=END;state.month=t.slice(0,7);state.selected=t;save();render()})
+window.__adazCalendarRender=render;
 new MutationObserver(()=>{if(!planMode)ensureButton()}).observe(page,{childList:true,subtree:true});
 ensureButton();
 })();
