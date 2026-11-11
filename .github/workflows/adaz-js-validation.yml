@@ -73,8 +73,17 @@ jobs:
               raise SystemExit("The one-step-at-a-time experience is missing")
           if "home-extra-row" not in html or "home-stats" not in html:
               raise SystemExit("The simplified home layout is missing")
-          if "adaz-shell-v29" not in sw:
+          if "adaz-shell-v30" not in sw:
               raise SystemExit("Service worker cache version was not refreshed")
 
-          print("Navigation, five-tab layout and swipe-card checks passed.")
+          academy = Path("adaz-academy.js").read_text(encoding="utf-8")
+          for area in ["Oro Laminado", "Medicina", "ICFES · Saber 11", "IELTS Academic"]:
+              if area not in academy:
+                  raise SystemExit(f"Study path is missing: {area}")
+          if len(re.findall(r"id:'[bmei][0-9]+'", academy)) < 26:
+              raise SystemExit("The interactive study library is incomplete")
+          if "Ingeniería Financiera" in academy:
+              raise SystemExit("The removed study path reappeared")
+
+          print("Navigation, simplified layout and 4 study paths passed.")
           PY

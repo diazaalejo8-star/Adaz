@@ -28,55 +28,30 @@
     else window.alert(message);
   };
   const week = {
-    0: [
-      ['Mañana flexible','Descanso y vida personal','Duerme lo necesario y reserva tiempo libre sin convertirlo en otra obligación.'],
-      ['10–20 min','Revisión semanal','Mira lo que sí hiciste, elige de una a tres prioridades y ajusta lo que no sea realista.'],
-      ['Bloque corto','Preparar la semana','Deja lista la mochila/materiales y define la primera tarea de lunes.'],
-      ['Noche','Cierre tranquilo','Evita llenar el domingo de trabajo pendiente; procura acostarte a una hora razonable.']
-    ],
-    1: [
-      ['06:30–13:45*','Colegio','Horario de referencia registrado en tu plan; comprueba si sigue vigente.'],
-      ['Después de clases','Comer y recuperar energía','Haz una pausa antes del siguiente bloque exigente.'],
-      ['35 min','IELTS · Listening','Haz una práctica oficial breve y revisa cada error, distractor y paráfrasis.'],
-      ['Según calendario real','Fuerza / gimnasio','Usa tu rutina vigente y solo si toca esa sesión; no añadas volumen por compensar.'],
-      ['10–15 min','Aestel Lux · control diario','Revisa pedidos, anticipos y mensajes importantes con un objetivo definido.'],
-      ['Noche','Preparar mañana','Deja anotada la prioridad del martes y haz un cierre breve.']
-    ],
-    2: [
-      ['06:30–13:45*','Colegio','Bloque escolar de referencia; ajústalo si cambió tu horario.'],
-      ['30 min','ICFES · área prioritaria','Resuelve preguntas y escribe por qué descartaste las opciones incorrectas.'],
-      ['Según entrenador','Natación / deporte planificado','Registra duración, distancia si aplica y cómo te sentiste. La indicación del entrenador tiene prioridad.'],
-      ['10 min','Repaso espaciado','Intenta recordar cinco conceptos antes de volver a mirar los apuntes.'],
-      ['Noche','Desconexión','Tiempo personal, alimentación y sueño; evita duplicar tareas si el día fue pesado.']
-    ],
-    3: [
-      ['06:30–16:30*','Colegio · jornada larga','Miércoles figura como la jornada más larga en el horario provisional. Verifica si sigue vigente.'],
-      ['15 min','Mínimo académico viable','Repasa tres errores o cinco ideas de memoria; no fuerces una sesión extensa.'],
-      ['Según calendario real','Entrenamiento o recuperación','Sigue el plan del entrenador y cómo te encuentras ese día.'],
-      ['Noche','Dejar listo mañana','Materiales preparados y cierre temprano para proteger el descanso.']
-    ],
-    4: [
-      ['06:30–13:45*','Colegio','Bloque escolar de referencia; ajusta si ya cambió.'],
-      ['35 min','IELTS · Reading o Writing','Alterna habilidades por semana. Resuelve con tiempo y evalúa la calidad, no solo la cantidad.'],
-      ['Según calendario real','Entrenamiento planificado','Fuerza, natación o recuperación según tu plan vigente.'],
-      ['10 min','Repaso de finanzas','Actualiza caja, costos, encargos o pagos pendientes; no tomes decisiones con cifras estimadas.'],
-      ['Noche','Tiempo libre sin culpa','El ocio también tiene lugar en una semana equilibrada.']
-    ],
-    5: [
-      ['06:30–13:45*','Colegio','Horario escolar de referencia.'],
-      ['30 min','ICFES o IELTS Speaking','Practica un área prioritaria y apunta un ajuste concreto para la próxima vez.'],
-      ['15 min','Cierre Aestel Lux','Revisa entregas, cobros y una publicación o idea de contenido medible.'],
-      ['Según entrenador','Natación / deporte planificado','No compenses sesiones perdidas con trabajo extra automático.'],
-      ['Noche','Recuperación y relaciones','Reserva tiempo para descansar y estar con tu gente.']
-    ],
-    6: [
-      ['30 min','Estudio a elección','Escoge la habilidad más débil según tus registros; puedes alternar IELTS e ICFES.'],
-      ['40 min','Bloque de negocio','Catálogo, costos, contenido, servicio al cliente o revisión de proveedores; una tarea por bloque.'],
-      ['Según calendario real','Entrenamiento','Mantén el calendario real y la recuperación; no agregues dobles sesiones por defecto.'],
-      ['Después','Actividad elegida','Algo creativo, social, cultural o simplemente entretenido.']
-    ]
+    0: [['Mañana flexible','Descanso','Recupera energía y disfruta tiempo personal.'],['10–20 min','Revisión de semana','Elige hasta tres prioridades realistas.'],['Noche','Preparar mañana','Deja listo lo necesario y descansa.']],
+    1: [['06:30–13:45*','Colegio','Horario provisional; confirma si sigue vigente.'],['30 min','IELTS · una habilidad','Haz una práctica breve y revisa un error importante.'],['Según entrenador','Gimnasio o recuperación','Sigue la sesión prevista; no añadas trabajo extra.']],
+    2: [['06:30–13:45*','Colegio','Horario provisional; confirma si sigue vigente.'],['30 min','ICFES · área prioritaria','Resuelve unas preguntas y explica tus errores.'],['Según entrenador','Natación o recuperación','Respeta la carga indicada por tu entrenador.']],
+    3: [['06:30–16:30*','Colegio · día largo','Horario provisional; confirma si sigue vigente.'],['10–15 min','Repaso ligero','Recuerda unas ideas sin mirar tus apuntes.'],['Noche','Comer y descansar','No hace falta añadir otra sesión exigente.']],
+    4: [['06:30–13:45*','Colegio','Horario provisional; confirma si sigue vigente.'],['30 min','IELTS · Reading o Writing','Alterna habilidades y revisa una mejora concreta.'],['Según entrenador','Entrenamiento o recuperación','Ajusta la sesión a tu energía y al plan deportivo.']],
+    5: [['06:30–13:45*','Colegio','Horario provisional; confirma si sigue vigente.'],['30 min','ICFES o IELTS Speaking','Elige solo el área que más necesitas trabajar.'],['10–15 min','Oro Laminado','Revisa pedidos, pagos o inventario; una sola tarea.']],
+    6: [['30 min','Estudio a elección','Escoge una lección de Medicina, ICFES o IELTS.'],['30 min','Oro Laminado','Mejora una ficha, costo o idea de contenido.'],['Según entrenador','Entrenamiento o descanso','No acumules sesiones para compensar.']]
   };
   const dayNames = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  function compactReminderCard() {
+    const form = $('#reminderForm');
+    const card = form && form.closest('.card');
+    if (!card || card.querySelector('.routine-reminder-details')) return;
+    const heading = card.querySelector('h2');
+    if (heading) heading.textContent = 'Avisos (opcional)';
+    const details = document.createElement('details');
+    details.className = 'routine-reminder-details';
+    const summary = document.createElement('summary');
+    summary.textContent = 'Configurar recordatorios';
+    const body = document.createElement('div');
+    while (card.children.length > 1) body.append(card.children[1]);
+    details.append(summary, body);
+    card.append(details);
+  }
   function currentSchedule() {
     const d = new Date();
     const num = d.getDay();
