@@ -73,7 +73,7 @@ jobs:
               raise SystemExit("The one-step-at-a-time experience is missing")
           if "home-extra-row" not in html or "home-stats" not in html:
               raise SystemExit("The simplified home layout is missing")
-          if "adaz-shell-v31" not in sw:
+          if "adaz-shell-v32" not in sw:
               raise SystemExit("Service worker cache version was not refreshed")
 
           academy = Path("adaz-academy.js").read_text(encoding="utf-8")
@@ -92,6 +92,13 @@ jobs:
                   raise SystemExit(f"The {track} challenge test is incomplete")
               if not review or len(re.findall(r"\{title:", review.group(1))) < 5:
                   raise SystemExit(f"The {track} review guide is incomplete")
+          if "goalPanel()" not in academy or "data-s2-save-goals" not in academy:
+              raise SystemExit("The personal IELTS/ICFES goal tracker is missing")
+          if "adaz-goals-tracker-v1" not in academy:
+              raise SystemExit("The personal score history key is missing")
+          for phrase in ["brought forward by two days", "Ganancia antes de costos fijos", "pH 3"]:
+              if phrase not in academy:
+                  raise SystemExit(f"Study question regression: {phrase}")
           if "adaz-commercial-theme" not in html:
               raise SystemExit("The commercial visual theme is missing")
           if "spotifyClientId" in html or "connectSpotify" in html:
