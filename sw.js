@@ -1,9 +1,9 @@
-const CACHE = 'adaz-shell-v33';
+const CACHE = 'adaz-shell-v34';
 const SHELL_FILES = [
   './', './index.html', './rescate.html', './manifest.webmanifest', './icon.svg',
   './icon-192.png', './icon-512.png', './adaz-apple.css',
   './adaz-extra.js', './adaz-integrations.js', './adaz-academy.js', './adaz-experience.js',
-  './adaz-business-health.js', './adaz-personal-finance-training.js'
+  './adaz-business-health.js', './adaz-personal-finance-training.js', './adaz-year-plan.js'
 ];
 const absolute = path => new URL(path, self.registration.scope).href;
 const indexUrl = absolute('./index.html');
