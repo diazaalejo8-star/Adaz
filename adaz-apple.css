@@ -406,3 +406,6 @@ button{touch-action:manipulation}
  #page-routine .routine-item{align-items:flex-start}
  #page-routine .routine-time{min-width:70px}
 }
+
+/* The old study dashboard remains only as a private data form for backward-compatible records. */
+#page-study{display:none!important}
