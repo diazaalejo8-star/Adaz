@@ -44,12 +44,11 @@ La invitación está ligada al correo y vence en siete días. El correo de la cu
 
 ## 4. Construir las APK de prueba
 
-El workflow `.github/workflows/build-adaz-apks.yml` construye dos APK de depuración:
+El workflow `.github/workflows/build-adaz-apks.yml` construye una APK de depuración independiente para los adultos. La APK Personal que ya tienes se conserva: al actualizarse la PWA publicada, mantiene su instalación y sus datos locales; no necesitas reemplazarla con otro paquete.
 
-- `app-personal-debug.apk` — paquete `com.adaz.personal`
-- `app-family-debug.apk` — paquete `com.adaz.family`
+- `app-debug.apk` — paquete `com.adaz.family` (ADAZ Family)
 
-Después de que GitHub Actions termine correctamente, descarga el artefacto **ADAZ-Personal-and-Family-APKs** desde la ejecución del workflow. Son APK de depuración para pruebas, no APK de lanzamiento firmadas para distribución pública.
+Después de que GitHub Actions termine correctamente, descarga el artefacto **ADAZ-Family-APK** desde la ejecución del workflow. Es una APK de depuración para pruebas, no una APK de lanzamiento firmada para distribución pública.
 
 ## 5. Pruebas antes de confiar en el sistema
 
