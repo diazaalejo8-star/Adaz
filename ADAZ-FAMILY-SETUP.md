@@ -25,7 +25,7 @@
 ## 2. Vincular las cuentas
 
 1. En ADAZ Personal, abre **ADAZ Family** desde el acceso superior.
-2. Guarda el Project URL y la clave pública. Si ya configuraste la nube en ADAZ Personal, Family puede reutilizar esa configuración en ese mismo dispositivo.
+2. Guarda manualmente el mismo Project URL y la clave pública publishable/anon en ADAZ Family. En los APK separados, cada aplicación tiene su propio almacenamiento local y no comparte automáticamente la configuración de ADAZ Personal.
 3. Crea tu cuenta con correo y contraseña dentro de la app. Si Supabase exige confirmar el correo, abre el mensaje, confirma y vuelve a la app para iniciar sesión con tu contraseña.
 4. En la pestaña ADAZ Personal, escribe el correo del adulto y crea una invitación.
 5. Comparte el código directamente con ese adulto.
