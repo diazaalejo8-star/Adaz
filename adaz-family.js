@@ -1,7 +1,8 @@
 (() => {
 'use strict';
 const $=id=>document.getElementById(id), KEY='adaz-family-config-v1';
-let cfg=read(KEY,{url:'',key:''}), client=null, session=null, mode='student', links=[];
+const appRole=new URLSearchParams(location.search).get('role')==='parent'?'parent':'student';
+let cfg=read(KEY,{url:'',key:''}), client=null, session=null, mode=appRole, links=[];
 const personalCfg=read('adaz-cloud-config',{});if(!cfg.url&&personalCfg.supabaseUrl)cfg={url:personalCfg.supabaseUrl,key:personalCfg.supabaseKey||''};
 function read(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch{return d}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
@@ -11,7 +12,7 @@ function dateKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMon
 function localData(){try{return JSON.parse(localStorage.getItem('adaz-data-v1')||'{}')}catch{return {}}}
 function setupClient(){if(!cfg.url||!cfg.key)throw new Error('Guarda primero la conexión Supabase.');if(!window.supabase?.createClient)throw new Error('No se pudo cargar Supabase.');if(!client)client=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return client}
 function showApp(s){session=s; $('authCard').classList.toggle('hidden',!!s);$('appCard').classList.toggle('hidden',!s);if(s){$('sessionEmail').textContent=s.user.email||'';refreshAll().catch(e=>status('appStatus',e.message));}}
-function selectedMode(next){mode=next;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===next));$('studentPanel').classList.toggle('hidden',next!=='student');$('parentPanel').classList.toggle('hidden',next!=='parent');if(session)refreshAll().catch(e=>status('appStatus',e.message));}
+function selectedMode(next){if(next!==appRole)return;mode=next;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===next));$('studentPanel').classList.toggle('hidden',next!=='student');$('parentPanel').classList.toggle('hidden',next!=='parent');if(session)refreshAll().catch(e=>status('appStatus',e.message));}
 async function refreshAll(){const c=setupClient();const {data,error}=await c.auth.getSession();if(error)throw error;session=data.session;if(!session){showApp(null);return;}showAppShell();await loadLinks();if(mode==='student'){renderPermissions();renderPreview();await loadMyOutings();}else{await loadParentData();}}
 function showAppShell(){$('authCard').classList.add('hidden');$('appCard').classList.remove('hidden');$('sessionEmail').textContent=session?.user?.email||'';}
 async function loadLinks(){const {data,error}=await client.from('adaz_family_links').select('id,child_id,parent_id,child_label,status,permissions,created_at');if(error)throw error;links=data||[];renderLinks();}
@@ -34,6 +35,6 @@ $('testConfig').onclick=async()=>{try{const c=setupClient();const {error}=await 
 $('signIn').onclick=async()=>{try{const c=setupClient(),email=$('email').value.trim(),password=$('password').value;if(!email||!password)throw new Error('Escribe tu correo y contraseña.');const {data,error}=await c.auth.signInWithPassword({email,password});if(error)throw error;status('authStatus','Sesión iniciada.');showApp(data.session);}catch(e){status('authStatus',e.message);}};$('signUp').onclick=async()=>{try{const c=setupClient(),email=$('email').value.trim(),password=$('password').value;if(!email||password.length<8)throw new Error('Escribe tu correo y una contraseña de al menos 8 caracteres.');const {data,error}=await c.auth.signUp({email,password});if(error)throw error;if(data.session){status('authStatus','Cuenta creada y sesión iniciada.');showApp(data.session);}else{status('authStatus','Cuenta creada. Revisa el correo para confirmar la dirección y después vuelve aquí para iniciar sesión con tu contraseña.');}}catch(e){status('authStatus',e.message);}};
 $('refresh').onclick=()=>refreshAll().catch(e=>status('appStatus',e.message));$('signOut').onclick=async()=>{try{await client.auth.signOut();showApp(null);}catch(e){status('appStatus',e.message);}};
 $('createInvite').onclick=()=>createInvite().catch(e=>status('appStatus',e.message));$('savePermissions').onclick=()=>savePermissions().catch(e=>status('permissionStatus',e.message));$('publishSummary').onclick=()=>publishSummary().catch(e=>status('appStatus',e.message));$('createOuting').onclick=()=>createOuting().catch(e=>status('appStatus',e.message));$('acceptInvite').onclick=()=>acceptInvite().catch(e=>status('acceptStatus',e.message));
-document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>selectedMode(b.dataset.mode));
+document.querySelectorAll('[data-mode]').forEach(b=>{b.hidden=b.dataset.mode!==appRole;b.onclick=()=>selectedMode(b.dataset.mode);});
 (async()=>{try{if(cfg.url&&cfg.key){const c=setupClient();const {data}=await c.auth.getSession();showApp(data.session);if(data.session)selectedMode('student');}}catch(e){status('configStatus',e.message);}})();
 })();
