@@ -15,6 +15,7 @@
 3. Copia y ejecuta, en orden, estos archivos del repositorio:
    - `supabase/migrations/202611110001_adaz_family.sql`
    - `supabase/migrations/202611110002_adaz_family_permissions.sql`
+   - `supabase/migrations/202611110003_adaz_family_evidence_constraints.sql`
 4. Revisa que las cinco tablas `adaz_family_*` y `adaz_outing_requests` / `adaz_parent_responses` aparezcan creadas.
 5. En **Authentication → URL Configuration**, permite la URL publicada de ADAZ como redirect URL.
 6. Usa únicamente el **Project URL** y la clave pública **publishable/anon**. Nunca pegues una `service_role` o una clave secreta en la aplicación.
