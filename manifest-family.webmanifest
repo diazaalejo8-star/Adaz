@@ -1,0 +1,18 @@
+{
+  "id": "./family.html",
+  "name": "ADAZ Family — Espacio familiar",
+  "short_name": "ADAZ Family",
+  "description": "Panel familiar de acuerdos, progreso compartido y planes de salida.",
+  "lang": "es-CO",
+  "start_url": "./family.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#090b10",
+  "theme_color": "#090b10",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
