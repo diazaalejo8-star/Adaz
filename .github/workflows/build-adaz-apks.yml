@@ -13,7 +13,19 @@ on:
       - 'adaz-*.js'
       - 'adaz-*.css'
       - '.github/workflows/build-adaz-apks.yml'
-  pull_request:\n    branches: [main]\n    paths:\n      - 'android/**'\n      - 'index.html'\n      - 'family.html'\n      - 'adaz-family.js'\n      - 'adaz-family-link.js'\n      - 'manifest*.webmanifest'\n      - 'adaz-*.js'\n      - 'adaz-*.css'\n      - '.github/workflows/build-adaz-apks.yml'\n  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - 'index.html'
+      - 'family.html'
+      - 'adaz-family.js'
+      - 'adaz-family-link.js'
+      - 'manifest*.webmanifest'
+      - 'adaz-*.js'
+      - 'adaz-*.css'
+      - '.github/workflows/build-adaz-apks.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -39,7 +51,17 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Check JavaScript syntax\n        run: |\n          node --check adaz-family.js\n          node --check adaz-family-link.js\n          node --check adaz-academy-curriculum.js\n          node --check adaz-year-plan.js\n\n      - name: Build both debug APKs
+      - name: Check JavaScript syntax
+        run: |
+          node --check adaz-family.js
+          node --check adaz-family-link.js
+          node --check adaz-academy-curriculum.js
+          node --check adaz-year-plan.js
+          node --check adaz-academy.js
+          node --check adaz-integrations.js
+          node --check adaz-extra.js
+
+      - name: Build both debug APKs
         working-directory: android
         run: gradle --no-daemon assemblePersonalDebug assembleFamilyDebug
 
