@@ -1,6 +1,7 @@
 -- ADAZ FAMILY · CONFIGURACIÓN COMPLETA DE BASE DE DATOS
--- Ejecutar una sola vez en Supabase SQL Editor, en un proyecto de pruebas antes de producción.
+-- Ejecutar completo en Supabase SQL Editor. El script puede volver a ejecutarse si una ejecución anterior quedó incompleta.
 -- Incluye las cinco migraciones versionadas del repositorio.
+-- Las políticas y restricciones se preparan para una ejecución repetible.
 
 -- SOURCE: supabase/migrations/202611110001_adaz_family.sql
 -- ADAZ Family v1
@@ -269,6 +270,7 @@ with check (
 
 -- SOURCE: supabase/migrations/202611120002_adaz_family_parent_response_read.sql
 -- ADAZ Family v1.1: adults can read only their own responses for permitted active outings.
+drop policy if exists "parent reads own outing responses" on public.adaz_parent_responses;
 create policy "parent reads own outing responses"
 on public.adaz_parent_responses
 for select to authenticated
