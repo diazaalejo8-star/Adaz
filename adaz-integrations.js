@@ -42,7 +42,10 @@
     localStorage.setItem(key,JSON.stringify(value));
   }
   function appBaseUri() {
-    return location.origin + location.pathname.replace(/index\.html$/i,'').replace(/\/?$/,'/');
+    if (window.ADAZNative && typeof window.ADAZNative.authRedirectUri === 'function') {
+      return window.ADAZNative.authRedirectUri();
+    }
+    return location.origin + location.pathname.replace(/index\\.html$/i,'').replace(/\\/?$/,'/');
   }
   function currentLocalData() {
     const rawProgress=readJSON('adaz-data-v1',{});
