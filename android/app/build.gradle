@@ -8,29 +8,16 @@ android {
     compileSdk 35
 
     defaultConfig {
+        applicationId 'com.adaz.family'
         minSdk 24
         targetSdk 35
         versionCode 1
         versionName '1.0.0'
+        resValue 'string', 'app_name', 'ADAZ Family'
+        buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/family.html"'
     }
 
     buildFeatures { buildConfig true }
-
-    flavorDimensions += 'edition'
-    productFlavors {
-        personal {
-            dimension 'edition'
-            applicationId 'com.adaz.personal'
-            resValue 'string', 'app_name', 'ADAZ'
-            buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/index.html"'
-        }
-        family {
-            dimension 'edition'
-            applicationId 'com.adaz.family'
-            resValue 'string', 'app_name', 'ADAZ Family'
-            buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/family.html"'
-        }
-    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
