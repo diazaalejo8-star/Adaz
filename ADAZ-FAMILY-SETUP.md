@@ -28,10 +28,11 @@
 
 1. En ADAZ Personal, abre **ADAZ Family** desde el acceso superior.
 2. Guarda el Project URL y la clave pública. Si ya configuraste la nube en ADAZ Personal, Family puede reutilizar esa configuración en ese mismo dispositivo.
-3. Crea tu cuenta con correo y contraseña dentro de la app. Si Supabase exige confirmar el correo, abre el mensaje, confirma y vuelve a la app para iniciar sesión con tu contraseña.
+3. En cada aplicación, guarda el mismo Project URL y clave pública. Como Android mantiene datos separados por APK, no se copian automáticamente entre teléfonos.
+4. Cada integrante escribe su propio correo y pulsa **Enviar enlace de acceso**. Abre el enlace recibido en ese mismo dispositivo para iniciar sesión; Personal y Family usan el mismo acceso sin contraseña.
 4. En la pestaña ADAZ Personal, escribe el correo del adulto y crea una invitación.
 5. Comparte el código directamente con ese adulto.
-6. El adulto instala ADAZ Family, introduce el mismo Project URL y clave pública, crea su propia cuenta con su correo, inicia sesión y acepta el código.
+6. El adulto instala ADAZ Family, introduce el mismo Project URL y clave pública, solicita su enlace de acceso con el correo invitado y, tras iniciar sesión, acepta el código.
 7. En tu cuenta, activa únicamente las categorías que hayas acordado compartir.
 
 La invitación está ligada al correo y vence en siete días. El correo de la cuenta invitada es una comprobación de acceso, no una verificación legal de identidad; confirma personalmente que corresponde a tu padre, madre o acudiente.
