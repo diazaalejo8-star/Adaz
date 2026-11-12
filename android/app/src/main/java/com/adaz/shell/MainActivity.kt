@@ -1,20 +1,18 @@
 package com.adaz.shell
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.CookieManager
-import android.webkit.SafeBrowsingResponse
-import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
-import android.webkit.WebSettings
 
-class MainActivity : ComponentActivity() {
+class MainActivity : Activity() {
     private lateinit var webView: WebView
     private val trustedHost = "diazaalejo8-star.github.io"
 
@@ -22,7 +20,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         webView = WebView(this)
-        webView.setBackgroundColor(android.graphics.Color.rgb(9, 11, 16))
+        webView.setBackgroundColor(Color.rgb(9, 11, 16))
         webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -39,10 +37,9 @@ class MainActivity : ComponentActivity() {
             setAcceptCookie(true)
             setAcceptThirdPartyCookies(webView, false)
         }
-        webView.webChromeClient = WebChromeClient()
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                val uri = request.url
+                val uri: Uri = request.url
                 if (uri.scheme == "https" && uri.host == trustedHost) return false
                 return try {
                     startActivity(Intent(Intent.ACTION_VIEW, uri))
@@ -55,12 +52,6 @@ class MainActivity : ComponentActivity() {
         setContentView(webView)
         if (savedInstanceState == null) webView.loadUrl(BuildConfig.START_URL)
         else webView.restoreState(savedInstanceState)
-
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (webView.canGoBack()) webView.goBack() else finish()
-            }
-        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -68,9 +59,16 @@ class MainActivity : ComponentActivity() {
         super.onSaveInstanceState(outState)
     }
 
+    @Deprecated("Deprecated in Android API; retained for broad device compatibility.")
+    override fun onBackPressed() {
+        if (this::webView.isInitialized && webView.canGoBack()) webView.goBack() else super.onBackPressed()
+    }
+
     override fun onDestroy() {
-        webView.stopLoading()
-        webView.destroy()
+        if (this::webView.isInitialized) {
+            webView.stopLoading()
+            webView.destroy()
+        }
         super.onDestroy()
     }
 }
