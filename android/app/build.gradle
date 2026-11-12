@@ -8,15 +8,31 @@ android {
     compileSdk 35
 
     defaultConfig {
-        // ADAZ Personal is the primary app. Family is an integrated screen
-        // served from the same trusted origin and WebView storage context.
         applicationId 'com.adaz.personal'
         minSdk 24
         targetSdk 35
         versionCode 2
         versionName '1.1.0'
-        resValue 'string', 'app_name', 'ADAZ'
-        buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/index.html"'
+    }
+
+    flavorDimensions += 'edition'
+    productFlavors {
+        personal {
+            dimension 'edition'
+            applicationId 'com.adaz.personal'
+            versionCode 2
+            versionName '1.1.0'
+            resValue 'string', 'app_name', 'ADAZ'
+            buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/index.html"'
+        }
+        family {
+            dimension 'edition'
+            applicationId 'com.adaz.family'
+            versionCode 2
+            versionName '1.1.0'
+            resValue 'string', 'app_name', 'ADAZ Family'
+            buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/family.html"'
+        }
     }
 
     buildFeatures { buildConfig true }
