@@ -31,7 +31,7 @@ android {
             versionCode 2
             versionName '1.1.0'
             resValue 'string', 'app_name', 'ADAZ Family'
-            buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/family.html"'
+            buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/family.html?role=parent"'
         }
     }
 
