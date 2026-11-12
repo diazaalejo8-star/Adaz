@@ -1,19 +1,7 @@
-name: Build ADAZ Family APK
+name: Build ADAZ Personal Integrated APK
 
 on:
   push:
-    branches: [main, adaz-family-v1]
-    paths:
-      - 'android/**'
-      - 'index.html'
-      - 'family.html'
-      - 'adaz-family.js'
-      - 'adaz-family-link.js'
-      - 'manifest*.webmanifest'
-      - 'adaz-*.js'
-      - 'adaz-*.css'
-      - '.github/workflows/build-adaz-apks.yml'
-  pull_request:
     branches: [main]
     paths:
       - 'android/**'
@@ -22,6 +10,7 @@ on:
       - 'adaz-family.js'
       - 'adaz-family-link.js'
       - 'manifest*.webmanifest'
+      - 'sw.js'
       - 'adaz-*.js'
       - 'adaz-*.css'
       - '.github/workflows/build-adaz-apks.yml'
@@ -66,15 +55,14 @@ jobs:
           node --check adaz-integrations.js
           node --check adaz-extra.js
 
-      - name: Build both debug APKs
+      - name: Build ADAZ Personal debug APK
         working-directory: android
         run: gradle --no-daemon assembleDebug
 
-      - name: Upload APKs
+      - name: Upload integrated ADAZ APK
         uses: actions/upload-artifact@v4
         with:
-          name: ADAZ-Family-APK
+          name: ADAZ-Personal-Integrated-APK
           if-no-files-found: error
-          path: |
-            android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
