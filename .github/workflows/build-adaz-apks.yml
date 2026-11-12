@@ -13,7 +13,7 @@ on:
       - 'adaz-*.js'
       - 'adaz-*.css'
       - '.github/workflows/build-adaz-apks.yml'
-  workflow_dispatch:
+  pull_request:\n    branches: [main]\n    paths:\n      - 'android/**'\n      - 'index.html'\n      - 'family.html'\n      - 'adaz-family.js'\n      - 'adaz-family-link.js'\n      - 'manifest*.webmanifest'\n      - 'adaz-*.js'\n      - 'adaz-*.css'\n      - '.github/workflows/build-adaz-apks.yml'\n  workflow_dispatch:
 
 permissions:
   contents: read
