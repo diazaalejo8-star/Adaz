@@ -25,7 +25,7 @@ create table if not exists public.adaz_family_links (
   parent_id uuid not null references auth.users(id) on delete cascade,
   child_label text not null default 'ADAZ Personal',
   status text not null default 'active' check (status in ('active','revoked')),
-  permissions jsonb not null default '{"study":true,"habits":true,"business":false,"training":false,"outings":true}'::jsonb,
+  permissions jsonb not null default '{"study":false,"habits":false,"business":false,"training":false,"outings":false}'::jsonb,
   created_at timestamptz not null default now(),
   unique(child_id,parent_id),
   check (jsonb_typeof(permissions) = 'object')
