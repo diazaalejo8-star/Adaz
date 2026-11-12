@@ -1,0 +1,57 @@
+name: Build ADAZ Personal and Family APKs
+
+on:
+  push:
+    branches: [main, adaz-family-v1]
+    paths:
+      - 'android/**'
+      - 'index.html'
+      - 'family.html'
+      - 'adaz-family.js'
+      - 'adaz-family-link.js'
+      - 'manifest*.webmanifest'
+      - 'adaz-*.js'
+      - 'adaz-*.css'
+      - '.github/workflows/build-adaz-apks.yml'
+  pull_request:\n    branches: [main]\n    paths:\n      - 'android/**'\n      - 'index.html'\n      - 'family.html'\n      - 'adaz-family.js'\n      - 'adaz-family-link.js'\n      - 'manifest*.webmanifest'\n      - 'adaz-*.js'\n      - 'adaz-*.css'\n      - '.github/workflows/build-adaz-apks.yml'\n  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Check JavaScript syntax\n        run: |\n          node --check adaz-family.js\n          node --check adaz-family-link.js\n          node --check adaz-academy-curriculum.js\n          node --check adaz-year-plan.js
+          node --check adaz-academy.js
+          node --check adaz-integrations.js
+          node --check adaz-extra.js\n\n      - name: Build both debug APKs
+        working-directory: android
+        run: gradle --no-daemon assemblePersonalDebug assembleFamilyDebug
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ADAZ-Personal-and-Family-APKs
+          if-no-files-found: error
+          path: |
+            android/app/build/outputs/apk/personal/debug/app-personal-debug.apk
+            android/app/build/outputs/apk/family/debug/app-family-debug.apk
+          retention-days: 30
