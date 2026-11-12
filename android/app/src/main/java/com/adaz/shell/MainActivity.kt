@@ -21,6 +21,9 @@ class MainActivity : Activity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+        }
         window.statusBarColor = Color.rgb(9, 11, 16)
         window.navigationBarColor = Color.rgb(9, 11, 16)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
