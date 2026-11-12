@@ -12,10 +12,12 @@
 
 1. Abre el proyecto Supabase que ya usas para ADAZ.
 2. En **SQL Editor**, abre una consulta nueva.
-3. Copia y ejecuta, en orden, estos archivos del repositorio:
+3. Copia y ejecuta, en orden, estos cinco archivos del repositorio:
    - `supabase/migrations/202611110001_adaz_family.sql`
    - `supabase/migrations/202611110002_adaz_family_permissions.sql`
    - `supabase/migrations/202611110003_adaz_family_evidence_constraints.sql`
+   - `supabase/migrations/202611120001_adaz_family_outing_permission.sql`
+   - `supabase/migrations/202611120002_adaz_family_parent_response_read.sql`
 4. Revisa que las cinco tablas `adaz_family_*` y `adaz_outing_requests` / `adaz_parent_responses` aparezcan creadas.
 5. En **Authentication → URL Configuration**, permite la URL publicada de ADAZ como redirect URL.
 6. Usa únicamente el **Project URL** y la clave pública **publishable/anon**. Nunca pegues una `service_role` o una clave secreta en la aplicación.
@@ -44,11 +46,12 @@ La invitación está ligada al correo y vence en siete días. El correo de la cu
 
 ## 4. Construir las APK de prueba
 
-El workflow `.github/workflows/build-adaz-apks.yml` construye una APK de depuración independiente para los adultos. La APK Personal que ya tienes se conserva: al actualizarse la PWA publicada, mantiene su instalación y sus datos locales; no necesitas reemplazarla con otro paquete.
+El workflow `.github/workflows/build-adaz-apks.yml` construye dos APK independientes:
 
-- `app-debug.apk` — paquete `com.adaz.family` (ADAZ Family)
+- `app-personal-debug.apk` — paquete `com.adaz.personal`, abre `index.html`.
+- `app-family-debug.apk` — paquete `com.adaz.family`, abre `family.html?role=parent`.
 
-Después de que GitHub Actions termine correctamente, descarga el artefacto **ADAZ-Family-APK** desde la ejecución del workflow. Es una APK de depuración para pruebas, no una APK de lanzamiento firmada para distribución pública.
+Descarga el artefacto `ADAZ-Personal-and-Family-APKs` desde GitHub Actions. Son APK de depuración para pruebas, no versiones de lanzamiento firmadas. Las dos APK pueden instalarse simultáneamente porque usan identificadores distintos.
 
 ## 5. Pruebas antes de confiar en el sistema
 
