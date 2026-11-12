@@ -14,7 +14,7 @@
 2. En **SQL Editor**, abre una consulta nueva.
 3. Abre `supabase/ADAZ-FAMILY-SETUP.sql` en el repositorio, copia todo su contenido y ejecútalo una sola vez. Ese archivo reúne las cinco migraciones en orden.
 4. Revisa que las tablas `adaz_family_*`, `adaz_outing_requests` y `adaz_parent_responses` aparezcan creadas.
-5. En **Authentication → URL Configuration**, permite estas rutas de retorno: `https://diazaalejo8-star.github.io/Adaz/` y `https://diazaalejo8-star.github.io/Adaz/family.html*`.
+5. En **Authentication → URL Configuration → Redirect URLs**, permite estas rutas de retorno: `https://diazaalejo8-star.github.io/Adaz/`, `https://diazaalejo8-star.github.io/Adaz/family.html*`, `adazpersonal://auth-callback` y `adazfamily://auth-callback`. Las dos últimas devuelven el enlace mágico directamente a su APK correspondiente.
 6. Usa únicamente el **Project URL** y la clave pública **publishable/anon**. Nunca pegues una `service_role` o una clave secreta en la aplicación.
 
 > El SQL está preparado en un único archivo, pero no se ejecuta automáticamente en tu proyecto Supabase. Debe aplicarse y probarse allí antes de usar datos reales.
@@ -24,7 +24,7 @@
 1. En ADAZ Personal, abre **ADAZ Family** desde el acceso superior.
 2. Guarda el Project URL y la clave pública. Si ya configuraste la nube en ADAZ Personal, Family puede reutilizar esa configuración en ese mismo dispositivo.
 3. En cada aplicación, guarda el mismo Project URL y clave pública. Como Android mantiene datos separados por APK, no se copian automáticamente entre teléfonos.
-4. Cada integrante escribe su propio correo y pulsa **Enviar enlace de acceso**. Abre el enlace recibido en ese mismo dispositivo para iniciar sesión; Personal y Family usan el mismo acceso sin contraseña.
+4. Cada integrante escribe su propio correo y pulsa **Enviar enlace de acceso**. En las APK Android, el enlace mágico debe abrir la aplicación correspondiente (ADAZ Personal o ADAZ Family) mediante su esquema propio. En la versión web se mantiene el retorno a GitHub Pages. Personal y Family usan el mismo acceso sin contraseña.
 4. En la pestaña ADAZ Personal, escribe el correo del adulto y crea una invitación.
 5. Comparte el código directamente con ese adulto.
 6. El adulto instala ADAZ Family, introduce el mismo Project URL y clave pública, solicita su enlace de acceso con el correo invitado y, tras iniciar sesión, acepta el código.
