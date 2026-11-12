@@ -73,7 +73,7 @@ jobs:
               raise SystemExit("The one-step-at-a-time experience is missing")
           if "home-extra-row" not in html or "home-stats" not in html:
               raise SystemExit("The simplified home layout is missing")
-          if "adaz-shell-v35" not in sw:
+          if "adaz-shell-v38" not in sw:
               raise SystemExit("Service worker cache version was not refreshed")
 
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
