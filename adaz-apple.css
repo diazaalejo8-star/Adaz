@@ -449,3 +449,14 @@ body{background:var(--bg)!important;color:var(--ink)!important}
 .yp-result-card input,.yp-result-card textarea{width:100%;background:#11110f;border:1px solid #39352e;border-radius:10px;padding:10px;color:#eeeae3;font:inherit}
 .yp-save-result{border:1px solid #b9a184;background:#b9a184;color:#17140f;border-radius:10px;padding:9px 13px;font-weight:800;cursor:pointer}
 .yp-result-card>p{font-size:10px;color:#9e968b;margin:9px 0 0}
+
+
+/* Android WebView: keep the whole page inside the visible viewport. */
+html,body{min-height:100%;height:auto;overflow-x:hidden}
+@media(max-width:820px){
+  .app-shell{min-height:100dvh;overflow:visible}
+  .main{min-height:100dvh;min-height:100svh;padding-bottom:0}
+  .content{height:auto;min-height:0;overflow:visible;padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
+  #bottomNav.bottom-nav{bottom:0;padding-bottom:calc(7px + env(safe-area-inset-bottom,0px))}
+  #page-dashboard{padding-bottom:14px}
+}
