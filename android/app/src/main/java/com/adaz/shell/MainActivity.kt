@@ -49,7 +49,7 @@ class MainActivity : Activity() {
             @JavascriptInterface
             fun authRedirectUri(): String = BuildConfig.AUTH_REDIRECT_URI
         }, "ADAZNative")
-        webView.setBackgroundColor(Color.rgb(9, 11, 16)
+        webView.setBackgroundColor(Color.rgb(9, 11, 16))
         webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
