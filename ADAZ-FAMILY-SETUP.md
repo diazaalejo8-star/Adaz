@@ -12,17 +12,12 @@
 
 1. Abre el proyecto Supabase que ya usas para ADAZ.
 2. En **SQL Editor**, abre una consulta nueva.
-3. Copia y ejecuta, en orden, estos cinco archivos del repositorio:
-   - `supabase/migrations/202611110001_adaz_family.sql`
-   - `supabase/migrations/202611110002_adaz_family_permissions.sql`
-   - `supabase/migrations/202611110003_adaz_family_evidence_constraints.sql`
-   - `supabase/migrations/202611120001_adaz_family_outing_permission.sql`
-   - `supabase/migrations/202611120002_adaz_family_parent_response_read.sql`
-4. Revisa que las cinco tablas `adaz_family_*` y `adaz_outing_requests` / `adaz_parent_responses` aparezcan creadas.
-5. En **Authentication → URL Configuration**, permite la URL publicada de ADAZ como redirect URL.
+3. Abre `supabase/ADAZ-FAMILY-SETUP.sql` en el repositorio, copia todo su contenido y ejecútalo una sola vez. Ese archivo reúne las cinco migraciones en orden.
+4. Revisa que las tablas `adaz_family_*`, `adaz_outing_requests` y `adaz_parent_responses` aparezcan creadas.
+5. En **Authentication → URL Configuration**, permite estas rutas de retorno: `https://diazaalejo8-star.github.io/Adaz/` y `https://diazaalejo8-star.github.io/Adaz/family.html*`.
 6. Usa únicamente el **Project URL** y la clave pública **publishable/anon**. Nunca pegues una `service_role` o una clave secreta en la aplicación.
 
-> La migración está preparada en el repositorio, pero no se ejecuta sola en tu proyecto Supabase. Debe aplicarse y probarse allí antes de usar datos reales.
+> El SQL está preparado en un único archivo, pero no se ejecuta automáticamente en tu proyecto Supabase. Debe aplicarse y probarse allí antes de usar datos reales.
 
 ## 2. Vincular las cuentas
 
