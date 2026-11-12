@@ -1,4 +1,9 @@
 -- Tighten ADAZ Family v1 permissions and expose a narrow permission-update RPC.
+-- Remove the permissive bootstrap default from links created before this migration.
+update public.adaz_family_links
+set permissions = '{"study":false,"habits":false,"business":false,"training":false,"outings":false}'::jsonb
+where permissions = '{"study":true,"habits":true,"business":false,"training":false,"outings":true}'::jsonb;
+
 alter table public.adaz_family_links
   alter column permissions set default '{"study":false,"habits":false,"business":false,"training":false,"outings":false}'::jsonb;
 
