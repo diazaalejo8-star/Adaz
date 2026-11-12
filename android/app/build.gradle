@@ -24,6 +24,9 @@ android {
             versionName '1.2.0'
             resValue 'string', 'app_name', 'ADAZ'
             buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/index.html"'
+            buildConfigField 'String', 'AUTH_SCHEME', '"adazpersonal"'
+            buildConfigField 'String', 'AUTH_REDIRECT_URI', '"adazpersonal://auth-callback"'
+            manifestPlaceholders = [authScheme: 'adazpersonal']
         }
         family {
             dimension 'edition'
@@ -32,6 +35,9 @@ android {
             versionName '1.2.0'
             resValue 'string', 'app_name', 'ADAZ Family'
             buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/family.html?role=parent"'
+            buildConfigField 'String', 'AUTH_SCHEME', '"adazfamily"'
+            buildConfigField 'String', 'AUTH_REDIRECT_URI', '"adazfamily://auth-callback"'
+            manifestPlaceholders = [authScheme: 'adazfamily']
         }
     }
 
