@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Build
 import android.view.WindowInsets
 import android.webkit.CookieManager
+import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -17,6 +18,13 @@ import android.webkit.WebViewClient
 class MainActivity : Activity() {
     private lateinit var webView: WebView
     private val trustedHost = "diazaalejo8-star.github.io"
+
+    private fun callbackUrl(uri: Uri?): String? {
+        if (uri == null || uri.scheme != BuildConfig.AUTH_SCHEME || uri.host != "auth-callback") return null
+        val code = uri.getQueryParameter("code") ?: return null
+        val separator = if (BuildConfig.START_URL.contains("?")) "&" else "?"
+        return BuildConfig.START_URL + separator + "code=" + Uri.encode(code)
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +45,11 @@ class MainActivity : Activity() {
             }
             insets
         }
-        webView.setBackgroundColor(Color.rgb(9, 11, 16))
+        webView.addJavascriptInterface(object {
+            @JavascriptInterface
+            fun authRedirectUri(): String = BuildConfig.AUTH_REDIRECT_URI
+        }, "ADAZNative")
+        webView.setBackgroundColor(Color.rgb(9, 11, 16)
         webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -57,6 +69,10 @@ class MainActivity : Activity() {
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 val uri: Uri = request.url
+                if (uri.scheme == BuildConfig.AUTH_SCHEME && uri.host == "auth-callback") {
+                    callbackUrl(uri)?.let { view.loadUrl(it) }
+                    return true
+                }
                 if (uri.scheme == "https" && uri.host == trustedHost) return false
                 return try {
                     startActivity(Intent(Intent.ACTION_VIEW, uri))
@@ -67,8 +83,14 @@ class MainActivity : Activity() {
             }
         }
         setContentView(webView)
-        if (savedInstanceState == null) webView.loadUrl(BuildConfig.START_URL)
+        if (savedInstanceState == null) webView.loadUrl(callbackUrl(intent?.data) ?: BuildConfig.START_URL)
         else webView.restoreState(savedInstanceState)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        callbackUrl(intent?.data)?.let { if (this::webView.isInitialized) webView.loadUrl(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
