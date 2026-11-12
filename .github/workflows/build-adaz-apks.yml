@@ -1,4 +1,4 @@
-name: Build ADAZ Personal and Family APKs
+name: Build ADAZ Family APK
 
 on:
   push:
@@ -68,14 +68,13 @@ jobs:
 
       - name: Build both debug APKs
         working-directory: android
-        run: gradle --no-daemon assemblePersonalDebug assembleFamilyDebug
+        run: gradle --no-daemon assembleDebug
 
       - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
-          name: ADAZ-Personal-and-Family-APKs
+          name: ADAZ-Family-APK
           if-no-files-found: error
           path: |
-            android/app/build/outputs/apk/personal/debug/app-personal-debug.apk
-            android/app/build/outputs/apk/family/debug/app-family-debug.apk
+            android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
