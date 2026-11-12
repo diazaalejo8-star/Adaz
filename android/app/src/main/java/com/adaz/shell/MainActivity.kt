@@ -83,7 +83,9 @@ class MainActivity : Activity() {
             }
         }
         setContentView(webView)
-        if (savedInstanceState == null) webView.loadUrl(callbackUrl(intent?.data) ?: BuildConfig.START_URL)
+        val authCallback = callbackUrl(intent?.data)
+        if (authCallback != null) webView.loadUrl(authCallback)
+        else if (savedInstanceState == null) webView.loadUrl(BuildConfig.START_URL)
         else webView.restoreState(savedInstanceState)
     }
 
