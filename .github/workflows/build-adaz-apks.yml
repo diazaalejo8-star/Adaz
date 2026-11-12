@@ -39,7 +39,7 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Build both debug APKs
+      - name: Check JavaScript syntax\n        run: |\n          node --check adaz-family.js\n          node --check adaz-family-link.js\n          node --check adaz-academy-curriculum.js\n          node --check adaz-year-plan.js\n\n      - name: Build both debug APKs
         working-directory: android
         run: gradle --no-daemon assemblePersonalDebug assembleFamilyDebug
 
