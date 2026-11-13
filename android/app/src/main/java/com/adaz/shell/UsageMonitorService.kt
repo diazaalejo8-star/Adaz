@@ -12,27 +12,26 @@ import android.os.IBinder
 import android.os.Looper
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import java.net.HttpURLConnection
-import java.net.URL
-import java.io.OutputStreamWriter
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.TimeZone
+import java.util.concurrent.Executors
 
 class UsageMonitorService : Service() {
     private val handler = Handler(Looper.getMainLooper())
-    private val uploadBusy = AtomicBoolean(false)
+    private val executor = Executors.newSingleThreadExecutor()
     private val prefs by lazy { getSharedPreferences("adaz_usage_monitor", Context.MODE_PRIVATE) }
     private val poll = object : Runnable {
         override fun run() {
             try {
                 val snapshot = collectSnapshot()
                 prefs.edit().putString("snapshot", snapshot.toString()).apply()
-                if (cloudUrl.isNotBlank() && childId.isNotBlank() && uploadBusy.compareAndSet(false, true)) {
-                    Thread { try { uploadSnapshot(snapshot) } finally { uploadBusy.set(false) } }.start()
-                }
+                executor.execute { uploadSnapshot(snapshot) }
             } catch (_: Exception) {}
             handler.postDelayed(this, 20_000L)
         }
@@ -44,10 +43,10 @@ class UsageMonitorService : Service() {
         val notification = if (Build.VERSION.SDK_INT >= 26)
             Notification.Builder(this, "adaz_usage").setSmallIcon(android.R.drawable.ic_menu_view)
                 .setContentTitle("ADAZ TRUST está activo")
-                .setContentText("Compartición de uso visible y configurable en ADAZ Personal")
+                .setContentText("Compartición visible de uso de aplicaciones")
                 .setOngoing(true).build()
         else Notification.Builder(this).setSmallIcon(android.R.drawable.ic_menu_view)
-            .setContentTitle("ADAZ TRUST está activo").setContentText("Supervisión visible").setOngoing(true).build()
+            .setContentTitle("ADAZ TRUST está activo").setContentText("Compartición visible").setOngoing(true).build()
         startForeground(4107, notification)
         prefs.edit().putBoolean("running", true).apply()
         handler.post(poll)
@@ -103,83 +102,95 @@ class UsageMonitorService : Service() {
             .put("dailyUsage", usage).put("capturedAt", now).put("deviceStatus", "active")
     }
 
-
-    private fun request(url: String, method: String, body: JSONObject, token: String? = null): Pair<Int, String> {
-        val conn = (URL(url).openConnection() as HttpURLConnection).apply {
-            requestMethod = method
-            connectTimeout = 12000
-            readTimeout = 12000
-            setRequestProperty("apikey", anonKey)
-            if (token != null) setRequestProperty("Authorization", "Bearer $token")
-            setRequestProperty("Content-Type", "application/json")
-            doOutput = true
-        }
-        OutputStreamWriter(conn.outputStream, Charsets.UTF_8).use { it.write(body.toString()) }
-        val code = conn.responseCode
-        val stream = if (code in 200..299) conn.inputStream else conn.errorStream
-        val response = stream?.bufferedReader()?.use { it.readText() } ?: ""
-        conn.disconnect()
-        return code to response
-    }
-
-    private fun refreshAccessToken(): Boolean {
-        if (refreshToken.isBlank() || cloudUrl.isBlank()) return false
-        val body = JSONObject().put("refresh_token", refreshToken)
-        val (code, response) = request("$cloudUrl/auth/v1/token?grant_type=refresh_token", "POST", body)
-        if (code !in 200..299) return false
-        val json = JSONObject(response)
-        accessToken = json.optString("access_token", accessToken)
-        refreshToken = json.optString("refresh_token", refreshToken)
-        tokenExpiresAt = System.currentTimeMillis() + json.optLong("expires_in", 3600L) * 1000L
-        return accessToken.isNotBlank()
-    }
-
     private fun iso(timestamp: Long): String {
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.US)
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+        format.timeZone = TimeZone.getTimeZone("UTC")
         return format.format(Date(timestamp))
     }
 
+    private fun refreshAccessToken(): String? {
+        val url = prefs.getString("supabase_url", "") ?: ""
+        val key = prefs.getString("supabase_key", "") ?: ""
+        val refresh = prefs.getString("refresh_token", "") ?: ""
+        if (url.isBlank() || key.isBlank() || refresh.isBlank()) return null
+        val endpoint = URL(url.trimEnd('/') + "/auth/v1/token?grant_type=refresh_token")
+        val connection = (endpoint.openConnection() as HttpURLConnection).apply {
+            requestMethod = "POST"; connectTimeout = 10000; readTimeout = 10000
+            setRequestProperty("apikey", key); setRequestProperty("Content-Type", "application/json")
+            doOutput = true
+        }
+        try {
+            OutputStreamWriter(connection.outputStream, Charsets.UTF_8).use {
+                it.write(JSONObject().put("refresh_token", refresh).toString())
+            }
+            val code = connection.responseCode
+            val stream = if (code in 200..299) connection.inputStream else connection.errorStream
+            val body = stream.bufferedReader().use { it.readText() }
+            if (code !in 200..299) return null
+            val json = JSONObject(body)
+            val access = json.optString("access_token", "")
+            val nextRefresh = json.optString("refresh_token", refresh)
+            if (access.isBlank()) return null
+            prefs.edit().putString("access_token", access).putString("refresh_token", nextRefresh)
+                .putLong("expires_at", System.currentTimeMillis() + json.optLong("expires_in", 3600L) * 1000L).apply()
+            return access
+        } finally { connection.disconnect() }
+    }
+
     private fun uploadSnapshot(snapshot: JSONObject) {
-        if (tokenExpiresAt - System.currentTimeMillis() < 120000L && !refreshAccessToken()) return
-        val payload = JSONObject()
-            .put("child_id", childId)
-            .put("active_package", snapshot.optString("activePackage"))
-            .put("active_app", snapshot.optString("activeApp"))
-            .put("active_since", if (snapshot.isNull("activeSince")) JSONObject.NULL else iso(snapshot.optLong("activeSince")))
+        val url = prefs.getString("supabase_url", "") ?: return
+        val key = prefs.getString("supabase_key", "") ?: return
+        var access = prefs.getString("access_token", "") ?: ""
+        if (access.isBlank() || prefs.getLong("expires_at", 0L) < System.currentTimeMillis() + 60_000L) {
+            access = refreshAccessToken() ?: return
+        }
+        val childId = prefs.getString("child_id", "") ?: return
+        val activeSince = snapshot.optLong("activeSince", 0L)
+        val payload = JSONObject().put("child_id", childId)
+            .put("active_package", snapshot.optString("activePackage", ""))
+            .put("active_app", snapshot.optString("activeApp", ""))
+            .put("active_since", if (activeSince > 0) iso(activeSince) else JSONObject.NULL)
             .put("daily_usage", snapshot.optJSONArray("dailyUsage") ?: JSONArray())
             .put("captured_at", iso(snapshot.optLong("capturedAt", System.currentTimeMillis())))
-            .put("device_status", "active")
-        var (code, _) = request("$cloudUrl/rest/v1/adaz_usage_snapshots?on_conflict=child_id", "POST", payload, accessToken)
-        if (code == 401 && refreshAccessToken()) {
-            val result = request("$cloudUrl/rest/v1/adaz_usage_snapshots?on_conflict=child_id", "POST", payload, accessToken)
-            code = result.first
+            .put("device_status", snapshot.optString("deviceStatus", "active"))
+        val endpoint = URL(url.trimEnd('/') + "/rest/v1/adaz_usage_snapshots?on_conflict=child_id")
+        val connection = (endpoint.openConnection() as HttpURLConnection).apply {
+            requestMethod = "POST"; connectTimeout = 10000; readTimeout = 10000
+            setRequestProperty("apikey", key); setRequestProperty("Authorization", "Bearer $access")
+            setRequestProperty("Content-Type", "application/json")
+            setRequestProperty("Prefer", "resolution=merge-duplicates,return=minimal")
+            doOutput = true
         }
+        try {
+            OutputStreamWriter(connection.outputStream, Charsets.UTF_8).use { it.write(payload.toString()) }
+            connection.responseCode
+        } catch (_: Exception) {
+        } finally { connection.disconnect() }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == ACTION_STOP) { stopForeground(STOP_FOREGROUND_REMOVE); stopSelf(); return START_NOT_STICKY }
+        if (intent?.action == ACTION_STOP) {
+            prefs.edit().remove("supabase_url").remove("supabase_key").remove("access_token")
+                .remove("refresh_token").remove("child_id").remove("expires_at").apply()
+            stopForeground(STOP_FOREGROUND_REMOVE); stopSelf(); return START_NOT_STICKY
+        }
         return START_STICKY
     }
-    override fun onDestroy() { handler.removeCallbacks(poll); prefs.edit().putBoolean("running", false).apply(); super.onDestroy() }
+    override fun onDestroy() {
+        handler.removeCallbacks(poll); executor.shutdownNow()
+        prefs.edit().putBoolean("running", false).apply()
+        super.onDestroy()
+    }
     override fun onBind(intent: Intent?): IBinder? = null
 
     companion object {
         const val ACTION_STOP = "com.adaz.shell.STOP_USAGE_MONITOR"
-        @Volatile private var cloudUrl = ""
-        @Volatile private var anonKey = ""
-        @Volatile private var accessToken = ""
-        @Volatile private var refreshToken = ""
-        @Volatile private var childId = ""
-        @Volatile private var tokenExpiresAt = 0L
-        fun setCloudCredentials(url: String, key: String, access: String, refresh: String, userId: String) {
-            cloudUrl = url.trimEnd('/')
-            anonKey = key
-            accessToken = access
-            refreshToken = refresh
-            childId = userId
-            tokenExpiresAt = System.currentTimeMillis() + 3000L
+        fun configure(context: Context, url: String, key: String, access: String, refresh: String, childId: String, expiresAt: Long) {
+            context.getSharedPreferences("adaz_usage_monitor", Context.MODE_PRIVATE).edit()
+                .putString("supabase_url", url).putString("supabase_key", key)
+                .putString("access_token", access).putString("refresh_token", refresh)
+                .putString("child_id", childId).putLong("expires_at", expiresAt).apply()
         }
-        fun clearCloudCredentials() { cloudUrl = ""; anonKey = ""; accessToken = ""; refreshToken = ""; childId = ""; tokenExpiresAt = 0L }
         fun start(context: Context) {
             val intent = Intent(context, UsageMonitorService::class.java)
             if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(intent) else context.startService(intent)
