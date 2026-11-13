@@ -1,6 +1,7 @@
 package com.adaz.shell
 
 import android.app.*
+import android.app.AppOpsManager
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
@@ -67,8 +68,16 @@ class UsageMonitorService : Service() {
         }
     }
 
+    private fun hasUsageAccess(): Boolean {
+        val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        return appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), packageName) == AppOpsManager.MODE_ALLOWED
+    }
+
     private fun collectSnapshot(): JSONObject {
         val now = System.currentTimeMillis()
+        if (!hasUsageAccess()) return JSONObject().put("activePackage", "").put("activeApp", "")
+            .put("activeSince", JSONObject.NULL).put("dailyUsage", JSONArray())
+            .put("capturedAt", now).put("deviceStatus", "permission_missing")
         val start = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
         }.timeInMillis
