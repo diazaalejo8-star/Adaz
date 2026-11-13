@@ -42,14 +42,14 @@ La invitación está ligada al correo y vence en siete días. El correo de la cu
 
 ## 4. Activar estadísticas de uso en Android
 
-1. Instala la APK Personal reconstruida y abre el acceso **ADAZ Family** desde ADAZ Personal.
+1. Instala la APK ADAZ Personal **1.3.1** reconstruida y abre el acceso **ADAZ Family** desde ADAZ Personal.
 2. En la sección de estadísticas de uso, pulsa **Autorizar acceso de uso en Android** y activa el permiso especial para ADAZ.
 3. Activa **Estadísticas de uso** en los permisos compartidos y guarda los cambios.
 4. Pulsa **Iniciar seguimiento visible**. Acepta el permiso de notificaciones; Android debe mostrar una notificación persistente mientras el servicio esté activo.
 5. El servicio registra la aplicación en primer plano y los minutos acumulados por aplicación. Sincroniza los datos con Supabase cada 20 segundos mientras el servicio esté ejecutándose. ADAZ Family actualiza el panel cada 15 segundos cuando está abierto.
-6. Para dejar de compartir, desactiva el permiso **Estadísticas de uso** o pulsa **Detener**. Los tokens de sesión usados por el servicio se cifran con Android Keystore.
+6. Para dejar de compartir, desactiva el permiso **Estadísticas de uso** o pulsa **Detener**. Ambas acciones detienen la captura y retiran la última lectura del panel familiar. Cerrar sesión en ADAZ Personal también detiene el seguimiento. Los tokens de sesión usados por el servicio se cifran con Android Keystore.
 
-El panel no captura la pantalla, el contenido de otras aplicaciones, mensajes, pulsaciones, audio, cámara ni ubicación. Android puede limitar el servicio por batería, reinicio del dispositivo o restricciones del fabricante; revisa la hora de la última captura en ADAZ Family.
+El panel no captura la pantalla, el contenido de otras aplicaciones, mensajes, pulsaciones, audio, cámara ni ubicación. El permiso debe estar activado y guardado antes de que el botón de inicio permita comenzar. Si la última lectura tiene más de 60 segundos, el panel deja de presentar una aplicación como si siguiera activa y muestra que no hay actualización reciente. Android puede limitar el servicio por batería, reinicio del dispositivo o restricciones del fabricante; revisa la hora de la última captura en ADAZ Family.
 
 ## 5. Construir las APK de prueba
 
@@ -69,7 +69,9 @@ Descarga el artefacto `ADAZ-Personal-and-Family-APKs` desde GitHub Actions. Son 
 - Confirmar que revocar el vínculo elimina el acceso familiar.
 - Publicar un resumen de prueba y comprobar que no aparecen detalles privados.
 - Probar la APK Family en un dispositivo Android distinto y revisar el inicio de sesión por correo.
-- Verificar que el adulto solo ve la aplicación activa cuando el permiso `usage` está habilitado.
+- Verificar que el inicio queda bloqueado si el permiso `usage` está desactivado.
+- Verificar que al detener el seguimiento, desactivar el permiso o cerrar sesión se retira la última lectura del panel.
+- Dejar el teléfono sin conexión o detener el servicio y comprobar que, tras 60 segundos, el panel no presenta la última aplicación como si fuera actual.
 - Comprobar la última hora de captura y el comportamiento cuando se detiene el servicio o se pierde la conexión.
 
 No uses información real hasta que las pruebas de permisos y acceso hayan pasado.
