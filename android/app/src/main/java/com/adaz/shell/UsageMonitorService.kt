@@ -38,6 +38,7 @@ class UsageMonitorService : Service() {
         else Notification.Builder(this).setSmallIcon(android.R.drawable.ic_menu_view)
             .setContentTitle("ADAZ TRUST está activo").setContentText("Supervisión visible").setOngoing(true).build()
         startForeground(4107, notification)
+        prefs.edit().putBoolean("running", true).apply()
         handler.post(poll)
     }
 
@@ -95,7 +96,7 @@ class UsageMonitorService : Service() {
         if (intent?.action == ACTION_STOP) { stopForeground(STOP_FOREGROUND_REMOVE); stopSelf(); return START_NOT_STICKY }
         return START_STICKY
     }
-    override fun onDestroy() { handler.removeCallbacks(poll); super.onDestroy() }
+    override fun onDestroy() { handler.removeCallbacks(poll); prefs.edit().putBoolean("running", false).apply(); super.onDestroy() }
     override fun onBind(intent: Intent?): IBinder? = null
 
     companion object {
