@@ -16,13 +16,24 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.net.HttpURLConnection
+import java.net.URL
+import java.io.OutputStreamWriter
+import java.util.concurrent.atomic.AtomicBoolean
 
 class UsageMonitorService : Service() {
     private val handler = Handler(Looper.getMainLooper())
+    private val uploadBusy = AtomicBoolean(false)
     private val prefs by lazy { getSharedPreferences("adaz_usage_monitor", Context.MODE_PRIVATE) }
     private val poll = object : Runnable {
         override fun run() {
-            try { prefs.edit().putString("snapshot", collectSnapshot().toString()).apply() } catch (_: Exception) {}
+            try {
+                val snapshot = collectSnapshot()
+                prefs.edit().putString("snapshot", snapshot.toString()).apply()
+                if (cloudUrl.isNotBlank() && childId.isNotBlank() && uploadBusy.compareAndSet(false, true)) {
+                    Thread { try { uploadSnapshot(snapshot) } finally { uploadBusy.set(false) } }.start()
+                }
+            } catch (_: Exception) {}
             handler.postDelayed(this, 20_000L)
         }
     }
@@ -92,6 +103,54 @@ class UsageMonitorService : Service() {
             .put("dailyUsage", usage).put("capturedAt", now).put("deviceStatus", "active")
     }
 
+
+    private fun request(url: String, method: String, body: JSONObject, token: String? = null): Pair<Int, String> {
+        val conn = (URL(url).openConnection() as HttpURLConnection).apply {
+            requestMethod = method
+            connectTimeout = 12000
+            readTimeout = 12000
+            setRequestProperty("apikey", anonKey)
+            if (token != null) setRequestProperty("Authorization", "Bearer $token")
+            setRequestProperty("Content-Type", "application/json")
+            doOutput = true
+        }
+        OutputStreamWriter(conn.outputStream, Charsets.UTF_8).use { it.write(body.toString()) }
+        val code = conn.responseCode
+        val stream = if (code in 200..299) conn.inputStream else conn.errorStream
+        val response = stream?.bufferedReader()?.use { it.readText() } ?: ""
+        conn.disconnect()
+        return code to response
+    }
+
+    private fun refreshAccessToken(): Boolean {
+        if (refreshToken.isBlank() || cloudUrl.isBlank()) return false
+        val body = JSONObject().put("refresh_token", refreshToken)
+        val (code, response) = request("$cloudUrl/auth/v1/token?grant_type=refresh_token", "POST", body)
+        if (code !in 200..299) return false
+        val json = JSONObject(response)
+        accessToken = json.optString("access_token", accessToken)
+        refreshToken = json.optString("refresh_token", refreshToken)
+        tokenExpiresAt = System.currentTimeMillis() + json.optLong("expires_in", 3600L) * 1000L
+        return accessToken.isNotBlank()
+    }
+
+    private fun uploadSnapshot(snapshot: JSONObject) {
+        if (tokenExpiresAt - System.currentTimeMillis() < 120000L && !refreshAccessToken()) return
+        val payload = JSONObject()
+            .put("child_id", childId)
+            .put("active_package", snapshot.optString("activePackage"))
+            .put("active_app", snapshot.optString("activeApp"))
+            .put("active_since", if (snapshot.isNull("activeSince")) JSONObject.NULL else java.time.Instant.ofEpochMilli(snapshot.optLong("activeSince")).toString())
+            .put("daily_usage", snapshot.optJSONArray("dailyUsage") ?: JSONArray())
+            .put("captured_at", java.time.Instant.ofEpochMilli(snapshot.optLong("capturedAt", System.currentTimeMillis())).toString())
+            .put("device_status", "active")
+        var (code, _) = request("$cloudUrl/rest/v1/adaz_usage_snapshots?on_conflict=child_id", "POST", payload, accessToken)
+        if (code == 401 && refreshAccessToken()) {
+            val result = request("$cloudUrl/rest/v1/adaz_usage_snapshots?on_conflict=child_id", "POST", payload, accessToken)
+            code = result.first
+        }
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) { stopForeground(STOP_FOREGROUND_REMOVE); stopSelf(); return START_NOT_STICKY }
         return START_STICKY
@@ -101,6 +160,21 @@ class UsageMonitorService : Service() {
 
     companion object {
         const val ACTION_STOP = "com.adaz.shell.STOP_USAGE_MONITOR"
+        @Volatile private var cloudUrl = ""
+        @Volatile private var anonKey = ""
+        @Volatile private var accessToken = ""
+        @Volatile private var refreshToken = ""
+        @Volatile private var childId = ""
+        @Volatile private var tokenExpiresAt = 0L
+        fun setCloudCredentials(url: String, key: String, access: String, refresh: String, userId: String) {
+            cloudUrl = url.trimEnd('/')
+            anonKey = key
+            accessToken = access
+            refreshToken = refresh
+            childId = userId
+            tokenExpiresAt = System.currentTimeMillis() + 3000L
+        }
+        fun clearCloudCredentials() { cloudUrl = ""; anonKey = ""; accessToken = ""; refreshToken = ""; childId = ""; tokenExpiresAt = 0L }
         fun start(context: Context) {
             val intent = Intent(context, UsageMonitorService::class.java)
             if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(intent) else context.startService(intent)
