@@ -114,6 +114,11 @@ class MainActivity : Activity() {
                 runOnUiThread { startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)) }
             }
             @JavascriptInterface fun getUsageSnapshot(): String = UsageMonitorService.snapshot(this@MainActivity)
+            @JavascriptInterface fun configureUsageSync(url: String, key: String, access: String, refresh: String, childId: String, expiresAt: Long): Boolean {
+                if (!url.startsWith("https://") || key.isBlank() || access.isBlank() || refresh.isBlank() || childId.isBlank()) return false
+                UsageMonitorService.configure(this@MainActivity, url, key, access, refresh, childId, expiresAt)
+                return true
+            }
             @JavascriptInterface fun startUsageMonitor(): Boolean {
                 if (!hasUsageAccess()) return false
                 if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS") != android.content.pm.PackageManager.PERMISSION_GRANTED) {
