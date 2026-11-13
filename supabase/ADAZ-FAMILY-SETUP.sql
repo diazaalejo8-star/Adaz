@@ -339,6 +339,7 @@ using (
       and coalesce((l.permissions->>'usage')::boolean,false)=true
   )
 );
+revoke all on public.adaz_usage_snapshots from anon;
 grant select, insert, update, delete on public.adaz_usage_snapshots to authenticated;
 
 create index if not exists adaz_usage_snapshots_captured_at_idx
