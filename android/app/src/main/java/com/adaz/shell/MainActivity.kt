@@ -1,5 +1,7 @@
 package com.adaz.shell
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AppOpsManager
