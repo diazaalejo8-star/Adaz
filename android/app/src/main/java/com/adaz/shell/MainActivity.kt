@@ -113,7 +113,7 @@ class MainActivity : Activity() {
             @JavascriptInterface fun openUsageAccessSettings() {
                 runOnUiThread { startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)) }
             }
-            @JavascriptInterface fun getUsageSnapshot(): String = usageSnapshot()
+            @JavascriptInterface fun getUsageSnapshot(): String = UsageMonitorService.snapshot(this@MainActivity)
             @JavascriptInterface fun startUsageMonitor(): Boolean { if (!hasUsageAccess()) return false; UsageMonitorService.start(this@MainActivity); return true }
             @JavascriptInterface fun stopUsageMonitor() { UsageMonitorService.stop(this@MainActivity) }
             @JavascriptInterface fun isUsageMonitorRunning(): Boolean = getSharedPreferences("adaz_usage_monitor", Context.MODE_PRIVATE).getBoolean("running", false)
