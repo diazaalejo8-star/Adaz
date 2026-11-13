@@ -134,15 +134,20 @@ class UsageMonitorService : Service() {
         return accessToken.isNotBlank()
     }
 
+    private fun iso(timestamp: Long): String {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.US)
+        return format.format(Date(timestamp))
+    }
+
     private fun uploadSnapshot(snapshot: JSONObject) {
         if (tokenExpiresAt - System.currentTimeMillis() < 120000L && !refreshAccessToken()) return
         val payload = JSONObject()
             .put("child_id", childId)
             .put("active_package", snapshot.optString("activePackage"))
             .put("active_app", snapshot.optString("activeApp"))
-            .put("active_since", if (snapshot.isNull("activeSince")) JSONObject.NULL else java.time.Instant.ofEpochMilli(snapshot.optLong("activeSince")).toString())
+            .put("active_since", if (snapshot.isNull("activeSince")) JSONObject.NULL else iso(snapshot.optLong("activeSince")))
             .put("daily_usage", snapshot.optJSONArray("dailyUsage") ?: JSONArray())
-            .put("captured_at", java.time.Instant.ofEpochMilli(snapshot.optLong("capturedAt", System.currentTimeMillis())).toString())
+            .put("captured_at", iso(snapshot.optLong("capturedAt", System.currentTimeMillis())))
             .put("device_status", "active")
         var (code, _) = request("$cloudUrl/rest/v1/adaz_usage_snapshots?on_conflict=child_id", "POST", payload, accessToken)
         if (code == 401 && refreshAccessToken()) {
