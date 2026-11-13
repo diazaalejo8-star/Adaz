@@ -97,11 +97,11 @@ class UsageMonitorService : Service() {
             if (foreground) { activePackage = event.packageName ?: ""; activeSince = event.timeStamp }
             if (background && event.packageName == activePackage) { activePackage = ""; activeSince = 0L }
         }
-        if (activePackage == packageName) activePackage = ""
+        if (activePackage == packageName) { activePackage = ""; activeSince = 0L }
         val usage = JSONArray()
         val stats = manager.queryAndAggregateUsageStats(start, now).values
             .filter { it.totalTimeInForeground > 0 && it.packageName != packageName && it.packageName != "android" }
-            .sortedByDescending { it.totalTimeInForeground }.take(25)
+            .sortedByDescending { it.totalTimeInForeground }
         for (item in stats) {
             val label = try {
                 val app = packageManager.getApplicationInfo(item.packageName, 0)
@@ -188,7 +188,7 @@ class UsageMonitorService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
             prefs.edit().remove("supabase_url").remove("supabase_key").remove("access_token")
-                .remove("refresh_token").remove("child_id").remove("expires_at").apply()
+                .remove("refresh_token").remove("child_id").remove("expires_at").remove("snapshot").apply()
             stopForeground(STOP_FOREGROUND_REMOVE); stopSelf(); return START_NOT_STICKY
         }
         return START_STICKY
@@ -215,7 +215,7 @@ class UsageMonitorService : Service() {
         fun stop(context: Context) {
             context.getSharedPreferences("adaz_usage_monitor", Context.MODE_PRIVATE).edit()
                 .remove("supabase_url").remove("supabase_key").remove("access_token")
-                .remove("refresh_token").remove("child_id").remove("expires_at").apply()
+                .remove("refresh_token").remove("child_id").remove("expires_at").remove("snapshot").apply()
             context.stopService(Intent(context, UsageMonitorService::class.java))
         }
         fun snapshot(context: Context): String =
