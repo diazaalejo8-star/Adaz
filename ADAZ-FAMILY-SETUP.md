@@ -12,8 +12,8 @@
 
 1. Abre el proyecto Supabase que ya usas para ADAZ.
 2. En **SQL Editor**, abre una consulta nueva.
-3. Abre `supabase/ADAZ-FAMILY-SETUP.sql` en el repositorio, copia todo su contenido y ejecútalo una sola vez. Ese archivo reúne las cinco migraciones en orden.
-4. Revisa que las tablas `adaz_family_*`, `adaz_outing_requests` y `adaz_parent_responses` aparezcan creadas.
+3. Abre `supabase/ADAZ-FAMILY-SETUP.sql` en el repositorio, copia todo su contenido y ejecútalo una sola vez. Ese archivo reúne las seis migraciones en orden, incluida `202611120004_adaz_usage_monitoring.sql`.
+4. Revisa que las tablas `adaz_family_*`, `adaz_outing_requests`, `adaz_parent_responses` y `adaz_usage_snapshots` aparezcan creadas.
 5. En **Authentication → URL Configuration → Redirect URLs**, permite estas rutas de retorno: `https://diazaalejo8-star.github.io/Adaz/`, `https://diazaalejo8-star.github.io/Adaz/family.html*`, `adazpersonal://auth-callback` y `adazfamily://auth-callback`. Las dos últimas devuelven el enlace mágico directamente a su APK correspondiente.
 6. Usa únicamente el **Project URL** y la clave pública **publishable/anon**. Nunca pegues una `service_role` o una clave secreta en la aplicación.
 
@@ -40,7 +40,18 @@ La invitación está ligada al correo y vence en siete días. El correo de la cu
 - Los planes de salida se escriben manualmente; no existe rastreo de ubicación.
 - El estudiante puede desactivar categorías o revocar un vínculo.
 
-## 4. Construir las APK de prueba
+## 4. Activar estadísticas de uso en Android
+
+1. Instala la APK Personal reconstruida y abre el acceso **ADAZ Family** desde ADAZ Personal.
+2. En la sección de estadísticas de uso, pulsa **Autorizar acceso de uso en Android** y activa el permiso especial para ADAZ.
+3. Activa **Estadísticas de uso** en los permisos compartidos y guarda los cambios.
+4. Pulsa **Iniciar seguimiento visible**. Acepta el permiso de notificaciones; Android debe mostrar una notificación persistente mientras el servicio esté activo.
+5. El servicio registra la aplicación en primer plano y los minutos acumulados por aplicación. Sincroniza los datos con Supabase cada 20 segundos mientras el servicio esté ejecutándose. ADAZ Family actualiza el panel cada 15 segundos cuando está abierto.
+6. Para dejar de compartir, desactiva el permiso **Estadísticas de uso** o pulsa **Detener**. Los tokens de sesión usados por el servicio se cifran con Android Keystore.
+
+El panel no captura la pantalla, el contenido de otras aplicaciones, mensajes, pulsaciones, audio, cámara ni ubicación. Android puede limitar el servicio por batería, reinicio del dispositivo o restricciones del fabricante; revisa la hora de la última captura en ADAZ Family.
+
+## 5. Construir las APK de prueba
 
 El workflow `.github/workflows/build-adaz-apks.yml` construye dos APK independientes:
 
@@ -49,7 +60,7 @@ El workflow `.github/workflows/build-adaz-apks.yml` construye dos APK independie
 
 Descarga el artefacto `ADAZ-Personal-and-Family-APKs` desde GitHub Actions. Son APK de depuración para pruebas, no versiones de lanzamiento firmadas. Las dos APK pueden instalarse simultáneamente porque usan identificadores distintos.
 
-## 5. Pruebas antes de confiar en el sistema
+## 6. Pruebas antes de confiar en el sistema
 
 - Probar dos cuentas distintas: estudiante y adulto invitado.
 - Confirmar que un correo no invitado no puede aceptar el código.
@@ -58,5 +69,7 @@ Descarga el artefacto `ADAZ-Personal-and-Family-APKs` desde GitHub Actions. Son 
 - Confirmar que revocar el vínculo elimina el acceso familiar.
 - Publicar un resumen de prueba y comprobar que no aparecen detalles privados.
 - Probar la APK Family en un dispositivo Android distinto y revisar el inicio de sesión por correo.
+- Verificar que el adulto solo ve la aplicación activa cuando el permiso `usage` está habilitado.
+- Comprobar la última hora de captura y el comportamiento cuando se detiene el servicio o se pierde la conexión.
 
 No uses información real hasta que las pruebas de permisos y acceso hayan pasado.
