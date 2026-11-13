@@ -124,13 +124,13 @@ class MainActivity : Activity() {
             @JavascriptInterface fun startUsageMonitor(): Boolean {
                 if (!hasUsageAccess()) return false
                 if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS") != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(arrayOf("android.permission.POST_NOTIFICATIONS"), 4108)
+                    runOnUiThread { requestPermissions(arrayOf("android.permission.POST_NOTIFICATIONS"), 4108) }
                     return false
                 }
-                UsageMonitorService.start(this@MainActivity)
+                runOnUiThread { UsageMonitorService.start(this@MainActivity) }
                 return true
             }
-            @JavascriptInterface fun stopUsageMonitor() { UsageMonitorService.stop(this@MainActivity) }
+            @JavascriptInterface fun stopUsageMonitor() { runOnUiThread { UsageMonitorService.stop(this@MainActivity) } }
             @JavascriptInterface fun isUsageMonitorRunning(): Boolean = getSharedPreferences("adaz_usage_monitor", Context.MODE_PRIVATE).getBoolean("running", false)
         }, "ADAZNative")
         webView.setBackgroundColor(Color.rgb(9, 11, 16))
