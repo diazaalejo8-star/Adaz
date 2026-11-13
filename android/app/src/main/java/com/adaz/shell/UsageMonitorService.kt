@@ -213,7 +213,10 @@ class UsageMonitorService : Service() {
             if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(intent) else context.startService(intent)
         }
         fun stop(context: Context) {
-            context.startService(Intent(context, UsageMonitorService::class.java).setAction(ACTION_STOP))
+            context.getSharedPreferences("adaz_usage_monitor", Context.MODE_PRIVATE).edit()
+                .remove("supabase_url").remove("supabase_key").remove("access_token")
+                .remove("refresh_token").remove("child_id").remove("expires_at").apply()
+            context.stopService(Intent(context, UsageMonitorService::class.java))
         }
         fun snapshot(context: Context): String =
             context.getSharedPreferences("adaz_usage_monitor", Context.MODE_PRIVATE)
