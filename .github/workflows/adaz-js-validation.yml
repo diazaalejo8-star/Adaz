@@ -81,6 +81,15 @@ jobs:
           if "adaz_usage_snapshots" not in family_js or "active_app" not in family_js or "parentUsage" not in family_html:
               raise SystemExit("ADAZ TRUST live usage sharing is incomplete")
 
+          if "selectedMode(appRole)" not in family_js:
+              raise SystemExit("ADAZ Family must open the panel matching its app role")
+          if 'data-perm="study"' in family_js or 'data-perm="outings"' in family_js or "publishSummary" in family_js:
+              raise SystemExit("ADAZ Family must expose only the usage permission")
+          if "parentSummaries" in family_html or "parentOutings" in family_html or "Resumen compartido" in family_html:
+              raise SystemExit("ADAZ Family still exposes legacy summary or outing panels")
+          if "captured_at" not in family_js or "Sin actualización reciente" not in family_js:
+              raise SystemExit("ADAZ TRUST stale-data handling is missing")
+
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
           if "adaz-calendar-exam-results-v1" not in calendar_tests or "ICFES Saber 11 · simulacro integrado ADAZ" not in calendar_tests:
               raise SystemExit("The integrated calendar exam player is missing")
