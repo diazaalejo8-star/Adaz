@@ -345,3 +345,124 @@ grant select, insert, update, delete on public.adaz_usage_snapshots to authentic
 create index if not exists adaz_usage_snapshots_captured_at_idx
 on public.adaz_usage_snapshots(captured_at desc);
 
+
+
+
+-- ADAZ TRUST: usage-only parent scope. Apply after the base Family and usage schema.
+update public.adaz_family_links
+set permissions = jsonb_build_object(
+  'study', false, 'habits', false, 'business', false,
+  'training', false, 'outings', false,
+  'usage', coalesce((permissions ->> 'usage')::boolean, false)
+);
+alter table public.adaz_family_links alter column permissions set default
+  '{"study":false,"habits":false,"business":false,"training":false,"outings":false,"usage":false}'::jsonb;
+alter table public.adaz_family_links drop constraint if exists adaz_family_links_permissions_check;
+alter table public.adaz_family_links add constraint adaz_family_links_permissions_check check (
+  jsonb_typeof(permissions)='object'
+  and jsonb_typeof(permissions->'study')='boolean' and (permissions->>'study')::boolean=false
+  and jsonb_typeof(permissions->'habits')='boolean' and (permissions->>'habits')::boolean=false
+  and jsonb_typeof(permissions->'business')='boolean' and (permissions->>'business')::boolean=false
+  and jsonb_typeof(permissions->'training')='boolean' and (permissions->>'training')::boolean=false
+  and jsonb_typeof(permissions->'outings')='boolean' and (permissions->>'outings')::boolean=false
+  and jsonb_typeof(permissions->'usage')='boolean'
+);
+
+create or replace function public.adaz_accept_family_invite(p_code text)
+returns uuid language plpgsql security definer set search_path = public, extensions
+as $$
+declare
+  v_invite public.adaz_family_invites%rowtype;
+  v_email text := lower(coalesce(auth.jwt()->>'email',''));
+begin
+  if auth.uid() is null then raise exception 'Inicia sesión primero.'; end if;
+  if coalesce(trim(p_code),'') = '' then raise exception 'Introduce el código de invitación.'; end if;
+  select * into v_invite from public.adaz_family_invites
+  where code_hash = encode(digest(upper(trim(p_code)),'sha256'),'hex')
+    and accepted_at is null and expires_at > now()
+  limit 1;
+  if not found then raise exception 'El código no existe, expiró o ya fue utilizado.'; end if;
+  if v_email <> v_invite.parent_email then
+    raise exception 'Inicia sesión con el correo al que se envió la invitación.';
+  end if;
+  if auth.uid() = v_invite.child_id then raise exception 'No puedes vincular tu cuenta contigo mismo.'; end if;
+  insert into public.adaz_family_links(child_id,parent_id,child_label,status,permissions)
+  values(v_invite.child_id,auth.uid(),'ADAZ Personal','active',
+    '{"study":false,"habits":false,"business":false,"training":false,"outings":false,"usage":false}'::jsonb)
+  on conflict(child_id,parent_id) do update set status='active';
+  update public.adaz_family_invites set accepted_at=now(),accepted_by=auth.uid() where id=v_invite.id;
+  return v_invite.child_id;
+end;
+$$;
+revoke all on function public.adaz_accept_family_invite(text) from public, anon;
+grant execute on function public.adaz_accept_family_invite(text) to authenticated;
+
+drop policy if exists "linked parent reads permitted summaries" on public.adaz_family_summaries;
+drop policy if exists "linked parent reads outing requests" on public.adaz_outing_requests;
+drop policy if exists "parent responds to linked outing" on public.adaz_parent_responses;
+drop policy if exists "parent reads own outing responses" on public.adaz_parent_responses;
+revoke insert on public.adaz_parent_responses from authenticated;
+
+drop policy if exists "child reads own invites" on public.adaz_family_invites;
+create policy "child reads own invites" on public.adaz_family_invites for select to authenticated
+using (child_id = (select auth.uid()));
+drop policy if exists "participants read family links" on public.adaz_family_links;
+create policy "participants read family links" on public.adaz_family_links for select to authenticated
+using (child_id = (select auth.uid()) or parent_id = (select auth.uid()));
+drop policy if exists "child revokes own family link" on public.adaz_family_links;
+create policy "child revokes own family link" on public.adaz_family_links for delete to authenticated
+using (child_id = (select auth.uid()));
+drop policy if exists "child updates own family permissions" on public.adaz_family_links;
+create policy "child updates own family permissions" on public.adaz_family_links for update to authenticated
+using (child_id = (select auth.uid())) with check (child_id = (select auth.uid()));
+
+drop policy if exists "child manages own summaries" on public.adaz_family_summaries;
+create policy "child manages own summaries" on public.adaz_family_summaries for all to authenticated
+using (child_id = (select auth.uid())) with check (child_id = (select auth.uid()));
+drop policy if exists "child manages own outing requests" on public.adaz_outing_requests;
+create policy "child manages own outing requests" on public.adaz_outing_requests for all to authenticated
+using (child_id = (select auth.uid())) with check (child_id = (select auth.uid()));
+drop policy if exists "child reads responses to own outings" on public.adaz_parent_responses;
+create policy "child reads responses to own outings" on public.adaz_parent_responses for select to authenticated
+using (exists (
+  select 1 from public.adaz_outing_requests o
+  where o.id=adaz_parent_responses.outing_request_id and o.child_id=(select auth.uid())
+));
+
+drop policy if exists "child manages own usage snapshot" on public.adaz_usage_snapshots;
+drop policy if exists "parent reads opted-in usage snapshot" on public.adaz_usage_snapshots;
+drop policy if exists "child or opted-in parent reads usage snapshot" on public.adaz_usage_snapshots;
+drop policy if exists "child inserts own usage snapshot" on public.adaz_usage_snapshots;
+drop policy if exists "child updates own usage snapshot" on public.adaz_usage_snapshots;
+drop policy if exists "child deletes own usage snapshot" on public.adaz_usage_snapshots;
+create policy "child or opted-in parent reads usage snapshot" on public.adaz_usage_snapshots
+for select to authenticated using (
+  child_id=(select auth.uid()) or exists (
+    select 1 from public.adaz_family_links l
+    where l.child_id=adaz_usage_snapshots.child_id
+      and l.parent_id=(select auth.uid()) and l.status='active'
+      and coalesce((l.permissions->>'usage')::boolean,false)=true
+  )
+);
+create policy "child inserts own usage snapshot" on public.adaz_usage_snapshots
+for insert to authenticated with check (child_id=(select auth.uid()));
+create policy "child updates own usage snapshot" on public.adaz_usage_snapshots
+for update to authenticated using (child_id=(select auth.uid()))
+with check (child_id=(select auth.uid()));
+create policy "child deletes own usage snapshot" on public.adaz_usage_snapshots
+for delete to authenticated using (child_id=(select auth.uid()));
+
+drop policy if exists "deny client access to ai usage" on public.adaz_ai_usage;
+create policy "deny client access to ai usage" on public.adaz_ai_usage for all to authenticated
+using (false) with check (false);
+revoke all on public.adaz_ai_usage from anon, authenticated;
+drop function if exists public.adaz_is_linked_parent(uuid);
+
+create index if not exists adaz_family_invites_child_id_idx on public.adaz_family_invites(child_id);
+create index if not exists adaz_family_invites_accepted_by_idx on public.adaz_family_invites(accepted_by);
+create index if not exists adaz_parent_responses_parent_id_idx on public.adaz_parent_responses(parent_id);
+
+comment on table public.adaz_usage_snapshots is
+  'ADAZ TRUST: foreground application name and aggregated daily usage only; no screen or in-app content.';
+comment on table public.adaz_family_links is
+  'ADAZ TRUST: active adult relationship; only the usage permission is supported in the current product scope.';
