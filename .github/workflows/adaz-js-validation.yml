@@ -89,6 +89,10 @@ jobs:
               raise SystemExit("ADAZ Family still exposes legacy summary or outing panels")
           if "captured_at" not in family_js or "Sin actualización reciente" not in family_js:
               raise SystemExit("ADAZ TRUST stale-data handling is missing")
+          if "links.some(x=>x.permissions?.usage)" not in family_js:
+              raise SystemExit("ADAZ Family must preserve usage sharing while at least one parent link remains")
+          if ".update({permissions:p}).eq('child_id',session.user.id)" not in family_js:
+              raise SystemExit("ADAZ Family must apply the usage permission to every active parent link")
 
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
           if "adaz-calendar-exam-results-v1" not in calendar_tests or "ICFES Saber 11 · simulacro integrado ADAZ" not in calendar_tests:
