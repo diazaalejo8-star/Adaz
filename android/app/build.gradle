@@ -11,8 +11,8 @@ android {
         applicationId 'com.adaz.personal'
         minSdk 24
         targetSdk 35
-        versionCode 5
-        versionName '1.3.1'
+        versionCode 6
+        versionName '1.3.2'
     }
 
     flavorDimensions += 'edition'
@@ -20,8 +20,8 @@ android {
         personal {
             dimension 'edition'
             applicationId 'com.adaz.personal'
-            versionCode 5
-            versionName '1.3.1'
+            versionCode 6
+            versionName '1.3.2'
             resValue 'string', 'app_name', 'ADAZ'
             buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/index.html"'
             buildConfigField 'String', 'AUTH_SCHEME', '"adazpersonal"'
@@ -31,8 +31,8 @@ android {
         family {
             dimension 'edition'
             applicationId 'com.adaz.family'
-            versionCode 5
-            versionName '1.3.1'
+            versionCode 6
+            versionName '1.3.2'
             resValue 'string', 'app_name', 'ADAZ Family'
             buildConfigField 'String', 'START_URL', '"https://diazaalejo8-star.github.io/Adaz/family.html?role=parent"'
             buildConfigField 'String', 'AUTH_SCHEME', '"adazfamily"'
