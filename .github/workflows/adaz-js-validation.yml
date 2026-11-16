@@ -91,8 +91,8 @@ jobs:
               raise SystemExit("ADAZ TRUST stale-data handling is missing")
           if "function hasUsagePermission(" not in family_js or "x.child_id===userId&&x.status==='active'&&x.permissions?.usage===true" not in family_js:
               raise SystemExit("ADAZ Family must preserve consent only across active parent links")
-          if "if(!s){stopUsageLoop();links=[];window.ADAZNative?.stopUsageMonitor?.();}" not in family_js:
-              raise SystemExit("ADAZ Family must stop polling and monitoring when the session ends")
+          if "if(!s){stopUsageLoop();links=[];if(mode==='student')window.ADAZNative?.stopUsageMonitor?.();}" not in family_js:
+              raise SystemExit("ADAZ Family must stop polling and student monitoring when the session ends")
           if "x.status==='active'&&x.permissions?.usage===true" not in family_js:
               raise SystemExit("ADAZ Family consent display must ignore revoked links")
           if ".update({permissions:p}).eq('child_id',session.user.id).eq('status','active')" not in family_js:
@@ -115,6 +115,12 @@ jobs:
 
           integrations = Path("adaz-integrations.js").read_text(encoding="utf-8")
           experience = Path("adaz-experience.js").read_text(encoding="utf-8")
+          jacob_function = Path("supabase/functions/adaz-planner/index.ts").read_text(encoding="utf-8")
+          supabase_config = Path("supabase/config.toml").read_text(encoding="utf-8")
+          if 'Deno.env.get("ADAZ_ENABLE_JACOB") !== "true"' not in jacob_function:
+              raise SystemExit("The JACOB server endpoint must stay paused unless explicitly enabled")
+          if "[functions.adaz-planner]" not in supabase_config or "verify_jwt = true" not in supabase_config:
+              raise SystemExit("The JACOB endpoint must require gateway JWT verification")
           if 'id="aiPromptForm"' in html or 'id="aiQuestion"' in html or 'id="aiDataConsent"' in html:
               raise SystemExit("The paused JACOB copilot must not appear in the UI")
           if "const AI_COPILOT_ENABLED = false;" not in integrations or "if (!AI_COPILOT_ENABLED)" not in integrations:
