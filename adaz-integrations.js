@@ -7,6 +7,7 @@
   const SPOTIFY_SESSION_KEY = 'adaz-spotify-session';
   const SPOTIFY_PKCE_KEY = 'adaz-spotify-pkce';
   const AI_HISTORY_KEY = 'adaz-ai-history';
+  const AI_COPILOT_ENABLED = false;
   let cloudConfig = readJSON(CLOUD_KEY, {supabaseUrl:'',supabaseKey:'',plannerUrl:'',autoSync:false,aiConsent:false});
   let spotifyConfig = readJSON(SPOTIFY_KEY, {clientId:'',playlistUrl:'https://open.spotify.com/search/workout%20music',redirectUri:''});
   let spotifySession = null; // Tokens kept only in memory; reconnect after a full reload.
@@ -119,14 +120,14 @@
       return;
     }
     if (!supabaseClient) {
-      status.textContent='Proyecto guardado. Pulsa “Probar configuración” para cargar el cliente y verificar la sesión.';
+      status.textContent='Proyecto guardado. Pulsa “Probar configuración” para verificar el acceso a Supabase.';
       return;
     }
     if (cloudSession&&cloudSession.user) {
       status.textContent='Sesión activa: '+(cloudSession.user.email||'usuario autenticado')+'. Copia automática '+(cloudConfig.autoSync?'ACTIVADA':'desactivada')+'.';
       return;
     }
-    status.textContent='Proyecto configurado, pero sin sesión. Entra con tu correo para sincronizar o llamar al copiloto.';
+    status.textContent='Proyecto configurado, pero sin sesión. Entra con tu correo para administrar tu respaldo privado.';
   }
   function renderIntegrationPage() {
     renderSpotifyConfig();
@@ -180,7 +181,7 @@
     cloudConfig.supabaseUrl=($('#supabaseProjectUrl')?.value||'').trim().replace(/\/+$/,'');
     cloudConfig.supabaseKey=($('#supabasePublishableKey')?.value||'').trim();
     cloudConfig.plannerUrl=($('#plannerFunctionUrl')?.value||'').trim();
-    if (!cloudConfig.plannerUrl&&cloudConfig.supabaseUrl) cloudConfig.plannerUrl=cloudConfig.supabaseUrl+'/functions/v1/adaz-planner';
+    if (!AI_COPILOT_ENABLED) cloudConfig.plannerUrl='';
     cloudConfig.autoSync=!!$('#cloudAutoSync')?.checked;
     cloudConfig.aiConsent=!!$('#aiDataConsent')?.checked;
     saveLocal(CLOUD_KEY,cloudConfig);
@@ -278,6 +279,7 @@
 
   async function askCopilot(event) {
     event.preventDefault();
+    if (!AI_COPILOT_ENABLED) { setStatus('aiStatus','El copiloto permanece pausado en esta versión.'); return; }
     const question=($('#aiQuestion')?.value||'').trim();
     if (!question) return;
     if (!cloudConfig.aiConsent) {setStatus('aiStatus','Primero acepta explícitamente el envío del resumen de ADAZ a JACOB mediante la casilla de consentimiento.');return;}
