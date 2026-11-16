@@ -97,8 +97,6 @@ jobs:
               raise SystemExit("ADAZ Family consent display must ignore revoked links")
           if ".update({permissions:p}).eq('child_id',session.user.id).eq('status','active')" not in family_js:
               raise SystemExit("ADAZ Family may only update consent on active links")
-          if "'+advice+'" not in calendar_tests or "Qué revisar a continuación" not in calendar_tests:
-              raise SystemExit("Assessment area recommendations must be visible on the results screen")
           if ".update({permissions:p}).eq('child_id',session.user.id)" not in family_js:
               raise SystemExit("ADAZ Family must apply the usage permission to every active parent link")
 
@@ -110,6 +108,8 @@ jobs:
               raise SystemExit("Calendar assessment player is missing from the offline shell cache")
 
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
+          if "'+advice+'" not in calendar_tests or "Qué revisar a continuación" not in calendar_tests:
+              raise SystemExit("Assessment area recommendations must be visible on the results screen")
           if "adaz-calendar-exam-results-v1" not in calendar_tests or "ICFES Saber 11 · simulacro integrado ADAZ" not in calendar_tests:
               raise SystemExit("The integrated calendar exam player is missing")
 
