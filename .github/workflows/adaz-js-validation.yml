@@ -89,8 +89,8 @@ jobs:
               raise SystemExit("ADAZ Family still exposes legacy summary or outing panels")
           if "captured_at" not in family_js or "Sin actualización reciente" not in family_js:
               raise SystemExit("ADAZ TRUST stale-data handling is missing")
-          if "links.some(x=>x.permissions?.usage)" not in family_js:
-              raise SystemExit("ADAZ Family must preserve usage sharing while at least one parent link remains")
+          if "function hasUsagePermission(" not in family_js or "x.child_id===userId&&x.status==='active'&&x.permissions?.usage===true" not in family_js:
+              raise SystemExit("ADAZ Family must preserve consent only across active parent links")
           if ".update({permissions:p}).eq('child_id',session.user.id)" not in family_js:
               raise SystemExit("ADAZ Family must apply the usage permission to every active parent link")
 
