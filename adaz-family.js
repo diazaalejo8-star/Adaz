@@ -12,7 +12,7 @@ function dateKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMon
 function localData(){try{return JSON.parse(localStorage.getItem('adaz-data-v1')||'{}')}catch{return {}}}
 function hasUsagePermission(userId=session?.user?.id){return links.some(x=>x.child_id===userId&&x.status==='active'&&x.permissions?.usage===true)}
 function setupClient(){if(!cfg.url||!cfg.key)throw new Error('Guarda primero la conexión Supabase.');if(!window.supabase?.createClient)throw new Error('No se pudo cargar Supabase.');if(!client)client=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return client}
-function showApp(s){session=s;if(!s){stopUsageLoop();links=[];window.ADAZNative?.stopUsageMonitor?.();} $('authCard').classList.toggle('hidden',!!s);$('appCard').classList.toggle('hidden',!s);if(s){$('sessionEmail').textContent=s.user.email||'';refreshAll().catch(e=>status('appStatus',e.message));}}
+function showApp(s){session=s;if(!s){stopUsageLoop();links=[];if(mode==='student')window.ADAZNative?.stopUsageMonitor?.();} $('authCard').classList.toggle('hidden',!!s);$('appCard').classList.toggle('hidden',!s);if(s)$('sessionEmail').textContent=s.user.email||'';}
 function selectedMode(next){if(next!==appRole)return;mode=next;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===next));$('studentPanel').classList.toggle('hidden',next!=='student');$('parentPanel').classList.toggle('hidden',next!=='parent');if(session)refreshAll().catch(e=>status('appStatus',e.message));}
 async function refreshAll(){const c=setupClient();const {data,error}=await c.auth.getSession();if(error)throw error;session=data.session;if(!session){showApp(null);return;}showAppShell();await loadLinks();if(mode==='student'){renderPermissions();if(hasUsagePermission(session.user.id)&&window.ADAZNative?.isUsageMonitorRunning?.())await configureNativeUsageSync();startUsageLoop();}else{if(usageTimer){clearInterval(usageTimer);usageTimer=null;}await loadParentData();startParentUsageLoop();}}
 function showAppShell(){$('authCard').classList.add('hidden');$('appCard').classList.remove('hidden');$('sessionEmail').textContent=session?.user?.email||'';}
@@ -38,5 +38,5 @@ $('createInvite').onclick=()=>createInvite().catch(e=>status('appStatus',e.messa
 document.querySelectorAll('[data-mode]').forEach(b=>{b.hidden=b.dataset.mode!==appRole;b.onclick=()=>selectedMode(b.dataset.mode);});
 selectedMode(appRole);
 
-(async()=>{try{if(cfg.url&&cfg.key){const c=setupClient();const {data}=await c.auth.getSession();showApp(data.session);if(data.session)selectedMode('student');}}catch(e){status('configStatus',e.message);}})();
+(async()=>{try{if(cfg.url&&cfg.key){const c=setupClient();const {data}=await c.auth.getSession();showApp(data.session);if(data.session)selectedMode(appRole);}}catch(e){status('configStatus',e.message);}})();
 })();
