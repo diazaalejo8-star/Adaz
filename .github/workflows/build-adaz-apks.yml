@@ -45,15 +45,12 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Check JavaScript syntax
+      - name: Check every ADAZ JavaScript module
         run: |
-          node --check adaz-family.js
-          node --check adaz-family-link.js
-          node --check adaz-academy-curriculum.js
-          node --check adaz-year-plan.js
-          node --check adaz-academy.js
-          node --check adaz-integrations.js
-          node --check adaz-extra.js
+          for file in adaz-*.js; do
+            echo "Checking $file"
+            node --check "$file"
+          done
 
       - name: Build separate Personal and Family debug APKs
         working-directory: android

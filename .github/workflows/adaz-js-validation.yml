@@ -91,6 +91,12 @@ jobs:
               raise SystemExit("ADAZ TRUST stale-data handling is missing")
           if "function hasUsagePermission(" not in family_js or "x.child_id===userId&&x.status==='active'&&x.permissions?.usage===true" not in family_js:
               raise SystemExit("ADAZ Family must preserve consent only across active parent links")
+          if "if(!s){stopUsageLoop();links=[];if(mode==='student')window.ADAZNative?.stopUsageMonitor?.();}" not in family_js:
+              raise SystemExit("ADAZ Family must stop polling and student monitoring when the session ends")
+          if "x.status==='active'&&x.permissions?.usage===true" not in family_js:
+              raise SystemExit("ADAZ Family consent display must ignore revoked links")
+          if ".update({permissions:p}).eq('child_id',session.user.id).eq('status','active')" not in family_js:
+              raise SystemExit("ADAZ Family may only update consent on active links")
           if ".update({permissions:p}).eq('child_id',session.user.id)" not in family_js:
               raise SystemExit("ADAZ Family must apply the usage permission to every active parent link")
 
@@ -102,11 +108,19 @@ jobs:
               raise SystemExit("Calendar assessment player is missing from the offline shell cache")
 
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
+          if "'+advice+'" not in calendar_tests or "Qué revisar a continuación" not in calendar_tests:
+              raise SystemExit("Assessment area recommendations must be visible on the results screen")
           if "adaz-calendar-exam-results-v1" not in calendar_tests or "ICFES Saber 11 · simulacro integrado ADAZ" not in calendar_tests:
               raise SystemExit("The integrated calendar exam player is missing")
 
           integrations = Path("adaz-integrations.js").read_text(encoding="utf-8")
           experience = Path("adaz-experience.js").read_text(encoding="utf-8")
+          jacob_function = Path("supabase/functions/adaz-planner/index.ts").read_text(encoding="utf-8")
+          supabase_config = Path("supabase/config.toml").read_text(encoding="utf-8")
+          if 'Deno.env.get("ADAZ_ENABLE_JACOB") !== "true"' not in jacob_function:
+              raise SystemExit("The JACOB server endpoint must stay paused unless explicitly enabled")
+          if "[functions.adaz-planner]" not in supabase_config or "verify_jwt = true" not in supabase_config:
+              raise SystemExit("The JACOB endpoint must require gateway JWT verification")
           if 'id="aiPromptForm"' in html or 'id="aiQuestion"' in html or 'id="aiDataConsent"' in html:
               raise SystemExit("The paused JACOB copilot must not appear in the UI")
           if "const AI_COPILOT_ENABLED = false;" not in integrations or "if (!AI_COPILOT_ENABLED)" not in integrations:

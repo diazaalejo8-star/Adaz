@@ -36,7 +36,7 @@ Para que Family muestre datos se necesita configurar la URL y clave pública de 
 ## Integraciones y límites
 
 - Supabase proporciona autenticación, invitaciones y almacenamiento de estadísticas Family con Row Level Security.
-- El código Edge `adaz-planner` existe, pero eso no significa que JACOB esté habilitado o configurado. No habilitarlo sin una decisión explícita, secretos de servidor válidos y prueba del flujo.
+- La Edge Function `adaz-planner` está desplegada, pero JACOB permanece pausado por defecto, con JWT obligatorio y compuerta `ADAZ_ENABLE_JACOB`. No habilitarla sin decisión explícita y prueba del flujo.
 - Una cola de borradores de redes sociales no equivale a una integración OAuth ni a publicación automática en Instagram o TikTok.
 - Abrir Spotify o enlaces externos no equivale a una integración de control remoto estable.
 - Los recordatorios `.ics` dependen de la aplicación de calendario del teléfono; la PWA no garantiza notificaciones cuando está cerrada.

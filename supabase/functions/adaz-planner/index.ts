@@ -28,6 +28,7 @@ function respond(status: number, body: Record<string, unknown>) {
 Deno.serve(async (request: Request) => {
   const origin = request.headers.get("origin") || "";
   if (request.method === "OPTIONS") return new Response("ok", { headers: { ...CORS, "Access-Control-Allow-Origin": origin === ALLOWED_ORIGIN ? origin : ALLOWED_ORIGIN } });
+  if (Deno.env.get("ADAZ_ENABLE_JACOB") !== "true") return respond(404, { error: "JACOB is paused in this ADAZ deployment." });
   if (request.method !== "POST") return respond(405, { error: "Use POST." });
   if (origin && origin !== ALLOWED_ORIGIN) return respond(403, { error: "Origin not allowed." });
   const authorization = request.headers.get("authorization") || "";

@@ -1,4 +1,6 @@
-# Activar JACOB en ADAZ
+# JACOB en ADAZ · estado pausado
+
+> **ESTADO ACTUAL (16 nov 2026): JACOB está pausado.** La interfaz no ofrece el copiloto y la Edge Function devuelve 404 salvo que el administrador active deliberadamente la variable de servidor `ADAZ_ENABLE_JACOB=true`. El gateway exige JWT. No sigas los pasos de despliegue o prueba de esta guía mientras siga pausado. No configures la variable de activación ni añadas claves de OpenAI para esta fase.
 
 Guía de despliegue para el proyecto Supabase del propietario/responsable de ADAZ. No pegues claves o tokens en GitHub, ADAZ, documentos compartidos ni conversaciones.
 
