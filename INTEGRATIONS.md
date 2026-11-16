@@ -6,7 +6,7 @@ Este repositorio es una PWA estática de GitHub Pages. No contiene claves privad
 
 - Spotify: abre un enlace o playlist de Spotify. El control avanzado usa OAuth Authorization Code con PKCE y funciones de Spotify Web API; requiere registrar tu propia app de desarrollador y tener Spotify Premium para controlar la reproducción.
 - Nube: sube una instantánea de tu progreso a tu propia tabla privada Supabase, pero únicamente después de configurar un proyecto, iniciar sesión y activar de forma explícita la copia automática. Es una copia unidireccional desde este dispositivo; la restauración desde la nube es una acción aparte y reemplaza los datos locales después de pedir confirmación.
-- JACOB: envía una consulta y el resumen local autorizado de ADAZ —incluidos Aestel Business, ADAZ Health, Academy y agenda— a una Supabase Edge Function; esa función llama a la OpenAI API. La conversación se guarda localmente y el acceso es bajo demanda.
+- JACOB: **pausado**. La interfaz no permite consultas y la Edge Function devuelve 404 salvo activación deliberada mediante una variable de servidor. El código y la guía se conservan, pero no se considera una integración disponible.
 - ChatGPT: la aplicación no puede conectarse a tu historial privado de ChatGPT ni subir mensajes a esta conversación automáticamente. El botón Preparar resumen para ChatGPT descarga un archivo que tú puedes adjuntar manualmente aquí. El uso de la OpenAI API tiene facturación independiente del plan de ChatGPT.
 
 ## A. Spotify: abrir música primero
@@ -81,13 +81,7 @@ JACOB utiliza la Edge Function existente adaz-planner. La versión de código ac
 - mantiene autenticación de Supabase, límite de consultas y la API key exclusivamente en el servidor;
 - usa gpt-6.1-sol como modelo predeterminado, modificable mediante OPENAI_MODEL en Supabase Secrets.
 
-Para activarlo:
-1. Despliega de nuevo supabase/functions/adaz-planner/index.ts desde el proyecto Supabase.
-2. En Edge Function Secrets configura OPENAI_API_KEY y, si quieres, OPENAI_MODEL=gpt-6.1-sol.
-3. En ADAZ configura el Project URL, la publishable/anon key y la URL de la función; inicia sesión y acepta el consentimiento solo después de revisar qué datos se compartirán.
-4. Envía una consulta de prueba sobre Aestel Business y comprueba que JACOB no invente métricas.
-
-El código de JACOB ya está en el repositorio, pero no estará operativo desde la app hasta que la función se despliegue y los secretos estén configurados. La facturación de la OpenAI API es independiente de ChatGPT. Define límites de gasto en el proyecto antes de usarlo de forma frecuente.
+**Estado: pausado por decisión del proyecto.** La función Edge se mantiene desplegada para evitar perder el trabajo, pero ahora devuelve 404 a menos que el administrador configure explícitamente `ADAZ_ENABLE_JACOB=true` en secretos de servidor. El gateway también exige JWT. No habilitar esta variable ni configurar el uso de OpenAI hasta que el proyecto vuelva a autorizar JACOB y se revise el flujo completo de consentimiento, coste y datos compartidos.
 
 ## G. Aestel Business — Instagram y TikTok
 
