@@ -34,7 +34,7 @@ Usa únicamente Project URL y clave pública publishable/anon. Nunca coloques un
 
 1. Instala ADAZ Personal en el teléfono del estudiante.
 2. Instala ADAZ Family en el teléfono del padre, madre o acudiente.
-3. Guarda el mismo Project URL y la misma clave pública en cada aplicación. La configuración no se copia automáticamente entre APK.
+3. Introduce el mismo Project URL y la misma clave pública en cada aplicación. Las APK Personal y Family tienen almacenamiento local separado; Family no hereda automáticamente la configuración de Personal.
 4. En cada teléfono, solicita el enlace mágico con el correo propio y ábrelo en ese mismo dispositivo para iniciar sesión.
 5. En ADAZ Personal, escribe el correo del adulto y genera el código de invitación.
 6. Comparte el código directamente con el adulto. El código vence en siete días.
