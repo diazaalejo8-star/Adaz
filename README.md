@@ -1,52 +1,49 @@
-# ADAZ — Sistema personal de progreso
+# ADAZ — sistema personal de progreso
 
-ADAZ es una primera versión funcional tipo **PWA** (aplicación web instalable). Su interfaz se adapta a móvil y escritorio. El objetivo es integrar estudios, Aestel Lux, entrenamiento, salud, finanzas personales y revisión semanal sin convertir el día en una lista inabarcable.
+ADAZ reúne planificación diaria, estudio, negocio de Oro Laminado, entrenamiento, natación, metas personales y revisión semanal. La edición Personal se publica como PWA y tiene un contenedor Android. Existe una segunda edición Android, Family, para consultar estadísticas de uso autorizadas por el estudiante.
 
-## Qué incluye
+## Módulos actuales
 
-- **Panel del día:** lista editable de tareas, avance diario, calendario de prioridades y temporizador de enfoque de 25 minutos.
-- **Estudios:** sesiones IELTS, Saber 11/ICFES y estudio general; habilidad/área, tiempo efectivo, objetivo concreto, método, resultado porcentual y banda IELTS opcional.
-- **Negocio:** registro de ventas, costos, reembolsos, pedidos, anticipos, saldos, contenido publicado y métricas capturadas manualmente.
-- **Finanzas del negocio:** cifras históricas editables y advertencia para conciliar caja real antes de reinvertir. Los COP $200.000 de inversión inicial y aproximadamente COP $150.000 de utilidad histórica se usan como referencias aportadas anteriormente, no como saldo actual.
-- **Entrenamiento y bienestar:** registro de natación, gimnasio, duración, metros si se conocen, esfuerzo, energía, sueño y estado de ánimo.
-- **Revisión semanal:** áreas de vida, carga global, avances, obstáculos y un cambio pequeño para la semana siguiente.
-- **Recordatorios:** descarga de un archivo `.ics` para importar en tu calendario y recordarte el cierre diario y traer el progreso a ChatGPT.
-- **Fuentes:** materiales oficiales de IELTS e ICFES, más revisiones científicas y guías generales.
-- **Datos:** exportación e importación en JSON, almacenamiento local en el navegador y caché de la estructura para uso sin conexión tras la primera carga online.
+- **Hoy y calendario:** tareas, prioridades y plan personal 2026–2027.
+- **ADAZ Academy:** prácticas originales para ICFES, IELTS Academic, fundamentos de Medicina y Negocios/Oro Laminado. Las preguntas originales ADAZ no son oficiales; los recursos oficiales se enlazan desde sus sitios de origen.
+- **Negocio:** registro de compras, productos, costos, ventas y pedidos. Los registros deben conciliarse con el inventario y la caja reales.
+- **ADAZ Health:** registro de gimnasio y natación, con seguimiento general de actividad y recuperación.
+- **Metas y finanzas personales:** objetivos personales separados del capital del negocio.
+- **ADAZ Family / Trust:** invitaciones entre cuentas y permiso opcional para compartir la aplicación en primer plano y minutos agregados por aplicación. No comparte capturas, mensajes ni contenido interno de otras apps.
+- **Datos locales:** el progreso Personal se guarda en el dispositivo. La exportación/importación JSON permite crear y restaurar respaldos.
 
-## Probar en un computador
+## Ejecutar en local
 
-Desde la carpeta `ADAZ`, ejecuta:
+Desde la carpeta raíz ejecuta:
 
 ```bash
 python -m http.server 8000
 ```
 
-Luego abre `http://localhost:8000/`. Para la vista inicial, también puedes abrir `index.html` directamente; sin HTTPS no estarán disponibles todas las funciones de instalación PWA/offline.
+Abre `http://localhost:8000/`. Algunas funciones PWA/Android requieren HTTPS; abrir el HTML como archivo no equivale a probarlas en producción.
 
-## Instalar en Android como app
+## Android: paquetes de prueba
 
-La opción lista en este paquete es instalarla como **PWA**:
+El proyecto contiene dos sabores Android:
 
-1. Publica el contenido de esta carpeta en una URL HTTPS.
-2. Abre esa dirección en Chrome para Android.
-3. En el menú del navegador, elige **Instalar aplicación** o **Añadir a pantalla de inicio** (el texto varía por versión).
-4. Abre ADAZ desde el icono que aparece en la pantalla principal.
-5. Importa el archivo `.ics` si deseas recordatorios del calendario y exporta un JSON de respaldo cada semana.
+- **ADAZ Personal** (`com.adaz.personal`), que abre `index.html`.
+- **ADAZ Family** (`com.adaz.family`), que abre `family.html?role=parent`.
 
-La guía paso a paso está en `INSTALAR-ANDROID.md`.
+El flujo `.github/workflows/build-adaz-apks.yml` compila variantes debug y publica un artefacto llamado `ADAZ-Personal-and-Family-APKs`. Son paquetes de prueba, no APKs firmadas de lanzamiento. Un build correcto no sustituye la validación en un teléfono Android real.
 
-## Importante: APK
+Para que Family muestre datos se necesita configurar la URL y clave pública de Supabase en ambas apps, usar dos cuentas distintas, aceptar una invitación y activar voluntariamente el permiso de uso desde Personal. Android también solicita el acceso de uso del sistema y una notificación persistente mientras el seguimiento está activo. Sin vínculo, permiso y captura reciente, el panel no tendrá datos.
 
-Este paquete **no contiene una APK compilada ni firmada**. La aplicación es una PWA instalable. Para generar una APK tipo Android Trusted Web Activity se necesita que la PWA esté publicada por HTTPS y completar el empaquetado Android con una herramienta como PWABuilder/Bubblewrap y una clave de firma. Este entorno no tiene Android SDK/Gradle preparados para compilar y validar una APK real, así que no sería correcto entregarte un ZIP o HTML llamándolo APK.
+## Integraciones y límites
 
-Referencia oficial de empaquetado: https://github.com/pwa-builder/PWABuilder/blob/main/docs/builder/android.md
+- Supabase proporciona autenticación, invitaciones y almacenamiento de estadísticas Family con Row Level Security.
+- El código Edge `adaz-planner` existe, pero eso no significa que JACOB esté habilitado o configurado. No habilitarlo sin una decisión explícita, secretos de servidor válidos y prueba del flujo.
+- Una cola de borradores de redes sociales no equivale a una integración OAuth ni a publicación automática en Instagram o TikTok.
+- Abrir Spotify o enlaces externos no equivale a una integración de control remoto estable.
+- Los recordatorios `.ics` dependen de la aplicación de calendario del teléfono; la PWA no garantiza notificaciones cuando está cerrada.
 
-## Privacidad y limitaciones
+## Privacidad y mantenimiento
 
-- No hay cuenta ni sincronización en la nube: los datos quedan en el navegador/dispositivo en que usas ADAZ.
-- ADAZ no envía nada automáticamente a ChatGPT. Para revisar avances, exporta el JSON y adjúntalo en la conversación.
-- Los recordatorios `.ics` requieren importar el archivo en tu calendario. La app no puede garantizar notificaciones del navegador cuando está cerrada.
-- Los horarios son orientativos/editables. La información escolar compartida para el tramo hasta el 13 de noviembre de 2026 está marcada como provisional; no se asumen horarios deportivos exactos.
-- No guardes contraseñas, datos bancarios completos, documentos de identidad ni información privada de otras personas.
-- Los registros pueden perderse al borrar los datos del navegador. Mantén respaldos.
+No introduzcas claves `service_role`, contraseñas, tokens ni códigos de doble factor en formularios, HTML, JavaScript o APK. Los permisos Family empiezan desactivados y pueden retirarse. Las actualizaciones deben conservar las claves y estructuras de almacenamiento local: nunca se debe borrar el progreso para resolver errores.
+
+Las migraciones de Supabase deben mantenerse sincronizadas con el historial del repositorio y comprobarse antes de modificar RLS o funciones. No reinicies el proyecto ni elimines filas como método de reparación.
+

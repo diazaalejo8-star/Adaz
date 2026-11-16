@@ -89,14 +89,33 @@ jobs:
               raise SystemExit("ADAZ Family still exposes legacy summary or outing panels")
           if "captured_at" not in family_js or "Sin actualización reciente" not in family_js:
               raise SystemExit("ADAZ TRUST stale-data handling is missing")
-          if "links.some(x=>x.permissions?.usage)" not in family_js:
-              raise SystemExit("ADAZ Family must preserve usage sharing while at least one parent link remains")
+          if "function hasUsagePermission(" not in family_js or "x.child_id===userId&&x.status==='active'&&x.permissions?.usage===true" not in family_js:
+              raise SystemExit("ADAZ Family must preserve consent only across active parent links")
           if ".update({permissions:p}).eq('child_id',session.user.id)" not in family_js:
               raise SystemExit("ADAZ Family must apply the usage permission to every active parent link")
+
+          exam_runner = '<script src="./adaz-calendar-tests.js"></script>'
+          year_plan_script = '<script src="./adaz-year-plan.js"></script>'
+          if exam_runner not in html or year_plan_script not in html or html.index(exam_runner) < html.index(year_plan_script):
+              raise SystemExit("Calendar assessment player must load after the year plan")
+          if "'./adaz-calendar-tests.js'" not in sw:
+              raise SystemExit("Calendar assessment player is missing from the offline shell cache")
 
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
           if "adaz-calendar-exam-results-v1" not in calendar_tests or "ICFES Saber 11 · simulacro integrado ADAZ" not in calendar_tests:
               raise SystemExit("The integrated calendar exam player is missing")
+
+          integrations = Path("adaz-integrations.js").read_text(encoding="utf-8")
+          experience = Path("adaz-experience.js").read_text(encoding="utf-8")
+          if 'id="aiPromptForm"' in html or 'id="aiQuestion"' in html or 'id="aiDataConsent"' in html:
+              raise SystemExit("The paused JACOB copilot must not appear in the UI")
+          if "const AI_COPILOT_ENABLED = false;" not in integrations or "if (!AI_COPILOT_ENABLED)" not in integrations:
+              raise SystemExit("The JACOB endpoint must remain disabled")
+          if "Habla con JACOB" in experience or "#aiQuestion" in experience:
+              raise SystemExit("More still links to the paused JACOB copilot")
+          year_plan = Path("adaz-year-plan.js").read_text(encoding="utf-8")
+          if "'2026-12-05':['ICFES · práctica oficial Saber 11'" in year_plan or "'2026-12-05':['ICFES · práctica ADAZ por áreas'" not in year_plan or "no una prueba oficial" not in year_plan:
+              raise SystemExit("The December ADAZ practice must be labelled as original, not official")
 
           academy = Path("adaz-academy.js").read_text(encoding="utf-8")
           for area in ["Oro Laminado", "Medicina", "ICFES · Saber 11", "IELTS Academic"]:
