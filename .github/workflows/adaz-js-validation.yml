@@ -94,6 +94,13 @@ jobs:
           if ".update({permissions:p}).eq('child_id',session.user.id)" not in family_js:
               raise SystemExit("ADAZ Family must apply the usage permission to every active parent link")
 
+          exam_runner = '<script src="./adaz-calendar-tests.js"></script>'
+          year_plan_script = '<script src="./adaz-year-plan.js"></script>'
+          if exam_runner not in html or year_plan_script not in html or html.index(exam_runner) < html.index(year_plan_script):
+              raise SystemExit("Calendar assessment player must load after the year plan")
+          if "'./adaz-calendar-tests.js'" not in sw:
+              raise SystemExit("Calendar assessment player is missing from the offline shell cache")
+
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
           if "adaz-calendar-exam-results-v1" not in calendar_tests or "ICFES Saber 11 · simulacro integrado ADAZ" not in calendar_tests:
               raise SystemExit("The integrated calendar exam player is missing")
