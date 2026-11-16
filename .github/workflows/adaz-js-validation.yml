@@ -91,6 +91,14 @@ jobs:
               raise SystemExit("ADAZ TRUST stale-data handling is missing")
           if "function hasUsagePermission(" not in family_js or "x.child_id===userId&&x.status==='active'&&x.permissions?.usage===true" not in family_js:
               raise SystemExit("ADAZ Family must preserve consent only across active parent links")
+          if "if(!s){stopUsageLoop();links=[];window.ADAZNative?.stopUsageMonitor?.();}" not in family_js:
+              raise SystemExit("ADAZ Family must stop polling and monitoring when the session ends")
+          if "x.status==='active'&&x.permissions?.usage===true" not in family_js:
+              raise SystemExit("ADAZ Family consent display must ignore revoked links")
+          if ".update({permissions:p}).eq('child_id',session.user.id).eq('status','active')" not in family_js:
+              raise SystemExit("ADAZ Family may only update consent on active links")
+          if "'+advice+'" not in calendar_tests or "Qué revisar a continuación" not in calendar_tests:
+              raise SystemExit("Assessment area recommendations must be visible on the results screen")
           if ".update({permissions:p}).eq('child_id',session.user.id)" not in family_js:
               raise SystemExit("ADAZ Family must apply the usage permission to every active parent link")
 
