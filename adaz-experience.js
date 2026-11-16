@@ -49,9 +49,8 @@ const pages={
   ['today','Vuelve al día de hoy','Elige una acción pequeña para empezar.','Ir a Hoy','page|dashboard']
  ]},
  integrations:{title:'Tus herramientas, conectadas con cuidado',desc:'Activa solo las conexiones que realmente necesites. Tus datos y permisos siguen bajo tu control.',cards:[
-  ['jacob','Habla con JACOB','Escribe una pregunta concreta para recibir ayuda cuando la conexión esté configurada.','Preguntar a JACOB','anchor|#aiQuestion'],
   ['music','Abre tu música','Usa tu lista de Spotify sin necesidad de activar el control avanzado.','Ver Spotify','anchor|#spotifyPlaylistUrl'],
-  ['privacy','Revisa tus permisos','Comprueba qué datos compartirías antes de conectar un servicio.','Ver privacidad','anchor|#aiDataConsent']
+  ['privacy','Revisa tus permisos','Comprueba qué datos compartirías antes de conectar un servicio.','Ver privacidad','anchor|#cloudAutoSync']
  ]},
  finance:{title:'Ten claro qué entra y qué sale',desc:'Registra movimientos reales y crea metas de ahorro sencillas.',cards:[
   ['movement','Apunta un movimiento','Registra un ingreso o un gasto para mantener tus cuentas claras.','Añadir movimiento','anchor|#pfTransactionForm'],
