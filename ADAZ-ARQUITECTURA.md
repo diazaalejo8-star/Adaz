@@ -63,7 +63,7 @@ ADAZ Health registra gimnasio y natación. En personas adolescentes, el contenid
 
 ## 8. Integraciones no habilitadas por defecto
 
-- **JACOB / `adaz-planner`:** existe código de Edge Function, pero eso no prueba que esté configurado con secretos válidos ni que la interfaz esté habilitada. Mantenerlo desactivado hasta una solicitud explícita y verificación del backend.
+- **JACOB / `adaz-planner`:** la función está desplegada, pero queda pausada por defecto con la compuerta `ADAZ_ENABLE_JACOB`; el gateway exige JWT. No se habilita desde la interfaz. Para reactivarla se necesita decisión explícita y revisión de consentimiento, coste y backend.
 - **Instagram y TikTok:** una cola de ideas o borradores no equivale a OAuth, lectura de métricas ni publicación.
 - **Spotify:** abrir enlaces no equivale a control remoto mediante API. No mostrar estado conectado sin verificar permisos y sesión.
 
@@ -76,3 +76,13 @@ ADAZ Health registra gimnasio y natación. En personas adolescentes, el contenid
 5. Family se prueba con cuentas separadas, invitación, consentimiento, sincronización, revocación y estado obsoleto.
 6. Las pruebas usan cuentas y datos de prueba; no se exponen claves privadas ni datos personales.
 
+## 10. Hallazgos de auditoría (16 nov 2026)
+
+- Se corrigió el ciclo de vida de ADAZ Family: al cerrar sesión o perderla se detienen los temporizadores de consulta y el monitor local del estudiante; el permiso se muestra solo si existe un vínculo activo.
+- Se corrigió la pantalla de resultados de evaluaciones para mostrar las recomendaciones por área que ya se calculaban, pero no se renderizaban.
+- El flujo de compilación Android ahora comprueba la sintaxis de todos los módulos `adaz-*.js`, no solo de una selección.
+- La base Supabase de producción tiene RLS activado en las tablas Family y uso. No se encontraron filas de Family/uso en la inspección, y los permisos de ejecución de las RPC quedaron limitados a `authenticated`, `postgres` y `service_role`.
+- Supabase Advisor mantiene dos avisos sobre funciones `SECURITY DEFINER` accesibles a usuarios autenticados. Son las RPC de invitación y aceptación que la app necesita; deben conservar validación de usuario/correo y revisión periódica. No se amplió su acceso a `anon`.
+- La lista de migraciones de Supabase no coincide con los nombres/fechas de los SQL versionados en `supabase/migrations`. No se aplicaron migraciones ni cambios de esquema durante esta auditoría; hace falta reconciliar el historial antes de volver a desplegar la base desde cero.
+- La función `adaz-planner` quedó desplegada en versión 2 con JWT obligatorio y una compuerta de servidor: devuelve 404 salvo activación explícita de `ADAZ_ENABLE_JACOB=true`.
+- Las APK se compilaron en CI, pero siguen pendientes las pruebas manuales en un Android real, incluidas las pruebas con dos cuentas y revocación de consentimiento.
