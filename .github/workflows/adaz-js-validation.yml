@@ -105,6 +105,18 @@ jobs:
           if "adaz-calendar-exam-results-v1" not in calendar_tests or "ICFES Saber 11 · simulacro integrado ADAZ" not in calendar_tests:
               raise SystemExit("The integrated calendar exam player is missing")
 
+          integrations = Path("adaz-integrations.js").read_text(encoding="utf-8")
+          experience = Path("adaz-experience.js").read_text(encoding="utf-8")
+          if 'id="aiPromptForm"' in html or 'id="aiQuestion"' in html or 'id="aiDataConsent"' in html:
+              raise SystemExit("The paused JACOB copilot must not appear in the UI")
+          if "const AI_COPILOT_ENABLED = false;" not in integrations or "if (!AI_COPILOT_ENABLED)" not in integrations:
+              raise SystemExit("The JACOB endpoint must remain disabled")
+          if "Habla con JACOB" in experience or "#aiQuestion" in experience:
+              raise SystemExit("More still links to the paused JACOB copilot")
+          year_plan = Path("adaz-year-plan.js").read_text(encoding="utf-8")
+          if "ICFES · práctica oficial Saber 11" in year_plan or "no una prueba oficial" not in year_plan:
+              raise SystemExit("ADAZ practice must be distinguished from official exam material")
+
           academy = Path("adaz-academy.js").read_text(encoding="utf-8")
           for area in ["Oro Laminado", "Medicina", "ICFES · Saber 11", "IELTS Academic"]:
               if area not in academy:
