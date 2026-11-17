@@ -92,6 +92,7 @@ jobs:
 
           family_js = Path("adaz-family.js").read_text(encoding="utf-8")
           family_html = Path("family.html").read_text(encoding="utf-8")
+          integrations = Path("adaz-integrations.js").read_text(encoding="utf-8")
           if "DEFAULT_SUPABASE_URL='https://sychkzfjfgllxzsbhxoz.supabase.co'" not in family_js or "DEFAULT_SUPABASE_KEY='sb_publishable_" not in family_js:
               raise SystemExit("ADAZ Family must be preconfigured for the connected Supabase project")
           if "DEFAULT_SUPABASE_URL = 'https://sychkzfjfgllxzsbhxoz.supabase.co'" not in integrations or "DEFAULT_SUPABASE_KEY = 'sb_publishable_" not in integrations:
