@@ -104,8 +104,10 @@ class MainActivity : Activity() {
         webView = WebView(this)
         webView.setOnApplyWindowInsetsListener { view, insets ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val bars = insets.getInsets(WindowInsets.Type.systemBars())
-                view.setPadding(0, bars.top, 0, bars.bottom)
+                val safe = insets.getInsets(
+                    WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout()
+                )
+                view.setPadding(0, safe.top, 0, safe.bottom)
             }
             insets
         }

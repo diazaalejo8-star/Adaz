@@ -1,9 +1,12 @@
 (() => {
 'use strict';
 const $=id=>document.getElementById(id), KEY='adaz-family-config-v1';
+const DEFAULT_SUPABASE_URL='https://sychkzfjfgllxzsbhxoz.supabase.co';
+const DEFAULT_SUPABASE_KEY='sb_publishable_pjURsjG7370z3pvTBoCvpQ_RGHBOvvg';
 const appRole=new URLSearchParams(location.search).get('role')==='parent'?'parent':'student';
-let cfg=read(KEY,{url:'',key:''}), client=null, session=null, mode=appRole, links=[], usageTimer=null, parentUsageTimer=null;
+let cfg=read(KEY,{url:DEFAULT_SUPABASE_URL,key:DEFAULT_SUPABASE_KEY}), client=null, session=null, mode=appRole, links=[], usageTimer=null, parentUsageTimer=null;
 const personalCfg=read('adaz-cloud-config',{});if(!cfg.url&&personalCfg.supabaseUrl)cfg={url:personalCfg.supabaseUrl,key:personalCfg.supabaseKey||''};
+if(!cfg.url)cfg.url=DEFAULT_SUPABASE_URL;if(!cfg.key)cfg.key=DEFAULT_SUPABASE_KEY;save(KEY,cfg);
 function read(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch{return d}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function status(id,msg){if($(id))$(id).textContent=msg||''}
@@ -29,8 +32,9 @@ async function loadParentUsage(){const {data:family,error}=await client.from('ad
 async function createInvite(){const email=$('parentEmail').value.trim().toLowerCase();if(!email){status('appStatus','Escribe el correo del adulto.');return;}const {data,error}=await client.rpc('adaz_create_family_invite',{p_parent_email:email});if(error){status('appStatus',error.message);return;}$('inviteOutput').classList.remove('hidden');$('inviteOutput').innerHTML='<p class="muted">Comparte este código directamente con el adulto invitado. Vence en 7 días y solo sirve con el correo indicado.</p><div class="code">'+esc(data)+'</div><div class="actions"><button class="btn" id="copyInvite">Copiar código</button></div>';$('copyInvite').onclick=()=>navigator.clipboard?.writeText(data);status('appStatus','Invitación creada para '+email+'.');}
 async function loadParentData(){const {error}=await client.from('adaz_family_links').select('child_id,child_label,permissions').eq('parent_id',session.user.id).eq('status','active');if(error)throw error;await loadParentUsage();}
 async function acceptInvite(){const code=$('inviteCode').value.trim().toUpperCase();const {data,error}=await client.rpc('adaz_accept_family_invite',{p_code:code});status('acceptStatus',error?error.message:'Cuenta vinculada. El estudiante todavía debe activar las categorías que desea compartir.');if(!error){$('inviteCode').value='';await refreshAll();}}
-$('projectUrl').value=cfg.url;$('publicKey').value=cfg.key;
-$('saveConfig').onclick=()=>{cfg={url:$('projectUrl').value.trim().replace(/\/$/,''),key:$('publicKey').value.trim()};save(KEY,cfg);client=null;status('configStatus','Conexión guardada solo en este dispositivo.');};
+$('projectUrl').value=cfg.url;$('publicKey').value=cfg.key;if(cfg.url&&cfg.key)$('configCard').classList.add('hidden');
+$('saveConfig').onclick=()=>{const url=$('projectUrl').value.trim().replace(/\/$/,'');const key=$('publicKey').value.trim();if(!url.startsWith('https://')||!key){status('configStatus','Introduce una URL HTTPS y una clave pública válida.');return;}cfg={url,key};save(KEY,cfg);client=null;$('configCard').classList.add('hidden');status('configStatus','Conexión guardada en este dispositivo.');};
+$('editConfig').onclick=()=>{$('configCard').classList.toggle('hidden');};
 $('testConfig').onclick=async()=>{try{const c=setupClient();const {error}=await c.auth.getSession();status('configStatus',error?error.message:'SDK listo y configuración guardada. Para comprobar la conexión remota, solicita un enlace de acceso e inicia sesión.');}catch(e){status('configStatus',e.message);}};
 $('sendAccess').onclick=async()=>{try{const c=setupClient(),email=$('email').value.trim();if(!email)throw new Error('Escribe tu correo electrónico.');status('authStatus','Enviando enlace de acceso…');const {error}=await c.auth.signInWithOtp({email,options:{emailRedirectTo:window.ADAZNative?.authRedirectUri?window.ADAZNative.authRedirectUri():location.href}});if(error)throw error;status('authStatus','Enlace enviado. Abre el correo en este mismo teléfono y pulsa el enlace para volver a ADAZ Family.');}catch(e){status('authStatus','No se pudo enviar el enlace: '+e.message);}};
 $('refresh').onclick=()=>refreshAll().catch(e=>status('appStatus',e.message));$('signOut').onclick=async()=>{try{window.ADAZNative?.stopUsageMonitor?.();let cleanupError=null;if(mode==='student'&&session?.user?.id){const cleanup=await client.from('adaz_usage_snapshots').delete().eq('child_id',session.user.id);cleanupError=cleanup.error;}await client.auth.signOut();showApp(null);if(cleanupError)status('appStatus','Sesión cerrada; no se pudo retirar la última lectura: '+cleanupError.message);}catch(e){status('appStatus',e.message);}};

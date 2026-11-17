@@ -8,7 +8,12 @@
   const SPOTIFY_PKCE_KEY = 'adaz-spotify-pkce';
   const AI_HISTORY_KEY = 'adaz-ai-history';
   const AI_COPILOT_ENABLED = false;
-  let cloudConfig = readJSON(CLOUD_KEY, {supabaseUrl:'',supabaseKey:'',plannerUrl:'',autoSync:false,aiConsent:false});
+  const DEFAULT_SUPABASE_URL = 'https://sychkzfjfgllxzsbhxoz.supabase.co';
+  const DEFAULT_SUPABASE_KEY = 'sb_publishable_pjURsjG7370z3pvTBoCvpQ_RGHBOvvg';
+  let cloudConfig = readJSON(CLOUD_KEY, {supabaseUrl:DEFAULT_SUPABASE_URL,supabaseKey:DEFAULT_SUPABASE_KEY,plannerUrl:'',autoSync:false,aiConsent:false});
+  if (!cloudConfig.supabaseUrl) cloudConfig.supabaseUrl = DEFAULT_SUPABASE_URL;
+  if (!cloudConfig.supabaseKey) cloudConfig.supabaseKey = DEFAULT_SUPABASE_KEY;
+  saveLocal(CLOUD_KEY, cloudConfig);
   let spotifyConfig = readJSON(SPOTIFY_KEY, {clientId:'',playlistUrl:'https://open.spotify.com/search/workout%20music',redirectUri:''});
   let spotifySession = null; // Tokens kept only in memory; reconnect after a full reload.
   let supabaseClient = null;
