@@ -96,7 +96,7 @@ jobs:
               raise SystemExit("ADAZ Family must be preconfigured for the connected Supabase project")
           if "DEFAULT_SUPABASE_URL = 'https://sychkzfjfgllxzsbhxoz.supabase.co'" not in integrations or "DEFAULT_SUPABASE_KEY = 'sb_publishable_" not in integrations:
               raise SystemExit("ADAZ Personal must be preconfigured for the connected Supabase project")
-          if "id='editConfig'" not in family_html or "editConfig" not in family_js:
+          if 'id="editConfig"' not in family_html or "editConfig" not in family_js:
               raise SystemExit("Family project settings must remain accessible after automatic setup")
           if "adaz_usage_snapshots" not in family_js or "active_app" not in family_js or "parentUsage" not in family_html:
               raise SystemExit("ADAZ TRUST live usage sharing is incomplete")
