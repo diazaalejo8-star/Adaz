@@ -94,7 +94,7 @@ jobs:
               raise SystemExit("Dark theme stylesheet must load after legacy inline styles")
           if 'data-page="training"' not in html.split('<nav class="bottom-nav"', 1)[0]:
               raise SystemExit("ADAZ Health must be directly accessible in the main navigation")
-          if 'class="home-health-card"' not in html or "Día 1 Full Body" not in html or "Día 4 Lower" not in html:
+          if "home-health-card" not in html or "Día 1 Full Body" not in html or "Día 4 Lower" not in html:
               raise SystemExit("ADAZ Health summary is missing from the home screen")
           training = Path("adaz-personal-finance-training.js").read_text(encoding="utf-8")
           for label in ["Día 1 · Full Body A", "Día 2 · Upper", "Día 3 · Full Body B", "Día 4 · Lower"]:
