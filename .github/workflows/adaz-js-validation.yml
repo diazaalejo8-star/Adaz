@@ -90,7 +90,8 @@ jobs:
           if "home-extra-row" not in html or "home-stats" not in html:
               raise SystemExit("The simplified home layout is missing")
 
-          if '<link rel="stylesheet" href="adaz-apple.css"' not in html or html.index('<link rel="stylesheet" href="adaz-apple.css"') < html.rfind("</style>"):
+          head = html.split("</head>", 1)[0]
+          if '<link rel="stylesheet" href="adaz-apple.css"' not in head or head.index('<link rel="stylesheet" href="adaz-apple.css"') < head.rfind("</style>"):
               raise SystemExit("Dark theme stylesheet must load after legacy inline styles")
           if 'data-page="training"' not in html.split('<nav class="bottom-nav"', 1)[0]:
               raise SystemExit("ADAZ Health must be directly accessible in the main navigation")
