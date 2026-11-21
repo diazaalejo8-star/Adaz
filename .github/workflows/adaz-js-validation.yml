@@ -147,6 +147,8 @@ jobs:
 
 
           operating_system = Path("adaz-operating-system.js").read_text(encoding="utf-8")
+          if ".os-dashboard" not in css or ".os-review-form" not in css or ".os-plan + .grid.two" not in css:
+              raise SystemExit("The unified operating system must have responsive, non-duplicated presentation styles")
           if '<script src="./adaz-operating-system.js"></script>' not in html or "'./adaz-operating-system.js'" not in sw:
               raise SystemExit("The unified ADAZ operating system must load online and offline")
           for phrase in ["ADAZ · SISTEMA OPERATIVO", "Tu programación de hoy", "Gimnasio · Día 1 Full Body A", "Gimnasio · Día 2 Upper", "Gimnasio · Día 3 Full Body B", "Gimnasio · Día 4 Lower", "no se acumula automáticamente"]:
