@@ -159,8 +159,6 @@ jobs:
                   raise SystemExit(f"Weekly-program regression: missing {phrase}")
           if "06:30–13:45" in html or "miércoles hasta 16:30" in html:
               raise SystemExit("An expired school timetable must not be shown as current")
-          if "Gimnasio C" in year_plan or "Gimnasio D" in year_plan:
-              raise SystemExit("The outdated gym labels reappeared in the calendar")
 
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
           if "'+advice+'" not in calendar_tests or "Qué revisar a continuación" not in calendar_tests:
@@ -183,6 +181,8 @@ jobs:
           if "Habla con JACOB" in experience or "#aiQuestion" in experience:
               raise SystemExit("More still links to the paused JACOB copilot")
           year_plan = Path("adaz-year-plan.js").read_text(encoding="utf-8")
+          if "Gimnasio C" in year_plan or "Gimnasio D" in year_plan:
+              raise SystemExit("The outdated gym labels reappeared in the calendar")
           if "'2026-12-05':['ICFES · práctica oficial Saber 11'" in year_plan or "'2026-12-05':['ICFES · práctica ADAZ por áreas'" not in year_plan or "no una prueba oficial" not in year_plan:
               raise SystemExit("The December ADAZ practice must be labelled as original, not official")
 
