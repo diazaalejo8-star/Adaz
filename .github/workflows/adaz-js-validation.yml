@@ -149,7 +149,7 @@ jobs:
           operating_system = Path("adaz-operating-system.js").read_text(encoding="utf-8")
           if '<script src="./adaz-operating-system.js"></script>' not in html or "'./adaz-operating-system.js'" not in sw:
               raise SystemExit("The unified ADAZ operating system must load online and offline")
-          for phrase in ["ADAZ · SISTEMA OPERATIVO", "Tu programación de hoy", "Gimnasio · Día 1 Full Body A", "Gimnasio · Día 2 Upper", "Gimnasio · Día 3 Full Body B", "Gimnasio · Día 4 Lower", "No se acumulan"]:
+          for phrase in ["ADAZ · SISTEMA OPERATIVO", "Tu programación de hoy", "Gimnasio · Día 1 Full Body A", "Gimnasio · Día 2 Upper", "Gimnasio · Día 3 Full Body B", "Gimnasio · Día 4 Lower", "no se acumula automáticamente"]:
               if phrase not in operating_system:
                   raise SystemExit(f"Operating-system regression: missing {phrase}")
           for phrase in ["Revisión semanal ADAZ", "ICFES · Matemáticas", "Medicina · ", "Oro Laminado · control operativo"]:
