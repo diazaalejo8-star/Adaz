@@ -28,13 +28,13 @@
     else window.alert(message);
   };
   const week = {
-    0: [['Mañana flexible','Descanso','Recupera energía y disfruta tiempo personal.'],['10–20 min','Revisión de semana','Elige hasta tres prioridades realistas.'],['Noche','Preparar mañana','Deja listo lo necesario y descansa.']],
-    1: [['06:30–13:45*','Colegio','Horario provisional; confirma si sigue vigente.'],['30 min','IELTS · una habilidad','Haz una práctica breve y revisa un error importante.'],['Según entrenador','Gimnasio o recuperación','Sigue la sesión prevista; no añadas trabajo extra.']],
-    2: [['06:30–13:45*','Colegio','Horario provisional; confirma si sigue vigente.'],['30 min','ICFES · área prioritaria','Resuelve unas preguntas y explica tus errores.'],['Según entrenador','Natación o recuperación','Respeta la carga indicada por tu entrenador.']],
-    3: [['06:30–16:30*','Colegio · día largo','Horario provisional; confirma si sigue vigente.'],['10–15 min','Repaso ligero','Recuerda unas ideas sin mirar tus apuntes.'],['Noche','Comer y descansar','No hace falta añadir otra sesión exigente.']],
-    4: [['06:30–13:45*','Colegio','Horario provisional; confirma si sigue vigente.'],['30 min','IELTS · Reading o Writing','Alterna habilidades y revisa una mejora concreta.'],['Según entrenador','Entrenamiento o recuperación','Ajusta la sesión a tu energía y al plan deportivo.']],
-    5: [['06:30–13:45*','Colegio','Horario provisional; confirma si sigue vigente.'],['30 min','ICFES o IELTS Speaking','Elige solo el área que más necesitas trabajar.'],['10–15 min','Oro Laminado','Revisa pedidos, pagos o inventario; una sola tarea.']],
-    6: [['30 min','Estudio a elección','Escoge una lección de Medicina, ICFES o IELTS.'],['30 min','Oro Laminado','Mejora una ficha, costo o idea de contenido.'],['Según entrenador','Entrenamiento o descanso','No acumules sesiones para compensar.']]
+    0: [['Flexible','Descanso físico','Día sin gimnasio: recuperación, familia, intereses y tiempo libre.'],['15–20 min','Revisión semanal','Revisa datos reales y define tres resultados concretos para la semana.']],
+    1: [['45–60 min','ICFES · Matemáticas','Problemas, gráficas y razonamiento; termina registrando la causa de tus errores.'],['Según rutina','Gimnasio · Día 1 Full Body A','Sigue ADAZ Health y la técnica indicada por el entrenador.']],
+    2: [['40–50 min','IELTS · Listening / Reading','Alterna habilidades y revisa respuestas con evidencia.'],['Según rutina','Gimnasio · Día 2 Upper','Sesión de tren superior sin añadir volumen extra.']],
+    3: [['35–45 min','Medicina · fundamentos','Un tema de biología, anatomía o fisiología; explica lo aprendido con tus palabras.'],['Según entrenador','Natación · técnica','Respeta la sesión real de piscina; si no está programada, usa el espacio para recuperar.']],
+    4: [['45–60 min','ICFES · área más débil','Prioriza el área con menor precisión registrada; si no hay datos, rota entre las cinco áreas.'],['Según rutina','Gimnasio · Día 3 Full Body B','Segunda sesión Full Body de la semana.']],
+    5: [['40–60 min','IELTS · Writing / Speaking','Alterna producción escrita y oral y revisa los criterios oficiales.'],['Según entrenador','Natación · técnica o eficiencia','Coordina la carga con tu entrenador; si no hay piscina, prioriza recuperación.']],
+    6: [['Según rutina','Gimnasio · Día 4 Lower','Última sesión de fuerza de la semana.'],['60–90 min','Evaluación o corrección','Alterna bloques cronometrados ICFES e IELTS con revisión posterior.'],['15–25 min','Oro Laminado · control operativo','Caja, compras, inventario, pedidos y margen; opcional si no hay operaciones pendientes.']]
   };
   const dayNames = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
   function compactReminderCard() {
@@ -63,9 +63,11 @@
     const note = $('#routineDateNote');
     if (heading) heading.textContent = 'Tu plan de ' + dayNames[num];
     if (dateNode) dateNode.textContent = d.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    if (note) note.textContent = today() <= '2026-11-13'
-      ? '* Las horas escolares son una referencia provisional guardada previamente y solo aplican si siguen vigentes. El resto son bloques flexibles, no citas con hora fija.'
-      : 'El horario escolar provisional de octubre–noviembre ya expiró. Confirma tu horario actual antes de convertirlo en horas fijas. Los demás bloques son orientativos.';
+    if (note) note.textContent = today() >= '2026-11-14' && today() <= '2027-01-17'
+      ? 'Vacaciones: usa bloques flexibles de 45–75 minutos y deja espacio para descanso. No hay horas fijas.'
+      : today() >= '2027-01-18'
+        ? 'El horario escolar de 2027 no está configurado. Coloca los bloques después de clases y ajusta su duración al horario real.'
+        : 'Bloques orientativos: ajústalos al colegio, al entrenador, a la familia y a tu energía real.';
     const timeline = $('#routineTimeline');
     if (timeline) timeline.innerHTML = plan.map(item => '<article class="routine-item"><div class="routine-time">' + escapeHTML(item[0]) + '</div><div class="routine-body"><h3>' + escapeHTML(item[1]) + '</h3><p>' + escapeHTML(item[2]) + '</p></div></article>').join('');
     const taskList = $('#routineTaskList');
