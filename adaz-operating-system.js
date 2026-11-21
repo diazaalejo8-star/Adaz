@@ -174,7 +174,7 @@
     const completed = doneFor(value);
     const required = plan.blocks.filter(item=>!item.optional);
     const completeRequired = required.filter(item=>completed.includes(item.id)).length;
-    const next = plan.blocks.find(item=>!completed.includes(item.id) && !item.optional) || plan.blocks.find(item=>!completed.includes(item.id));
+    const next = plan.blocks.find(item=>!completed.includes(item.id) && !item.optional);
     const week = weekIndex(value)+1;
     const progress = required.length ? Math.round(completeRequired/required.length*100) : 0;
     root.innerHTML = '<div class="os-dashboard-head"><div><div class="os-kicker">ADAZ · SISTEMA OPERATIVO</div><h2>Tu programación de hoy</h2><p>'+esc(dateLabel(value))+' · una prioridad principal y compromisos bien distribuidos.</p></div><span class="os-week">SEMANA '+week+'</span></div>' +
@@ -211,7 +211,7 @@
     const review = state.reviews[weekStart] || {};
     const priorities = Array.isArray(review.priorities) ? review.priorities : [];
     const savedLine = review.savedAt ? 'Última revisión guardada: '+new Date(review.savedAt).toLocaleString('es-CO',{dateStyle:'medium',timeStyle:'short'}) : 'Aún no has guardado la revisión de esta semana.';
-    root.innerHTML = '<section class="os-panel"><div class="os-kicker">01 · CADENCIA SEMANAL</div><h2>Una semana con intención</h2><p>La programación distribuye tus cinco frentes sin pedirte que avances en todos todos los días. Los bloques se pueden mover; no se deben acumular.</p><div class="os-week-grid">'+weeklyOverview.map((row,i)=>'<article class="os-week-card"><span>'+esc(row[0])+'</span><b>'+esc(row[1])+'</b><small>'+esc(row[2])+'</small></article>').join('')+'</div><div class="os-principles"><div><b>Estudio</b><span>2 bloques ICFES · 2 bloques IELTS · 1 bloque de Medicina.</span></div><div><b>Salud</b><span>4 sesiones de gimnasio del split actual y natación según el entrenador; domingo sin gimnasio.</span></div><div><b>Negocio</b><span>Un control semanal de caja, compras, inventario, pedidos y margen; sin publicar por obligación.</span></div></div></section>' +
+    root.innerHTML = '<section class="os-panel"><div class="os-kicker">01 · CADENCIA SEMANAL</div><h2>Una semana con intención</h2><p>La programación distribuye tus cinco frentes sin pedirte que avances en todos todos los días. Los bloques se pueden mover; no se deben acumular.</p><div class="os-target-strip"><b>Metas de referencia</b><span>ICFES: 480+ global · IELTS Academic: Band 8.0 en cada habilidad · Medicina: fundamentos científicos · Oro Laminado: operación rentable y ordenada.</span></div><div class="os-week-grid">'+weeklyOverview.map((row,i)=>'<article class="os-week-card"><span>'+esc(row[0])+'</span><b>'+esc(row[1])+'</b><small>'+esc(row[2])+'</small></article>').join('')+'</div><div class="os-principles"><div><b>Estudio</b><span>2 bloques ICFES · 2 bloques IELTS · 1 bloque de Medicina.</span></div><div><b>Salud</b><span>4 sesiones de gimnasio del split actual y natación según el entrenador; domingo sin gimnasio.</span></div><div><b>Negocio</b><span>Un control semanal de caja, compras, inventario, pedidos y margen; sin publicar por obligación.</span></div></div></section>' +
       '<section class="os-panel"><div class="os-kicker">02 · MÉTODO DE EJECUCIÓN</div><h2>Cómo funciona ADAZ</h2><div class="os-method-grid"><article><b>Definir</b><p>Una meta anual se convierte en resultados trimestrales y tres prioridades semanales.</p></article><article><b>Ejecutar</b><p>Cada día muestra la siguiente acción concreta. Empieza por el bloque principal y registra el resultado en su módulo.</p></article><article><b>Medir</b><p>Los porcentajes, bandas, ventas y sesiones se basan en tus registros; un dato que no existe no se inventa.</p></article><article><b>Ajustar</b><p>La siguiente semana prioriza las brechas observadas. Las tareas omitidas no se trasladan en cadena.</p></article></div><p class="os-note">'+esc(phaseNote(today()))+' Máximo recomendado: dos bloques de concentración exigentes al día; el resto debe respetar estudio, entrenamiento, descanso y compromisos reales.</p></section>' +
       '<section class="os-panel os-review-panel"><div class="os-kicker">03 · REVISIÓN SEMANAL</div><h2>Decide qué cambia la próxima semana</h2><p>Completa esta revisión al final de la semana. Guarda hechos y decisiones, no una lista de propósitos vagos.</p><div class="os-saved">'+esc(savedLine)+'</div><form id="os-weekly-review" class="os-review-form"><label>Prioridad 1 · resultado concreto<input name="p1" maxlength="120" value="'+esc(priorities[0]||'')+'" placeholder="Ej. Mejorar precisión en Matemáticas"></label><label>Prioridad 2<input name="p2" maxlength="120" value="'+esc(priorities[1]||'')+'" placeholder="Ej. Completar dos prácticas IELTS"></label><label>Prioridad 3<input name="p3" maxlength="120" value="'+esc(priorities[2]||'')+'" placeholder="Ej. Conciliar inventario y caja"></label><label>Qué sí avanzó<textarea name="win" rows="2" maxlength="500" placeholder="Anota un resultado observable.">'+esc(review.win||'')+'</textarea></label><label>Qué obstáculo se repitió<textarea name="obstacle" rows="2" maxlength="500" placeholder="Ej. Horarios cambiantes, exceso de tareas o falta de material.">'+esc(review.obstacle||'')+'</textarea></label><label>Qué ajuste harás la próxima semana<textarea name="adjustment" rows="2" maxlength="500" placeholder="Un cambio concreto y realista.">'+esc(review.adjustment||'')+'</textarea></label><div class="os-review-actions"><button type="submit" class="os-next-button">Guardar revisión semanal</button><span>Semana desde '+esc(weekStart)+'</span></div></form></section>';
   }
@@ -253,9 +253,9 @@
       toast.classList.add('show');
     }
   });
-  window.addEventListener('adaz-data-updated', () => {
-    renderDashboard();
-    renderPlan();
+  window.addEventListener('adaz-data-updated', () => renderDashboard());
+  document.addEventListener('click', event => {
+    if (event.target.closest('[data-page="plan"]')) setTimeout(renderPlan, 80);
   });
   window.addEventListener('storage', event => {
     if (event.key === KEY || event.key === 'adaz-data-v1') {
