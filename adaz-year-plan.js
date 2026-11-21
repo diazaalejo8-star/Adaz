@@ -66,7 +66,7 @@ const milestones={
 function phase(s){return phases.find(p=>s>=p[0]&&s<=p[1])||phases[0]}
 function tasks(s){
  if(s<START||s>END)return [];
- const d=dt(s),w=d.getDay(),week=Math.floor((d-new Date('2026-11-09T12:00:00'))/604800000),vac=s>='2026-11-14'&&s<='2027-01-17',out=[];
+ const d=dt(s),w=d.getDay(),week=Math.max(0,Math.floor((d-new Date('2026-11-16T12:00:00'))/604800000)),vac=s>='2026-11-14'&&s<='2027-01-17',out=[];
  const add=(id,title,desc,kind,duration)=>out.push({id,title,desc,kind,duration:duration||''});
  if(w===1){add('math','ICFES · Matemáticas','45–60 min: resolución de problemas, gráficas y razonamiento. Cierra con preguntas y registra la causa de cada error.','study');add('gym-a','Gimnasio · Día 1 Full Body A','Primera sesión del split. Sigue ADAZ Health y la técnica del entrenador.','gym','Según rutina Health')}
   if(w===2){add('ielts-cycle','IELTS · Listening / Reading','40–50 min: alterna ambas habilidades por semana. Corrige con evidencia y guarda tu resultado.','study');add('gym-b','Gimnasio · Día 2 Upper','Sesión de tren superior según ADAZ Health.','gym','Según rutina Health')}
