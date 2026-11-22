@@ -274,7 +274,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){con
 function points(){return state.points+Number(read('adaz-experience-v1',{}).points||0)}
 function lessonKey(t,l){return t+':'+l}
 function countDone(t){return tracks[t].lessons.filter(l=>state.done[lessonKey(t,l.id)]).length}
-function nextLesson(t){return tracks[t].lessons.find(l=>{const d=state.done[lessonKey(t,l.id)];return d&&d.reviewAt&&d.reviewAt<=date()})||tracks[t].lessons.find(l=>!state.done[lessonKey(t,l.id)])||tracks[t].lessons[0]}
+function nextLesson(t){const due=tracks[t].lessons.filter(l=>{const d=state.done[lessonKey(t,l.id)];return d&&d.reviewAt&&d.reviewAt<=date()}).sort((a,b)=>String(state.done[lessonKey(t,a.id)].reviewAt).localeCompare(String(state.done[lessonKey(t,b.id)].reviewAt)));return due[0]||tracks[t].lessons.find(l=>!state.done[lessonKey(t,l.id)])||tracks[t].lessons[0]}
 function renderHome(){
  const t=state.track,info=tracks[t],next=nextLesson(t),done=countDone(t),pct=Math.round(done/info.lessons.length*100),active=state.active;
  const cards=Object.entries(tracks).map(([k,v])=>'<button class="s2-track '+(k===t?'active':'')+'" data-s2-track="'+k+'"><span class="s2-icon">'+v.icon+'</span><b>'+v.name+'</b><small>'+esc(v.goal)+' · '+countDone(k)+'/'+v.lessons.length+' lecciones</small></button>').join('');
@@ -314,7 +314,10 @@ function renderTestResult(result){
 
 function complete(t,id,score){
  const l=tracks[t].lessons.find(x=>x.id===id);if(!l)return;
- const key=lessonKey(t,id),previous=state.done[key];state.done[key]={date:date(),score:score,reviewAt:plus(score?3:1)};if(!previous)state.points+=10;
+ const key=lessonKey(t,id),previous=state.done[key],intervals=[1,3,7,14];
+ const stage=score?Math.min(Math.max(0,Number(previous?.reviewStage??-1)+1),intervals.length-1):0;
+ state.done[key]={date:date(),score:score,reviewStage:stage,reviewCount:Number(previous?.reviewCount||0)+1,reviewAt:plus(intervals[stage])};
+ if(!previous)state.points+=10;
  state.history.unshift({date:date(),track:t,title:l.title,minutes:Math.max(5,parseInt(l.time,10)||8),accuracy:score?100:0});state.history=state.history.slice(0,100);state.active=null;save();syncLegacy(l,t);renderHome();
 }
 function syncLegacy(l,t){
