@@ -542,3 +542,32 @@ html,body{min-height:100%;height:auto;overflow-x:hidden}
  .os-review-actions{grid-column:auto;align-items:stretch;flex-direction:column}
  .os-review-actions .os-next-button{width:100%}
 }
+
+
+/* Goal evidence engine v2 */
+.os-goal-glance{display:grid;grid-template-columns:1fr 1.35fr auto;align-items:center;gap:12px;padding:13px 15px;border:1px solid #413a30;border-radius:14px;background:#151716}
+.os-goal-glance>div{display:grid;gap:4px;min-width:0}
+.os-goal-glance b{font-size:10px;color:#d8c7a9}
+.os-goal-glance span{font-size:10px;color:#aaa398}
+.os-ielts-glance{display:flex;flex-wrap:wrap;gap:5px 12px}
+.os-ielts-glance span{font-size:9px}
+.os-evidence-panel{border-color:#514638}
+.os-evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:13px}
+.os-evidence-grid>article,.os-ielts-evidence{display:grid;gap:7px;align-content:start;min-width:0;padding:13px;border:1px solid #34312b;border-radius:12px;background:#171a19}
+.os-evidence-grid>article>span,.os-ielts-evidence>span{font-size:9px;text-transform:uppercase;letter-spacing:.7px;font-weight:900;color:#c8b18d}
+.os-evidence-grid>article>b{font-size:16px;color:#eeeae3}
+.os-evidence-grid>article>small,.os-ielts-evidence article>small{font-size:9px;line-height:1.55;color:#a9a196}
+.os-ielts-evidence{grid-row:span 2}
+.os-ielts-evidence article{display:grid;grid-template-columns:90px 1fr;gap:4px 8px;padding:8px 0;border-bottom:1px solid #302e29}
+.os-ielts-evidence article:last-child{border:0}
+.os-ielts-evidence article>b{font-size:10px;color:#e5dfd4}
+.os-ielts-evidence article>strong{font-size:11px;color:#d4c09d}
+.os-ielts-evidence article>small{grid-column:1/-1}
+.os-source-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.os-source-links a{font-size:10px;color:#d5c19e;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:640px){
+ .os-goal-glance{grid-template-columns:1fr;gap:8px}
+ .os-evidence-grid{grid-template-columns:1fr}
+ .os-ielts-evidence{grid-row:auto}
+ .os-ielts-evidence article{grid-template-columns:85px 1fr}
+}

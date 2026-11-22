@@ -160,6 +160,19 @@ jobs:
           if "06:30–13:45" in html or "miércoles hasta 16:30" in html:
               raise SystemExit("An expired school timetable must not be shown as current")
 
+          goal_tracker = Path("adaz-academy.js").read_text(encoding="utf-8")
+          operating_system = Path("adaz-operating-system.js").read_text(encoding="utf-8")
+          for phrase in ["adaz-goals-tracker-v1", "adaz-calendar-exam-results-v1", "function goalSnapshot()", "function goalEvidenceHTML()", "No convierte porcentajes de preguntas cortas"]:
+              if phrase not in operating_system:
+                  raise SystemExit(f"Goal evidence engine missing: {phrase}")
+          for phrase in ["goal-icfes-evidence", "goal-ielts-evidence", "simulacro completo con escala 0–500", "self-estimate"]:
+              if phrase not in goal_tracker:
+                  raise SystemExit(f"Goal tracker provenance missing: {phrase}")
+          if "La meta se revisa por habilidad" not in goal_tracker:
+              raise SystemExit("IELTS goal must be checked skill by skill, not only by overall average")
+          if ".os-evidence-grid" not in css or ".os-goal-glance" not in css:
+              raise SystemExit("Responsive goal evidence styles are missing")
+
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
           if "'+advice+'" not in calendar_tests or "Qué revisar a continuación" not in calendar_tests:
               raise SystemExit("Assessment area recommendations must be visible on the results screen")
