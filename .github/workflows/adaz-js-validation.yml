@@ -173,6 +173,12 @@ jobs:
           if ".os-evidence-grid" not in css or ".os-goal-glance" not in css:
               raise SystemExit("Responsive goal evidence styles are missing")
 
+          goal_tracker = Path("adaz-academy.js").read_text(encoding="utf-8")
+          operating_system = Path("adaz-operating-system.js").read_text(encoding="utf-8")
+          if "intervals=[1,3,7,14]" not in goal_tracker or "reviewStage" not in goal_tracker or "reviewAt:plus(intervals[stage])" not in goal_tracker:
+              raise SystemExit("Academy must schedule progressive 1/3/7/14-day retrieval reviews")
+          if "Programa recuperaciones progresivas a 1, 3, 7 y 14 días" not in operating_system:
+              raise SystemExit("The planner must explain the actual spaced-review schedule")
           calendar_tests = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
           if "'+advice+'" not in calendar_tests or "Qué revisar a continuación" not in calendar_tests:
               raise SystemExit("Assessment area recommendations must be visible on the results screen")
