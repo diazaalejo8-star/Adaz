@@ -168,7 +168,7 @@ jobs:
           for phrase in ["goal-icfes-evidence", "goal-ielts-evidence", "simulacro completo con escala 0–500", "self-estimate"]:
               if phrase not in goal_tracker:
                   raise SystemExit(f"Goal tracker provenance missing: {phrase}")
-          if "la meta se revisa por habilidad" not in goal_tracker:
+          if "La meta se revisa por habilidad" not in goal_tracker:
               raise SystemExit("IELTS goal must be checked skill by skill, not only by overall average")
           if ".os-evidence-grid" not in css or ".os-goal-glance" not in css:
               raise SystemExit("Responsive goal evidence styles are missing")
