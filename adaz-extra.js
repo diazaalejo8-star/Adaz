@@ -29,10 +29,10 @@
   };
   const week = {
     0: [['Flexible','Descanso físico','Día sin gimnasio: recuperación, familia, intereses y tiempo libre.'],['15–20 min','Revisión semanal','Revisa datos reales y define tres resultados concretos para la semana.']],
-    1: [['45–60 min','ICFES · Matemáticas','Problemas, gráficas y razonamiento; termina registrando la causa de tus errores.'],['Según rutina','Gimnasio · Día 1 Full Body A','Sigue ADAZ Health y la técnica indicada por el entrenador.']],
+    1: [['45–60 min','ICFES · Matemáticas','Problemas, gráficas y razonamiento; termina registrando la causa de tus errores.'],['Según rutina','Gimnasio · Día 1 Full Body','Sigue ADAZ Health y la técnica indicada por el entrenador.']],
     2: [['40–50 min','IELTS · Listening / Reading','Alterna habilidades y revisa respuestas con evidencia.'],['Según rutina','Gimnasio · Día 2 Upper','Sesión de tren superior sin añadir volumen extra.']],
     3: [['35–45 min','Medicina · fundamentos','Un tema de biología, anatomía o fisiología; explica lo aprendido con tus palabras.'],['Según entrenador','Natación · técnica','Respeta la sesión real de piscina; si no está programada, usa el espacio para recuperar.']],
-    4: [['45–60 min','ICFES · área más débil','Prioriza el área con menor precisión registrada; si no hay datos, rota entre las cinco áreas.'],['Según rutina','Gimnasio · Día 3 Full Body B','Segunda sesión Full Body de la semana.']],
+    4: [['45–60 min','ICFES · área más débil','Prioriza el área con menor precisión registrada; si no hay datos, rota entre las cinco áreas.'],['Según rutina','Gimnasio · Día 3 Full Body','Segunda sesión Full Body de la semana.']],
     5: [['40–60 min','IELTS · Writing / Speaking','Alterna producción escrita y oral y revisa los criterios oficiales.'],['Según entrenador','Natación · técnica o eficiencia','Coordina la carga con tu entrenador; si no hay piscina, prioriza recuperación.']],
     6: [['Según rutina','Gimnasio · Día 4 Lower','Última sesión de fuerza de la semana.'],['60–90 min','Evaluación o corrección','Alterna bloques cronometrados ICFES e IELTS con revisión posterior.'],['15–25 min','Oro Laminado · control operativo','Caja, compras, inventario, pedidos y margen; opcional si no hay operaciones pendientes.']]
   };
