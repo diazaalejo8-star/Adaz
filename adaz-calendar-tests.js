@@ -149,9 +149,13 @@ function pickFresh(kind,filter,count=1){
  if(!pool.length)return [];
  const key=kind+'|'+(filter||'all'),used=Array.isArray(rotation[key])?rotation[key]:[];
  let fresh=pool.filter(x=>!used.includes(x.id));
- if(fresh.length<count){rotation[key]=[];fresh=pool.slice()}
- const chosen=shuffled(fresh).slice(0,Math.min(count,fresh.length));
- rotation[key]=[...(rotation[key]||used),...chosen.map(x=>x.id)].slice(-pool.length);
+ let chosen=shuffled(fresh).slice(0,count);
+ if(chosen.length<count){
+  const chosenIds=new Set(chosen.map(x=>x.id));
+  const refill=shuffled(pool.filter(x=>!chosenIds.has(x.id)));
+  chosen=chosen.concat(refill.slice(0,count-chosen.length));
+  rotation[key]=chosen.map(x=>x.id);
+ }else rotation[key]=[...used,...chosen.map(x=>x.id)].slice(-pool.length);
  try{localStorage.setItem(rotationKey,JSON.stringify(rotation))}catch{}
  return chosen.map(shuffleQuestion);
 }
