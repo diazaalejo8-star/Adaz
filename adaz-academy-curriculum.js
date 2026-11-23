@@ -171,6 +171,7 @@ const interactiveStyle=document.createElement('style');interactiveStyle.textCont
 
 function ensureRoot(){if(root.isConnected)return;const heading=page.querySelector('.page-heading');if(heading)heading.insertAdjacentElement('afterend',root);else page.append(root);render()}
 ensureRoot();
+render();
 new MutationObserver(()=>{if(!root.isConnected)ensureRoot()}).observe(page,{childList:true,subtree:true});
 window.addEventListener('adaz-experience-refresh',()=>{if(!root.isConnected)ensureRoot()});
 })();
