@@ -168,7 +168,7 @@ const interactiveStyle=document.createElement('style');interactiveStyle.textCont
 #adaz-curriculum .bar span{display:block;height:100%;background:#9fc5ff}
 @media(max-width:600px){#adaz-curriculum{padding:13px}#adaz-curriculum .track-grid{grid-template-columns:1fr}#adaz-curriculum .curr-module{align-items:flex-start;flex-direction:column}#adaz-curriculum .curr-btn{white-space:normal}}
 `;document.head.append(interactiveStyle);
-const root=document.createElement('section');root.id='adaz-curriculum';
+
 function ensureRoot(){if(root.isConnected)return;const heading=page.querySelector('.page-heading');if(heading)heading.insertAdjacentElement('afterend',root);else page.append(root);render()}
 ensureRoot();
 new MutationObserver(()=>{if(!root.isConnected)ensureRoot()}).observe(page,{childList:true,subtree:true});
