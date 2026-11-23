@@ -179,7 +179,7 @@
     const dayPlan = {
       1: [
         study('icfes-math','ICFES · Matemáticas','Trabaja resolución de problemas, interpretación de gráficas y razonamiento. Cierra con preguntas y registra por qué fallaste.', '45–60 min'),
-        gym('gym-full-a','Gimnasio · Día 1 Full Body A','Sigue el orden de ADAZ Health y la indicación del entrenador. Calidad técnica antes que carga.')
+        gym('gym-full-a','Gimnasio · Día 1 Full Body','Sigue el orden de ADAZ Health y la indicación del entrenador. Calidad técnica antes que carga.')
       ],
       2: [
         study('ielts-cycle','IELTS · '+ielts.name,'Prioriza '+ielts.name+'. '+(ielts.band!==null&&ielts.band!==undefined?'Última banda comparable: '+ielts.band+'/9 ('+evidenceLabel(ielts.source)+'). Meta: 8.0.':'No hay banda validada para esta habilidad; '+(ielts.accuracy!==null&&ielts.accuracy!==undefined?'la práctica reciente marca '+ielts.accuracy+'% en '+ielts.questions+' preguntas, solo como diagnóstico.':'recoge una primera evidencia comparable.'))+' Usa práctica oficial, retroalimentación y repasos espaciados.', '40–50 min'),
@@ -191,7 +191,7 @@
       ],
       4: [
         study('icfes-gap','ICFES · '+icfes.name,'Prioriza '+icfes.name+'. '+(icfes.accuracy===null?'Aún no hay resultados por área; se usa una rotación equilibrada.':'Precisión diagnóstica reciente: '+icfes.accuracy+'% en '+icfes.questions+' preguntas de '+icfes.tests+' evaluación(es). Esto orienta el estudio, no equivale al puntaje global ICFES.'), '45–60 min'),
-        gym('gym-full-b','Gimnasio · Día 3 Full Body B','Sigue la segunda sesión Full Body, sin acumular trabajo de días anteriores.')
+        gym('gym-full-b','Gimnasio · Día 3 Full Body','Sigue la segunda sesión Full Body, sin acumular trabajo de días anteriores.')
       ],
       5: [
         study('ielts-production','IELTS · '+fridayCycle[week%fridayCycle.length],'Alterna producción escrita y oral. Usa los criterios públicos de IELTS para revisar claridad, desarrollo, coherencia y precisión.', '40–60 min'),
@@ -277,10 +277,10 @@
   }
 
   const weeklyOverview = [
-    ['Lunes','ICFES Matemáticas','Día 1 · Full Body A'],
+    ['Lunes','ICFES Matemáticas','Día 1 · Full Body'],
     ['Martes','IELTS Listening / Reading','Día 2 · Upper'],
     ['Miércoles','Medicina · fundamentos','Natación técnica según entrenador'],
-    ['Jueves','ICFES · área más débil','Día 3 · Full Body B'],
+    ['Jueves','ICFES · área más débil','Día 3 · Full Body'],
     ['Viernes','IELTS Writing / Speaking','Natación o recuperación'],
     ['Sábado','Evaluación alternada + Oro Laminado','Día 4 · Lower'],
     ['Domingo','Revisión de 15–20 min','Descanso físico']
