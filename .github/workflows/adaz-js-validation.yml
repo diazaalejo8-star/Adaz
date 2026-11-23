@@ -146,7 +146,6 @@ jobs:
               raise SystemExit("Calendar assessment player is missing from the offline shell cache")
           if "'./adaz-academy-quests.js'" not in sw or '<script src="./adaz-academy-quests.js"></script>' not in html:
               raise SystemExit("Interactive Academy quests must load online and offline")
-              raise SystemExit("Calendar assessment player is missing from the offline shell cache")
 
 
           operating_system = Path("adaz-operating-system.js").read_text(encoding="utf-8")
