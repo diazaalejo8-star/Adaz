@@ -154,6 +154,21 @@ const css=document.createElement('style');css.id='adaz-study-v2-style';css.textC
 #page-academy .s2-lesson b{font-size:11px;display:block}
 #page-academy .s2-lesson small{font-size:9px;color:#a8b7c9}
 #page-academy .s2-lesson .arrow{color:#a58bff}
+#page-academy .s2-hero-lesson{background:linear-gradient(130deg,#182b42,#111e2e);border-color:#435a78;padding:22px}
+#page-academy .s2-hero-lesson h2{font-size:clamp(22px,3vw,30px);letter-spacing:-.7px}
+#page-academy .s2-lesson-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+#page-academy .s2-lesson-meta span{font-size:9px;color:#c9d8e8;background:#20344a;border:1px solid #344b65;border-radius:99px;padding:6px 9px}
+#page-academy .s2-card-focus{border-color:#3b536e;background:#142235}
+#page-academy .s2-card h3{font-size:17px;margin:7px 0 10px}
+#page-academy .s2-expand{margin:9px 0;border:1px solid #30465f;border-radius:12px;background:#0e1a29;padding:12px}
+#page-academy .s2-expand summary{font-size:11px;font-weight:800;color:#dce8f6;cursor:pointer}
+#page-academy .s2-expand p,#page-academy .s2-expand li{font-size:11px;line-height:1.7;color:#c0cede}
+#page-academy .s2-expand ol,#page-academy .s2-expand ul{padding-left:20px;margin:10px 0 0}
+#page-academy .s2-practice-callout{padding:13px;border-radius:12px;background:#1b2c40;border:1px solid #3a526e}
+#page-academy .s2-practice-callout b{font-size:11px;color:#bcaaff}
+#page-academy .s2-notes{width:100%;box-sizing:border-box;background:#0b1522;color:#edf3fb;border:1px solid #354b64;border-radius:12px;padding:12px;font:inherit;font-size:12px;line-height:1.6;resize:vertical}
+#page-academy .s2-card-focus>h3{color:#f2f6fc}
+@media(max-width:650px){#page-academy .s2-hero-lesson{padding:16px}#page-academy .s2-lesson-meta span{font-size:8px}}
 #page-academy .s2-card{background:#111e2e;border:1px solid #2a4058;border-radius:16px;padding:16px;margin:10px 0}
 #page-academy .s2-card h2{font-size:20px;margin:5px 0}
 #page-academy .s2-card p{font-size:12px;line-height:1.65;color:#c1cddd}
@@ -411,6 +426,7 @@ page.addEventListener('click',e=>{
  const op=e.target.closest('[data-s2-open]');if(op){const [t,id]=op.dataset.s2Open.split(':');state.track=t;state.active={track:t,id};save();renderLesson(t,id);return}
  if(e.target.closest('[data-s2-continue]')){if(state.active)renderLesson(state.active.track,state.active.id);return}
  if(e.target.closest('[data-s2-home]')){state.active=null;save();renderHome();return}
+ const saveNote=e.target.closest('[data-s2-save-note]');if(saveNote){state.notes=state.notes||{};const key=saveNote.dataset.s2SaveNote;state.notes[key]=page.querySelector('[data-s2-note="'+key+'"]')?.value||'';save();const status=page.querySelector('[data-s2-note-status]');if(status)status.textContent='Guardado ✓';return}
  const lessonAnswer=e.target.closest('[data-s2-lesson-answer]');if(lessonAnswer){renderLesson(lessonAnswer.dataset.s2LessonTrack,lessonAnswer.dataset.s2LessonId,Number(lessonAnswer.dataset.s2LessonAnswer));return}
  const ans=e.target.closest('[data-s2-answer]');if(ans){renderLesson(ans.dataset.s2TrackActive,ans.dataset.s2Id,ans.dataset.s2Answer);return}
  const done=e.target.closest('[data-s2-complete]');if(done){const [t,id]=done.dataset.s2Complete.split(':');complete(t,id,done.dataset.s2Score==='1');return}
