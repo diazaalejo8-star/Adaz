@@ -128,7 +128,7 @@ root.addEventListener('click',e=>{
  if(e.target.closest('[data-curr-save-response]')&&activeModule!==null){const value=root.querySelector('[data-curr-response]')?.value||'';progress.notes??={};progress.notes[current+':'+activeModule]=value;save();root.querySelectorAll('.lesson-saved').forEach(x=>x.textContent='Respuesta guardada.');return}
  if(e.target.closest('[data-curr-done]')&&activeModule!==null){done.add(current+':'+activeModule);save();activeModule=null;activeQuestion=null;activeAnswer=null;render();return}
 });
-const style=document.createElement('style');style.textContent=`
+const interactiveStyle=document.createElement('style');interactiveStyle.textContent=`
 #adaz-curriculum{margin:18px 0;padding:18px;background:#101722;border:1px solid #2b394b;border-radius:20px;color:#edf3fa}
 #adaz-curriculum .track-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
 #adaz-curriculum .track{background:#151f2d;border:1px solid #304158;border-radius:14px;padding:13px;text-align:left;color:#edf3fa;cursor:pointer}
@@ -167,7 +167,7 @@ const style=document.createElement('style');style.textContent=`
 #adaz-curriculum .bar{height:7px;background:#2a394c;border-radius:9px;overflow:hidden;margin:9px 0}
 #adaz-curriculum .bar span{display:block;height:100%;background:#9fc5ff}
 @media(max-width:600px){#adaz-curriculum{padding:13px}#adaz-curriculum .track-grid{grid-template-columns:1fr}#adaz-curriculum .curr-module{align-items:flex-start;flex-direction:column}#adaz-curriculum .curr-btn{white-space:normal}}
-`;document.head.append(style);
+`;document.head.append(interactiveStyle);
 const root=document.createElement('section');root.id='adaz-curriculum';
 function ensureRoot(){if(root.isConnected)return;const heading=page.querySelector('.page-heading');if(heading)heading.insertAdjacentElement('afterend',root);else page.append(root);render()}
 ensureRoot();
