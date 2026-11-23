@@ -2,7 +2,7 @@
 const page=document.querySelector('#page-academy');if(!page||window.__adazCurriculumV1)return;window.__adazCurriculumV1=true;
 const KEY='adaz-academy-curriculum-progress-v1';
 const tracks=[
-{id:'icfes',name:'ICFES · Saber 11',tag:'Cinco pruebas oficiales',desc:'Preparación por competencias, afirmaciones y evidencias. La práctica de examen se realiza con cuadernillos oficiales y sus claves; no se presentan preguntas inventadas como ICFES.',source:[['Guía de orientación Saber 11 · 2026','https://www.icfes.gov.co/evaluaciones-icfes/saber-11/guia-de-orientacion-examen-saber-11/'],['Marcos de referencia Saber 11','https://www.icfes.gov.co/evaluaciones-icfes/saber-11/marcos-de-referencia-examen-saber-11/'],['Caja de herramientas ICFES','https://www.icfes.gov.co/caja-de-herramientas-saber-11/']],modules:[
+{id:'icfes',name:'ICFES · Saber 11',tag:'Cinco pruebas oficiales',desc:'Preparación por competencias, afirmaciones y evidencias. La práctica de examen se realiza con cuadernillos oficiales y sus claves; no se presentan preguntas inventadas como ICFES.',source:[['Guía de orientación Saber 11 · ICFES','https://www.icfes.gov.co/evaluaciones-icfes/saber-11/guia-de-orientacion-examen-saber-11/'],['Caja de herramientas oficial ICFES','https://www.icfes.gov.co/caja-de-herramientas-saber-11/'],['Grupo500 · programa Año 500','https://ano500.grupo500educacion.co/'],['Grupo500 · metodología pública','https://grupo500educacion.com/pages/quienes-somos']],modules:[
 ['Matemáticas','Pensamiento numérico y variacional','Fracciones, razones, proporciones, porcentajes, tasas, potencias, notación científica, patrones, expresiones algebraicas, ecuaciones e inecuaciones.','Modela situaciones reales y justifica cada operación; identifica unidades y supuestos.'],
 ['Matemáticas','Funciones y modelación','Relaciones lineales, cuadráticas y exponenciales; tablas, gráficas, pendiente, interceptos, sistemas de ecuaciones y lectura de parámetros.','Pasa entre descripción verbal, tabla, expresión y gráfica; explica qué representa cada parámetro.'],
 ['Matemáticas','Geometría y medición','Perímetro, área, volumen, semejanza, escala, transformaciones, coordenadas, teorema de Pitágoras y relaciones métricas.','Dibuja el contexto, identifica datos, unidades y restricciones antes de calcular.'],
@@ -19,7 +19,7 @@ const tracks=[
 ['Ciencias Naturales','Indagación científica','Pregunta investigable, hipótesis, variables, control, diseño experimental, tablas, gráficas, incertidumbre, evidencia y conclusión.','Distingue variable independiente, dependiente y controlada; evalúa si los datos respaldan la conclusión.'],
 ['Inglés','Comprensión y uso del idioma','Vocabulario por contexto, conectores, tiempos verbales, modales, pronombres, referencias, intención, avisos, diálogos y textos breves.','Lee primero el contexto y la función comunicativa; no traduzcas palabra por palabra.']
 ]},
-{id:'ielts',name:'IELTS Academic',tag:'Listening · Reading · Writing · Speaking',desc:'Practica el formato oficial, analiza tus errores y compara Writing/Speaking con descriptores publicados. ADAZ no certifica bandas.',source:[['IELTS Academic · formato del examen','https://www.ielts.org/take-a-test/test-types/ielts-academic-test'],['IELTS Academic · sample tasks oficiales','https://www.ielts.org/take-a-test/preparation-resources/sample-test-questions/academic-test'],['IELTS · criterios de evaluación Writing y Speaking','https://ielts.org/for-test-takers/how-ielts-is-scored']],modules:[
+{id:'ielts',name:'IELTS Academic',tag:'Listening · Reading · Writing · Speaking',desc:'Practica el formato oficial, analiza tus errores y compara Writing/Speaking con descriptores publicados. ADAZ no certifica bandas.',source:[['IELTS · formato y muestras oficiales','https://ielts.org/take-a-test/preparation-resources/sample-test-questions/academic-test'],['Cambridge English · preparación IELTS','https://www.cambridgeenglish.org/exams-and-tests/ielts/preparation/'],['Richmond · Practice Tests for IELTS','https://richmondelt.com/elt-catalog/exams/richmond-practice-tests-for-ielts/'],['Richmond Learning Platform','https://richmondelt.com/richmond-digital/'],['Oxford Learner’s Dictionaries · vocabulario y uso','https://www.oxfordlearnersdictionaries.com/'],['Oxford English Hub · entorno de aprendizaje','https://englishhub.oup.com/'],['IELTS · criterios de evaluación','https://ielts.org/for-test-takers/how-ielts-is-scored']],modules:[
 ['Listening','Secciones y tipos de tarea','Cuatro partes, conversación y monólogos; selección múltiple, matching, mapas, formularios, notas, tablas y completamiento.','Anticipa el tipo de respuesta, detecta paráfrasis y registra distractores; escucha una sola vez al simular.'],
 ['Listening','Precisión auditiva','Números, fechas, nombres, plurales, límites de palabras, cambios de opinión y autocorrección del hablante.','Después de revisar la clave oficial, escucha de nuevo y localiza la frase exacta que confirma la respuesta.'],
 ['Reading','Lectura académica y gestión del tiempo','Tres textos, 40 preguntas; idea principal, detalle, inferencia, actitud del autor y vocabulario contextual.','Distribuye el tiempo; identifica palabras clave y busca equivalencias semánticas, no coincidencias literales.'],
@@ -70,8 +70,107 @@ const style=document.createElement('style');style.textContent=`
 @media(max-width:600px){#adaz-curriculum .track-grid{grid-template-columns:1fr}}
 `;document.head.append(style);
 const heading=page.querySelector('.page-heading');const root=document.createElement('section');root.id='adaz-curriculum';if(heading)heading.insertAdjacentElement('afterend',root);else page.prepend(root);
-let current='icfes';
-function render(){const t=tracks.find(x=>x.id===current)||tracks[0],all=t.modules.length,finished=t.modules.filter((m,i)=>done.has(t.id+':'+i)).length;root.innerHTML='<div class="eyebrow">ADAZ ACADEMY · MAPA DE APRENDIZAJE</div><h2 style="font-size:20px;margin:6px 0">Estudia por competencias, no por preguntas al azar</h2><p style="font-size:11px;color:#aebdd0;max-width:760px">'+esc(t.desc)+'</p><div class="track-grid">'+tracks.map(x=>'<button class="track '+(x.id===current?'active':'')+'" data-track="'+x.id+'"><b>'+esc(x.name)+'</b><small>'+esc(x.tag)+'</small></button>').join('')+'</div><div class="row-between" style="font-size:11px"><b>'+esc(t.name)+'</b><span>'+finished+'/'+all+' temas completados</span></div><div class="bar"><span style="width:'+(all?finished/all*100:0)+'%"></span></div>'+t.modules.map((m,i)=>'<details class="module"><summary>'+esc(m[0])+' · '+esc(m[1])+'</summary><p><b>Contenido:</b> '+esc(m[2])+'</p><p><b>Cómo dominarlo:</b> '+esc(m[3])+'</p><label><input type="checkbox" data-done="'+t.id+':'+i+'" '+(done.has(t.id+':'+i)?'checked':'')+'> Marcar como estudiado y explicado con mis palabras</label></details>').join('')+'<div class="source-links">'+t.source.map(s=>'<a href="'+esc(s[1])+'" target="_blank" rel="noopener">'+esc(s[0])+' ↗</a>').join('')+'</div><div class="notice" style="margin-top:13px">Método de sesión: 5 min de recuperación de lo anterior → 20 min de estudio comprensivo → 15–25 min de práctica oficial o aplicación → 5 min de registro de errores. Revisa el tema al día siguiente y vuelve a espaciarlo durante la semana.</div>';
-root.querySelectorAll('[data-track]').forEach(b=>b.onclick=()=>{current=b.dataset.track;render();});root.querySelectorAll('[data-done]').forEach(c=>c.onchange=()=>{if(c.checked)done.add(c.dataset.done);else done.delete(c.dataset.done);progress.done=[...done];localStorage.setItem(KEY,JSON.stringify(progress));render();});}
-render();
+
+let current='icfes',activeModule=null,activeQuestion=null,activeAnswer=null;
+function save(){progress.done=[...done];try{localStorage.setItem(KEY,JSON.stringify(progress))}catch{}}
+function kindFor(id){return id==='icfes'?'icfes':id==='ielts'?'ielts':id==='medicine'?'medicine':'business'}
+function filterFor(track,module){
+ if(track==='icfes')return ({'Sociales y Ciudadanas':'Sociales','Ciencias Naturales':'Ciencias'})[module[0]]||module[0];
+ if(track==='ielts')return ['Listening','Reading'].includes(module[0])?module[0]:null;
+ return track==='medicine'?'Ciencias':'Negocio';
+}
+function promptFor(track,module,index){
+ if(track==='ielts'&&module[0]==='Writing')return module[1].includes('Task 1')?'Task 1: The table shows the share of students travelling to college by bus (48% to 35%), walking (22% to 30%), cycling (10% to 25%) and car (20% to 10%) between 2015 and 2025. Summarise the main features in at least 150 words.':'Task 2: Some people believe schools should teach practical financial and digital skills alongside academic subjects. To what extent do you agree? Write at least 250 words.';
+ if(track==='ielts'&&module[0]==='Speaking')return module[1].includes('Part 1')?'Part 1: How do you organise your study time? What helps you concentrate? Give a direct answer and one relevant detail.':module[1].includes('Part 2')?'Part 2: Describe a skill you learned that has been useful in daily life. Explain how you learned it and why it matters.':'Part 3: How should schools prepare students for changes in the workplace? Compare at least two perspectives and justify your view.';
+ if(track==='medicine')return 'Caso académico: explica cómo se relaciona el tema “'+module[1]+'” con la estructura y función de un sistema biológico. No uses este ejercicio para autodiagnóstico.';
+ if(track==='oro')return 'Caso de negocio: aplica “'+module[1]+'” a una decisión realista de Oro Lámina. Indica qué dato necesitas, qué compararías y qué decisión tomarías sin inventar información del proveedor.';
+ return 'Reto Saber 11: resuelve una pregunta relacionada con “'+module[1]+'”. Identifica la competencia evaluada, la evidencia disponible y por qué descartas los distractores.';
+}
+function methodText(id){
+ if(id==='icfes')return 'Ruta inspirada en la estructura pública de Grupo500: preparación organizada por las cinco áreas Saber 11, explicación de conceptos, práctica progresiva, simulacros y retroalimentación por competencia. ADAZ crea sus propias clases y ejercicios; no es la plataforma de Grupo500 ni incluye sus clases privadas, grabaciones o materiales licenciados.';
+ if(id==='ielts')return 'Ruta de cuatro habilidades con tareas originales y referencias editoriales. Cambridge aporta orientación y muestras de preparación; Richmond publica Practice Tests for IELTS con componentes interactivos licenciados; Oxford se utiliza como apoyo complementario de vocabulario, gramática y aprendizaje autónomo. Oxford no se presenta como un examen IELTS oficial.';
+ if(id==='medicine')return 'Ruta introductoria basada en textos abiertos de biología y anatomía-fisiología. Las clases son educativas, no sustituyen formación universitaria ni permiten diagnosticar o tratar enfermedades.';
+ return 'Ruta aplicada a producto, compras, inventario, costos, flujo de caja, ventas y marketing. Los ejemplos son simulados; los datos reales se registran únicamente en el módulo privado de Business.';
+}
+function openModule(i){
+ const t=tracks.find(x=>x.id===current);activeModule=i;activeAnswer=null;
+ const m=t.modules[i],filter=filterFor(current,m);
+ activeQuestion=(current==='ielts'&&['Writing','Speaking'].includes(m[0]))?null:(window.ADAZExamBank?.next?.(kindFor(current),filter)||null);
+ render();
+}
+function questionHTML(t,m){
+ if(activeQuestion){
+  const x=activeQuestion;
+  return '<div class="lesson-quiz"><div class="lesson-kicker">COMPRUEBA LO APRENDIDO · PREGUNTA NUEVA</div><h4>'+esc(x.text)+'</h4><div class="lesson-options">'+x.opts.map((o,i)=>'<button data-curr-answer="'+i+'" '+(activeAnswer!==null?'disabled':'')+' class="'+(activeAnswer===i?'chosen':'')+'">'+String.fromCharCode(65+i)+'. '+esc(o)+'</button>').join('')+'</div>'+(activeAnswer!==null?'<div class="lesson-feedback"><b>'+(activeAnswer===x.a?'Correcto':'Revisa el razonamiento')+'</b><p>'+esc(x.why)+'</p><button class="curr-btn" data-curr-next-question>Otra pregunta nueva →</button></div>':'<p class="lesson-hint">Elige una respuesta. La explicación aparecerá al instante y la pregunta no volverá a salir hasta recorrer el banco disponible.</p>')+'</div>';
+ }
+ const prompt=promptFor(current,m,activeModule);
+ return '<div class="lesson-quiz"><div class="lesson-kicker">ACTIVIDAD APLICADA · RESPUESTA ABIERTA</div><h4>'+esc(prompt)+'</h4><textarea data-curr-response rows="5" placeholder="Desarrolla tu respuesta, argumentos o esquema aquí...">'+esc(progress.notes?.[current+':'+activeModule]||'')+'</textarea><div class="lesson-hint">Al guardar, conserva tu respuesta para retomarla. En IELTS Writing/Speaking puedes contrastar tu trabajo con los descriptores oficiales enlazados arriba.</div><button class="curr-btn" data-curr-save-response>Guardar mi trabajo</button><span class="lesson-saved" aria-live="polite"></span></div>';
+}
+function render(){
+ if(!root.isConnected){const heading=page.querySelector('.page-heading');if(heading)heading.insertAdjacentElement('afterend',root);else page.append(root)}
+ const t=tracks.find(x=>x.id===current)||tracks[0],all=t.modules.length,finished=t.modules.filter((m,i)=>done.has(t.id+':'+i)).length;
+ const head='<div class="eyebrow">ADAZ ACADEMY · CLASES INTERACTIVAS</div><h2 style="font-size:20px;margin:6px 0">Aprende, practica y comprueba</h2><p class="curr-desc">'+esc(t.desc)+'</p><div class="track-grid">'+tracks.map(x=>'<button class="track '+(x.id===current?'active':'')+'" data-track="'+x.id+'"><b>'+esc(x.name)+'</b><small>'+esc(x.tag)+'</small></button>').join('')+'</div><div class="curr-method"><b>Cómo está construido este programa</b><p>'+esc(methodText(current))+'</p></div>';
+ const progressBar='<div class="row-between" style="font-size:11px;margin-top:14px"><b>'+esc(t.name)+'</b><span>'+finished+'/'+all+' clases completadas</span></div><div class="bar"><span style="width:'+(all?finished/all*100:0)+'%"></span></div>';
+ if(activeModule===null){
+  root.innerHTML=head+progressBar+'<div class="curr-module-list">'+t.modules.map((m,i)=>'<article class="curr-module '+(done.has(t.id+':'+i)?'is-done':'')+'"><div><small>'+esc(m[0])+' · CLASE '+String(i+1).padStart(2,'0')+'</small><b>'+esc(m[1])+'</b><p>'+esc(m[2])+'</p></div><button class="curr-btn" data-open-module="'+i+'">'+(done.has(t.id+':'+i)?'Repasar clase':'Abrir clase')+' →</button></article>').join('')+'</div><div class="source-links"><b>Fuentes y materiales de referencia</b>'+t.source.map(s=>'<a href="'+esc(s[1])+'" target="_blank" rel="noopener noreferrer">'+esc(s[0])+' ↗</a>').join('')+'</div><div class="notice" style="margin-top:13px">Método de sesión: 5 min de recuperación activa → 20 min de clase → 15–25 min de práctica guiada → 5 min de corrección. El avance se guarda en este dispositivo.</div>';
+ }else{
+  const m=t.modules[activeModule],key=current+':'+activeModule;
+  root.innerHTML=head+progressBar+'<button class="curr-back" data-curr-back>← Volver al temario</button><article class="curr-lesson"><div class="lesson-kicker">'+esc(m[0])+' · CLASE '+String(activeModule+1).padStart(2,'0')+'</div><h3>'+esc(m[1])+'</h3><section><h4>1. Material de estudio</h4><p>'+esc(m[2])+'</p><p><b>Cómo dominarlo:</b> '+esc(m[3])+'</p></section><section><h4>2. Aplica lo aprendido</h4><p>Resuelve el reto sin consultar primero la respuesta. Después revisa la explicación o la pauta de evaluación.</p>'+questionHTML(t,m)+'</section><section><h4>3. Explica con tus palabras</h4><textarea data-curr-note rows="4" placeholder="Resume la idea, escribe un ejemplo o registra tus dudas...">'+esc(progress.notes?.[key]||'')+'</textarea><button class="curr-btn" data-curr-save-note>Guardar apuntes</button><span class="lesson-saved" aria-live="polite"></span></section><button class="curr-btn curr-done" data-curr-done>'+ (done.has(key)?'Clase completada ✓':'Marcar clase completada')+'</button></article><div class="source-links"><b>Consulta la fuente del tema</b>'+t.source.map(s=>'<a href="'+esc(s[1])+'" target="_blank" rel="noopener noreferrer">'+esc(s[0])+' ↗</a>').join('')+'</div>';
+ }
+}
+root.addEventListener('click',e=>{
+ const track=e.target.closest('[data-track]');if(track){current=track.dataset.track;activeModule=null;activeQuestion=null;activeAnswer=null;render();return}
+ const open=e.target.closest('[data-open-module]');if(open){openModule(Number(open.dataset.openModule));return}
+ if(e.target.closest('[data-curr-back]')){activeModule=null;activeQuestion=null;activeAnswer=null;render();return}
+ const answer=e.target.closest('[data-curr-answer]');if(answer&&activeQuestion){activeAnswer=Number(answer.dataset.currAnswer);render();return}
+ if(e.target.closest('[data-curr-next-question]')&&activeModule!==null){openModule(activeModule);return}
+ if(e.target.closest('[data-curr-save-note]')&&activeModule!==null){const value=root.querySelector('[data-curr-note]')?.value||'';progress.notes??={};progress.notes[current+':'+activeModule]=value;save();root.querySelectorAll('.lesson-saved').forEach(x=>x.textContent='Apuntes guardados.');return}
+ if(e.target.closest('[data-curr-save-response]')&&activeModule!==null){const value=root.querySelector('[data-curr-response]')?.value||'';progress.notes??={};progress.notes[current+':'+activeModule]=value;save();root.querySelectorAll('.lesson-saved').forEach(x=>x.textContent='Respuesta guardada.');return}
+ if(e.target.closest('[data-curr-done]')&&activeModule!==null){done.add(current+':'+activeModule);save();activeModule=null;activeQuestion=null;activeAnswer=null;render();return}
+});
+const style=document.createElement('style');style.textContent=`
+#adaz-curriculum{margin:18px 0;padding:18px;background:#101722;border:1px solid #2b394b;border-radius:20px;color:#edf3fa}
+#adaz-curriculum .track-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+#adaz-curriculum .track{background:#151f2d;border:1px solid #304158;border-radius:14px;padding:13px;text-align:left;color:#edf3fa;cursor:pointer}
+#adaz-curriculum .track.active{border-color:#9fc5ff;background:#1b2a3d}
+#adaz-curriculum .track b{display:block;font-size:13px}
+#adaz-curriculum .track small{display:block;color:#9eafc4;font-size:10px;margin-top:3px}
+#adaz-curriculum .curr-desc,#adaz-curriculum p{font-size:12px;line-height:1.65;color:#b7c4d5}
+#adaz-curriculum .curr-method{padding:12px 14px;border:1px solid #33475e;background:#142131;border-radius:13px;margin:12px 0}
+#adaz-curriculum .curr-method b{font-size:12px;color:#e7eef8}
+#adaz-curriculum .curr-module-list{display:grid;gap:9px;margin-top:14px}
+#adaz-curriculum .curr-module{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px;border:1px solid #2b3c50;background:#131d2a;border-radius:14px}
+#adaz-curriculum .curr-module.is-done{border-color:#3e765b}
+#adaz-curriculum .curr-module small,.lesson-kicker{display:block;font-size:9px;letter-spacing:1px;color:#9fc5ff;font-weight:850}
+#adaz-curriculum .curr-module b{display:block;font-size:12px;margin:5px 0}
+#adaz-curriculum .curr-module p{font-size:10px;margin:0;max-width:680px}
+#adaz-curriculum .curr-btn,.curr-back{border:1px solid #9fc5ff;background:#9fc5ff;color:#0c1727;border-radius:10px;padding:9px 12px;font-size:11px;font-weight:850;cursor:pointer;white-space:nowrap}
+#adaz-curriculum .curr-back{background:#17263a;color:#d6e6f8;border-color:#344b67;margin:12px 0}
+#adaz-curriculum .curr-lesson{margin-top:12px;padding:17px;border:1px solid #34465d;background:#121c29;border-radius:16px}
+#adaz-curriculum .curr-lesson h3{font-size:18px;margin:7px 0 14px}
+#adaz-curriculum .curr-lesson section{padding:13px 0;border-top:1px solid #2a3b50}
+#adaz-curriculum .curr-lesson h4{font-size:13px;margin:0 0 8px;color:#e8eef8}
+#adaz-curriculum textarea{display:block;width:100%;margin:9px 0;padding:11px;border:1px solid #394d64;border-radius:10px;background:#0b1420;color:#edf3fa;font:inherit;font-size:12px;resize:vertical}
+#adaz-curriculum .lesson-quiz{margin:10px 0;padding:13px;border:1px solid #34465d;border-radius:13px;background:#0e1723}
+#adaz-curriculum .lesson-quiz h4{font-size:13px;line-height:1.55;margin:8px 0}
+#adaz-curriculum .lesson-options{display:grid;gap:7px}
+#adaz-curriculum .lesson-options button{padding:10px;text-align:left;border:1px solid #35475d;background:#182536;color:#edf3fa;border-radius:10px;cursor:pointer;font-size:11px}
+#adaz-curriculum .lesson-options button.chosen{border-color:#9fc5ff;background:#243a54}
+#adaz-curriculum .lesson-options button:disabled{opacity:.85}
+#adaz-curriculum .lesson-feedback{margin-top:10px;padding:11px;border:1px solid #3d765b;border-radius:10px;background:#142a23}
+#adaz-curriculum .lesson-feedback p{margin:5px 0}
+#adaz-curriculum .lesson-hint,.lesson-saved{font-size:10px;color:#9eafc4}
+#adaz-curriculum .curr-done{margin-top:10px}
+#adaz-curriculum .source-links{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid #2a394c}
+#adaz-curriculum .source-links b{flex-basis:100%;font-size:11px}
+#adaz-curriculum a{font-size:10px;color:#9fc5ff}
+#adaz-curriculum .bar{height:7px;background:#2a394c;border-radius:9px;overflow:hidden;margin:9px 0}
+#adaz-curriculum .bar span{display:block;height:100%;background:#9fc5ff}
+@media(max-width:600px){#adaz-curriculum{padding:13px}#adaz-curriculum .track-grid{grid-template-columns:1fr}#adaz-curriculum .curr-module{align-items:flex-start;flex-direction:column}#adaz-curriculum .curr-btn{white-space:normal}}
+`;document.head.append(style);
+const root=document.createElement('section');root.id='adaz-curriculum';
+function ensureRoot(){if(root.isConnected)return;const heading=page.querySelector('.page-heading');if(heading)heading.insertAdjacentElement('afterend',root);else page.append(root);render()}
+ensureRoot();
+new MutationObserver(()=>{if(!root.isConnected)ensureRoot()}).observe(page,{childList:true,subtree:true});
+window.addEventListener('adaz-experience-refresh',()=>{if(!root.isConnected)ensureRoot()});
 })();
