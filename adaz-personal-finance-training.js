@@ -79,7 +79,7 @@ const days=[
 ['Curl martillo','Braquial y braquiorradial · flexión de codo con agarre neutro','1 × 8–10','2 min','Mantén muñeca neutra y evita balancear el tronco.'],
 ['Extensión de tríceps con cuerda','Tríceps · extensión de codo con hombro neutro; participan las tres cabezas','1–2 × 8–10','2 min','Mantén el brazo estable y termina el movimiento sin separar excesivamente los codos.'],
 ['Rotación externa con banda','Manguito rotador · infraespinoso y redondo menor como rotadores externos','1 × 8–10 por lado','60–90 s','Resistencia muy ligera, codo junto al cuerpo y sin dolor.'],
-['Superserie de muñeca: flexión + extensión','Flexores y extensores del antebrazo · trabajo directo ligero','1 × 8–10 de cada movimiento','60–90 s','Antebrazo apoyado, recorrido corto y controlado; no persigas fatiga intensa.']
+['Superserie de muñeca: flexión + extensión','Flexores y extensores del antebrazo · trabajo directo ligero','1 × 8–10 de cada movimiento','60–90 s','Antebrazo apoyado, recorrido corto y controlado; no persigas fatiga intensa.'],['Pronación / supinación con mancuerna ligera','Pronadores y supinador del antebrazo · rotación controlada','1 × 8 por sentido','60–90 s','Apoya el antebrazo y usa una palanca corta con carga muy ligera.']
 ]},
 {title:'Día 4 · Lower B',focus:'Trabajo unilateral, extensión de cadera, flexión de rodilla, aductores, abductores y pantorrilla con rodilla flexionada',power:[],main:[
 ['Sentadilla dividida asistida','Cuádriceps y glúteos · patrón unilateral','2 × 8 por lado','3–5 min','Usa un apoyo si lo necesitas y controla ambos lados con el mismo recorrido.'],
@@ -99,7 +99,7 @@ const coverage=[
 ['Espalda y escápulas','Dorsal, romboides, trapecios superior/medio/inferior','Jalón/dominada + remos + encogimiento + face pull + elevación en Y','Cobertura por tracción vertical, horizontal y control escapular.'],
 ['Bíceps y flexores del codo','Bíceps braquial, braquial y braquiorradial','Curl inclinado + predicador + martillo','Cambian posiciones y agarres; ningún curl aísla una cabeza del bíceps.'],
 ['Tríceps','Cabezas larga, lateral y medial','Extensión sobre la cabeza + pressdown + presses','Las tres cabezas participan en la extensión; la posición del hombro cambia la longitud de la cabeza larga, no permite aislarla.'],
-['Antebrazo y manguito rotador','Flexores/extensores de muñeca y rotadores externos','Superserie de muñeca + rotación externa + agarres','Volumen accesorio bajo; adaptar a la carga de natación.'],
+['Antebrazo y manguito rotador','Flexores/extensores de muñeca, pronadores/supinador y rotadores externos del hombro','Superserie de muñeca + pronación/supinación + rotación externa','Volumen accesorio bajo; adaptar a la carga de natación.'],
 ['Cuádriceps','Vastos y recto femoral','Sentadilla/prensa + split squat + extensión de rodilla','Los patrones de rodilla trabajan el grupo; no se promete aislar una cabeza concreta.'],
 ['Isquiotibiales','Porción biarticular y cabeza corta del bíceps femoral','Peso muerto rumano + curl femoral','Combina extensión de cadera y flexión de rodilla.'],
 ['Glúteos','Glúteo mayor, medio y menor','Sentadilla/RDL + hip thrust + abducción','Extensión de cadera y estabilización/abducción pélvica.'],
