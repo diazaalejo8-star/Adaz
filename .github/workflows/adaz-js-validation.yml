@@ -98,13 +98,13 @@ jobs:
           if "home-health-card" not in html or "Día 1 Full Body" not in html or "Día 4 Lower" not in html:
               raise SystemExit("ADAZ Health summary is missing from the home screen")
           training = Path("adaz-personal-finance-training.js").read_text(encoding="utf-8")
-          for label in ["Día 1 · Full Body", "Día 2 · Upper", "Día 3 · Full Body", "Día 4 · Lower"]:
+          for label in ["Día 1 · Full Body A", "Día 2 · Upper", "Día 3 · Full Body B", "Día 4 · Lower"]:
               if label not in training:
                   raise SystemExit(f"New four-day split is missing: {label}")
           build_workflow = Path(".github/workflows/build-adaz-apks.yml").read_text(encoding="utf-8")
           if "app-personal-debug.apk" not in build_workflow or "app-family-debug.apk" not in build_workflow or "actions/upload-artifact@v4" not in build_workflow:
               raise SystemExit("Downloadable PC APK artifact packaging is missing")
-          if "const CACHE = 'adaz-shell-v52';" not in sw:
+          if "const CACHE = 'adaz-shell-v54';" not in sw:
               raise SystemExit("Service worker cache version was not refreshed")
 
           family_js = Path("adaz-family.js").read_text(encoding="utf-8")
