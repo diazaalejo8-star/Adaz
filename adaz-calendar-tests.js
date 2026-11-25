@@ -139,8 +139,8 @@ q('Negocio','Marketing','Una publicación recibe 200 visitas y 10 consultas. ¿Q
 q('Negocio','Costos','El envío del proveedor cuesta $18.000 para 6 piezas iguales. ¿Qué costo de envío asignas a cada una?',['$2.000','$3.000','$6.000','$18.000'],1,'18.000 / 6 = 3.000 por pieza.'),
 q('Negocio','Registro','¿Qué dato permite calcular el margen de una venta?',['Solo el precio publicado.','Precio cobrado y costo total atribuible.','Número de seguidores.','Cantidad de mensajes recibidos.'],1,'Se necesita el ingreso real y el costo atribuible a la venta.')
 ];
-const rotationKey='adaz-question-rotation-v1';
-let rotation={};try{rotation=JSON.parse(localStorage.getItem(rotationKey)||'{}')||{}}catch{}
+const rotationKey='adaz-question-rotation-v2', previousRotationKey='adaz-question-rotation-v1';
+let rotation={};try{const current=JSON.parse(localStorage.getItem(rotationKey)||'null');rotation=current&&typeof current==='object'?current:(JSON.parse(localStorage.getItem(previousRotationKey)||'{}')||{})}catch{}
 function shuffled(list){const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function shuffleQuestion(item){const opts=shuffled(item.opts.map((text,index)=>({text,index})));return {...item,opts:opts.map(x=>x.text),a:opts.findIndex(x=>x.index===item.a)}}
 function pickFresh(kind,filter,count=1){
@@ -148,13 +148,15 @@ function pickFresh(kind,filter,count=1){
  if(filter)pool=pool.filter(x=>x.area===filter);
  if(!pool.length)return [];
  const key=kind+'|'+(filter||'all'),used=Array.isArray(rotation[key])?rotation[key]:[];
- let fresh=pool.filter(x=>!used.includes(x.id));
+ const fresh=pool.filter(x=>!used.includes(x.id));
  let chosen=shuffled(fresh).slice(0,count);
  if(chosen.length<count){
+  // Finish the current cycle first. Only then start a new cycle with
+  // questions not already selected in this same assessment.
   const chosenIds=new Set(chosen.map(x=>x.id));
-  const refill=shuffled(pool.filter(x=>!chosenIds.has(x.id)));
-  chosen=chosen.concat(refill.slice(0,count-chosen.length));
-  rotation[key]=chosen.map(x=>x.id);
+  const refill=shuffled(pool.filter(x=>!chosenIds.has(x.id))).slice(0,count-chosen.length);
+  chosen=chosen.concat(refill);
+  rotation[key]=[...fresh.map(x=>x.id),...refill.map(x=>x.id)].slice(-pool.length);
  }else rotation[key]=[...used,...chosen.map(x=>x.id)].slice(-pool.length);
  try{localStorage.setItem(rotationKey,JSON.stringify(rotation))}catch{}
  return chosen.map(shuffleQuestion);
@@ -162,7 +164,7 @@ function pickFresh(kind,filter,count=1){
 window.ADAZExamBank={
  next:(kind,filter)=>pickFresh(kind,filter,1)[0]||null,
  sample:(kind,filter,count)=>pickFresh(kind,filter,count),
- assessment:(kind)=>kind==='icfes'?['Matemáticas','Lectura Crítica','Sociales','Ciencias','Inglés'].flatMap(a=>pickFresh('icfes',a,2)):kind==='ielts'?[...pickFresh('ielts','Listening',4),...pickFresh('ielts','Reading',4)]:kind==='medicine'?pickFresh('medicine','Ciencias',8):pickFresh('business','Negocio',8)
+ assessment:(kind)=>kind==='icfes'?['Matemáticas','Lectura Crítica','Sociales','Ciencias','Inglés'].flatMap(a=>pickFresh('icfes',a,4)):kind==='ielts'?[...pickFresh('ielts','Listening',4),...pickFresh('ielts','Reading',4)]:kind==='medicine'?pickFresh('medicine','Ciencias',8):pickFresh('business','Negocio',8)
 };
 
 let exam=null,answers=[],pos=0,calendarState=null;
