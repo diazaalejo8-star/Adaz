@@ -148,13 +148,15 @@ function pickFresh(kind,filter,count=1){
  if(filter)pool=pool.filter(x=>x.area===filter);
  if(!pool.length)return [];
  const key=kind+'|'+(filter||'all'),used=Array.isArray(rotation[key])?rotation[key]:[];
- let fresh=pool.filter(x=>!used.includes(x.id));
+ const fresh=pool.filter(x=>!used.includes(x.id));
  let chosen=shuffled(fresh).slice(0,count);
  if(chosen.length<count){
+  // Finish the current cycle first. Only then start a new cycle with
+  // questions not already selected in this same assessment.
   const chosenIds=new Set(chosen.map(x=>x.id));
-  const refill=shuffled(pool.filter(x=>!chosenIds.has(x.id)));
-  chosen=chosen.concat(refill.slice(0,count-chosen.length));
-  rotation[key]=chosen.map(x=>x.id);
+  const refill=shuffled(pool.filter(x=>!chosenIds.has(x.id))).slice(0,count-chosen.length);
+  chosen=chosen.concat(refill);
+  rotation[key]=refill.map(x=>x.id);
  }else rotation[key]=[...used,...chosen.map(x=>x.id)].slice(-pool.length);
  try{localStorage.setItem(rotationKey,JSON.stringify(rotation))}catch{}
  return chosen.map(shuffleQuestion);
@@ -162,7 +164,7 @@ function pickFresh(kind,filter,count=1){
 window.ADAZExamBank={
  next:(kind,filter)=>pickFresh(kind,filter,1)[0]||null,
  sample:(kind,filter,count)=>pickFresh(kind,filter,count),
- assessment:(kind)=>kind==='icfes'?['Matemáticas','Lectura Crítica','Sociales','Ciencias','Inglés'].flatMap(a=>pickFresh('icfes',a,2)):kind==='ielts'?[...pickFresh('ielts','Listening',4),...pickFresh('ielts','Reading',4)]:kind==='medicine'?pickFresh('medicine','Ciencias',8):pickFresh('business','Negocio',8)
+ assessment:(kind)=>kind==='icfes'?['Matemáticas','Lectura Crítica','Sociales','Ciencias','Inglés'].flatMap(a=>pickFresh('icfes',a,4)):kind==='ielts'?[...pickFresh('ielts','Listening',4),...pickFresh('ielts','Reading',4)]:kind==='medicine'?pickFresh('medicine','Ciencias',8):pickFresh('business','Negocio',8)
 };
 
 let exam=null,answers=[],pos=0,calendarState=null;
