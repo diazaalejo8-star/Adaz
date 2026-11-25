@@ -139,7 +139,7 @@ q('Negocio','Marketing','Una publicación recibe 200 visitas y 10 consultas. ¿Q
 q('Negocio','Costos','El envío del proveedor cuesta $18.000 para 6 piezas iguales. ¿Qué costo de envío asignas a cada una?',['$2.000','$3.000','$6.000','$18.000'],1,'18.000 / 6 = 3.000 por pieza.'),
 q('Negocio','Registro','¿Qué dato permite calcular el margen de una venta?',['Solo el precio publicado.','Precio cobrado y costo total atribuible.','Número de seguidores.','Cantidad de mensajes recibidos.'],1,'Se necesita el ingreso real y el costo atribuible a la venta.')
 ];
-const rotationKey='adaz-question-rotation-v1';
+const rotationKey='adaz-question-rotation-v2';
 let rotation={};try{rotation=JSON.parse(localStorage.getItem(rotationKey)||'{}')||{}}catch{}
 function shuffled(list){const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function shuffleQuestion(item){const opts=shuffled(item.opts.map((text,index)=>({text,index})));return {...item,opts:opts.map(x=>x.text),a:opts.findIndex(x=>x.index===item.a)}}
