@@ -61,9 +61,9 @@ jobs:
           if "WindowInsets.Type.displayCutout()" not in activity:
               raise SystemExit("Android display-cutout insets are not handled")
           build = Path("android/app/build.gradle").read_text(encoding="utf-8")
-          if build.count("versionCode 8") != 3 or "versionName '1.3.4'" not in build:
-              raise SystemExit("Android update version must be 1.3.4 / versionCode 8")
-          if "const CACHE = 'adaz-shell-v56';" not in sw:
+          if build.count("versionCode 9") != 3 or "versionName '1.3.5'" not in build:
+              raise SystemExit("Android update version must be 1.3.4 / versionCode 9")
+          if "const CACHE = 'adaz-shell-v57';" not in sw:
               raise SystemExit("Android layout release must refresh the offline cache")
 
           if re.search(r"(?<!\$)\$\([^)]*\)\.forEach", html):
@@ -95,16 +95,16 @@ jobs:
               raise SystemExit("Dark theme stylesheet must load after legacy inline styles")
           if 'data-page="training"' not in html.split('<nav class="bottom-nav"', 1)[0]:
               raise SystemExit("ADAZ Health must be directly accessible in the main navigation")
-          if "home-health-card" not in html or "Día 1 Full Body" not in html or "Día 4 Lower" not in html:
+          if "home-health-card" not in html or "Día 1 Upper A" not in html or "Día 4 Lower B" not in html:
               raise SystemExit("ADAZ Health summary is missing from the home screen")
           training = Path("adaz-personal-finance-training.js").read_text(encoding="utf-8")
-          for label in ["Día 1 · Full Body A", "Día 2 · Upper", "Día 3 · Full Body B", "Día 4 · Lower"]:
+          for label in ["Día 1 · Upper A", "Día 2 · Lower A", "Día 3 · Upper B", "Día 4 · Lower B"]:
               if label not in training:
                   raise SystemExit(f"New four-day split is missing: {label}")
           build_workflow = Path(".github/workflows/build-adaz-apks.yml").read_text(encoding="utf-8")
           if "app-personal-debug.apk" not in build_workflow or "app-family-debug.apk" not in build_workflow or "actions/upload-artifact@v4" not in build_workflow:
               raise SystemExit("Downloadable PC APK artifact packaging is missing")
-          if "const CACHE = 'adaz-shell-v56';" not in sw:
+          if "const CACHE = 'adaz-shell-v57';" not in sw:
               raise SystemExit("Service worker cache version was not refreshed")
 
           family_js = Path("adaz-family.js").read_text(encoding="utf-8")
@@ -252,6 +252,25 @@ jobs:
               raise SystemExit("The commercial visual theme is missing")
           if "spotifyClientId" in html or "connectSpotify" in html:
               raise SystemExit("Spotify developer controls should not be exposed in the personal app")
+
+
+          calendar = Path("adaz-calendar-tests.js").read_text(encoding="utf-8")
+          curriculum = Path("adaz-academy-curriculum.js").read_text(encoding="utf-8")
+          academy = Path("adaz-academy.js").read_text(encoding="utf-8")
+          if "pickFresh('icfes',a,4)" not in calendar or "20 preguntas originales: 4 por cada una de las cinco áreas" not in calendar:
+              raise SystemExit("ICFES diagnostics must contain 20 questions balanced across five academic areas")
+          if "const fresh=pool.filter(x=>!used.includes(x.id))" not in calendar or "rotation[key]=refill.map(x=>x.id)" not in calendar:
+              raise SystemExit("Question rotation must complete a category bank cycle before repeating")
+          for lesson_id in ["ie2", "ie3", "ie4"]:
+              if f"id:'{lesson_id}'" not in academy:
+                  raise SystemExit("Saber 11 English tasks are not fully developed")
+          for phrase in ["Partes 1–3: vocabulario, avisos y diálogos", "Partes 4 y 7: gramática y léxico", "Partes 5 y 6: lectura literal e inferencial"]:
+              if phrase not in curriculum:
+                  raise SystemExit("Saber 11 English curriculum is missing one of the seven task families")
+          if "Mapa semanal de cobertura anatómica" not in Path("adaz-personal-finance-training.js").read_text(encoding="utf-8"):
+              raise SystemExit("ADAZ Health weekly anatomical coverage map is missing")
+          if "Día 1 · Upper A" not in Path("adaz-personal-finance-training.js").read_text(encoding="utf-8") or "Día 4 · Lower B" not in Path("adaz-personal-finance-training.js").read_text(encoding="utf-8"):
+              raise SystemExit("ADAZ Health Upper/Lower split is incomplete")
 
           print("Navigation, commercial theme, 4 study paths, review guides and 32 challenge questions passed.")
           PY
