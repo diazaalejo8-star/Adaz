@@ -62,14 +62,14 @@ jobs:
           for APK in \
             android/app/build/outputs/apk/personal/debug/app-personal-debug.apk \
             android/app/build/outputs/apk/family/debug/app-family-debug.apk; do
-            "$AAPT" dump badging "$APK" | grep -F "versionCode='9' versionName='1.3.5'"
+            "$AAPT" dump badging "$APK" | grep -F "versionCode='10' versionName='1.3.6'"
             sha256sum "$APK"
           done
 
       - name: Upload both separate APKs
         uses: actions/upload-artifact@v4
         with:
-          name: ADAZ-v1.3.5-Personal-and-Family-APKs
+          name: ADAZ-v1.3.6-Personal-and-Family-APKs
           if-no-files-found: error
           path: |
             android/app/build/outputs/apk/personal/debug/app-personal-debug.apk
