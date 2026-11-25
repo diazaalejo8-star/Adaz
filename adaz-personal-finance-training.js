@@ -46,51 +46,53 @@ const library=[
 function injectTraining(){
 const p=$('#page-training');if(!p)return;const box=$('#adaz-strength-plan')||document.createElement('div');box.id='adaz-strength-plan';
 const days=[
-{title:'Día 1 · Upper A',focus:'Empuje horizontal, dos vectores de tracción y trabajo inicial de brazos y deltoides',power:[],main:[
-['Press plano con mancuernas','Pectoral mayor · patrón horizontal; deltoides anterior y tríceps como sinergistas','2 × 6–10','3–5 min','Apoya bien la espalda, controla el descenso y usa un rango de movimiento cómodo.'],
-['Remo con pecho apoyado','Dorsal, romboides y trapecio medio · tracción horizontal','2 × 6–10','3–5 min','Mantén el pecho apoyado y lleva los codos sin encoger los hombros.'],
-['Jalón al pecho con agarre neutro','Dorsal ancho y redondo mayor · tracción vertical','2 × 8–10','3–5 min','Lleva los codos hacia abajo; no tires detrás de la nuca ni uses balanceo.']
-],iso:[
-['Elevación lateral con mancuerna o polea','Deltoides medio · abducción del hombro','1–2 × 8–10','2 min','Sube en el plano escapular sin impulso ni encogimiento.'],
-['Curl inclinado con mancuernas','Bíceps braquial · flexión de codo con el hombro en extensión','1–2 × 8–10','2 min','Deja que el brazo quede algo detrás del torso, sin forzar el hombro. Esta posición cambia la longitud del bíceps; no aísla una cabeza.'],
-['Extensión de tríceps sobre la cabeza en polea','Tríceps · extensión de codo con la cabeza larga en posición más alargada','1–2 × 8–10','2 min','Mantén costillas y pelvis estables; elige un recorrido cómodo y no arquees la espalda.'],
-['Encogimiento ligero con mancuernas','Trapecio superior · elevación escapular','1 × 8–10','2 min','Eleva los hombros verticalmente y evita rotarlos o impulsarte.']
-]},
-{title:'Día 2 · Lower A',focus:'Dominancia de rodilla, bisagra de cadera, pantorrilla con rodilla extendida y control del tronco',power:[
-['Salto vertical de baja amplitud','Potencia de tren inferior · aterrizaje y coordinación','2 × 3','2–3 min','Solo con supervisión cualificada, espacio despejado y aterrizajes controlados. Omite el bloque si hay fatiga o molestias.']
+{title:'Día 1 · Full Body',focus:'Sesión global: patrón de sentadilla, empuje horizontal, tracción horizontal, bisagra y core',power:[
+['Salto vertical de baja amplitud','Potencia de tren inferior · coordinación y aterrizaje','2 × 3','2–3 min','Solo con supervisión cualificada; aterriza con control. Omite si hay fatiga o molestias.']
 ],main:[
-['Sentadilla goblet o prensa de piernas','Cuádriceps y glúteo mayor · patrón dominante de rodilla','2 × 6–10','3–5 min','Mantén el apoyo estable y usa un recorrido que puedas controlar sin perder postura.'],
-['Peso muerto rumano con mancuernas','Isquiotibiales y glúteo mayor · extensión de cadera; erectores como estabilizadores','2 × 6–10','3–5 min','Lleva la cadera atrás, conserva la columna neutra y no busques profundidad a costa de la técnica.']
+['Sentadilla goblet o prensa de piernas','Cuádriceps y glúteo mayor · patrón dominante de rodilla','2 × 6–10','3–5 min','Apoyo estable y recorrido controlado, sin perder postura.'],
+['Press plano con mancuernas','Pectoral mayor · empuje horizontal; deltoides anterior y tríceps como sinergistas','2 × 6–10','3–5 min','Controla el descenso y usa un rango cómodo.'],
+['Remo con pecho apoyado','Dorsal, romboides y trapecio medio · tracción horizontal','2 × 6–10','3–5 min','Mantén el pecho apoyado y evita encoger los hombros.'],
+['Peso muerto rumano con mancuernas','Isquiotibiales y glúteo mayor · bisagra de cadera','2 × 6–10','3–5 min','Lleva la cadera atrás y conserva la columna neutra.']
 ],iso:[
-['Extensión de rodilla en máquina','Cuádriceps · extensión de rodilla','1–2 × 8–10','2 min','Alinea el eje de la máquina con la rodilla y evita dar impulso.'],
-['Elevación de gemelos de pie','Tríceps sural · mayor énfasis relativo en gastrocnemio con rodilla extendida','2 × 8–10','2 min','Pausa arriba y controla el descenso sin rebotes.'],
-['Dead bug','Core · control anti-extensión','2 × 8 por lado','60–90 s','Mueve brazo y pierna contrarios sin perder el control del tronco.']
+['Elevación lateral con mancuerna o polea','Deltoides medio · abducción del hombro','1 × 8–10','2 min','Sin impulso ni encogimiento.'],
+['Dead bug','Core · control anti-extensión','2 × 8 por lado','60–90 s','Mueve extremidades contrarias sin perder el control del tronco.']
 ]},
-{title:'Día 3 · Upper B',focus:'Empuje inclinado y vertical, tracción supinada, deltoides posteriores, trapecio inferior y segundo ángulo de brazos',power:[
-['Lanzamiento frontal con balón medicinal ligero','Potencia de tren superior · coordinación de empuje','2 × 4','2–3 min','Solo con entrenador, balón ligero y zona despejada. No lo hagas si el hombro llega fatigado de natación.']
+{title:'Día 2 · Upper',focus:'Tren superior: empuje inclinado y vertical, tracción vertical, deltoides posteriores y brazos',power:[
+['Lanzamiento frontal con balón medicinal ligero','Potencia de tren superior · coordinación de empuje','2 × 4','2–3 min','Solo con entrenador y balón ligero; omite si el hombro está fatigado por natación.']
 ],main:[
-['Press inclinado con mancuernas','Pectoral mayor · énfasis relativo en fibras claviculares; deltoides anterior','2 × 6–10','3–5 min','Usa inclinación moderada y controla la bajada sin elevar los hombros.'],
-['Dominada asistida o jalón supino','Dorsal ancho y flexores del codo · tracción vertical supinada','2 × 6–10','3–5 min','Usa asistencia suficiente para evitar balanceo y completar el recorrido con control.'],
-['Press de hombros con mancuernas sentado','Deltoides anterior y tríceps · empuje vertical','1–2 × 8–10','3–5 min','No arquees la espalda; reduce el recorrido si aparece molestia.']
+['Press inclinado con mancuernas','Pectoral mayor · énfasis relativo en fibras claviculares','2 × 6–10','3–5 min','Inclinación moderada y descenso controlado.'],
+['Dominada asistida o jalón supino','Dorsal ancho y flexores del codo · tracción vertical','2 × 6–10','3–5 min','Usa asistencia suficiente para evitar balanceo.'],
+['Press de hombros con mancuernas sentado','Deltoides anterior y tríceps · empuje vertical','1–2 × 8–10','3–5 min','No arquees la espalda; detén si hay molestia.']
 ],iso:[
-['Face pull con cuerda','Deltoides posterior y musculatura escapular · tracción alta','1–2 × 8–10','2 min','Lleva la cuerda hacia la altura de los ojos sin extender la zona lumbar.'],
-['Elevación en Y inclinada, ligera','Trapecio inferior y control escapular','1 × 8–10','2 min','Usa carga muy baja, pulgares hacia arriba y recorrido sin dolor.'],
-['Curl predicador con mancuerna o máquina','Bíceps braquial · flexión de codo con hombro flexionado','1–2 × 8–10','2 min','Evita rebotar en la parte baja. Cambia la posición del hombro; no aísla la cabeza corta.'],
-['Curl martillo','Braquial y braquiorradial · flexión de codo con agarre neutro','1 × 8–10','2 min','Mantén muñeca neutra y evita balancear el tronco.'],
-['Extensión de tríceps con cuerda','Tríceps · extensión de codo con hombro neutro; participan las tres cabezas','1–2 × 8–10','2 min','Mantén el brazo estable y termina el movimiento sin separar excesivamente los codos.'],
-['Rotación externa con banda','Manguito rotador · infraespinoso y redondo menor como rotadores externos','1 × 8–10 por lado','60–90 s','Resistencia muy ligera, codo junto al cuerpo y sin dolor.'],
-['Superserie de muñeca: flexión + extensión','Flexores y extensores del antebrazo · trabajo directo ligero','1 × 8–10 de cada movimiento','60–90 s','Antebrazo apoyado, recorrido corto y controlado; no persigas fatiga intensa.'],['Pronación / supinación con mancuerna ligera','Pronadores redondo/cuadrado y supinador · rotación del antebrazo','1 × 8 por sentido','60–90 s','Apoya el antebrazo y usa una palanca corta con carga muy ligera.'],['Flexión plus en pared o banco','Serrato anterior · protracción y control escapular','1 × 8–10','60–90 s','Empuja suavemente al final sin encoger hombros; omite si hay fatiga o molestia.'],['Rotación interna con banda muy ligera','Subescapular · rotación interna y estabilidad del manguito','1 × 8 por lado','60–90 s','Codo junto al cuerpo, resistencia mínima y recorrido sin dolor.'],['Flexión plus en pared o banco','Serrato anterior · protracción y control escapular','1 × 8–10','60–90 s','Empuja suavemente al final sin encoger hombros; omite si el hombro está fatigado.'],['Rotación interna con banda muy ligera','Subescapular y control del manguito rotador','1 × 8 por lado','60–90 s','Codo pegado al cuerpo, resistencia mínima y sin dolor.']
+['Face pull con cuerda','Deltoides posterior y musculatura escapular','1–2 × 8–10','2 min','Lleva la cuerda hacia la altura de los ojos sin extender la zona lumbar.'],
+['Curl inclinado con mancuernas','Bíceps braquial · flexión de codo','1–2 × 8–10','2 min','No fuerces la extensión del hombro; no aísla una cabeza.'],
+['Extensión de tríceps sobre la cabeza en polea','Tríceps · extensión de codo','1–2 × 8–10','2 min','Costillas y pelvis estables; evita arquear la espalda.'],
+['Rotación externa con banda','Manguito rotador · infraespinoso y redondo menor','1 × 8–10 por lado','60–90 s','Resistencia muy ligera, codo junto al cuerpo y sin dolor.'],
+['Flexión plus en pared o banco','Serrato anterior · protracción y control escapular','1 × 8–10','60–90 s','Empuja suavemente al final sin encoger hombros.']
 ]},
-{title:'Día 4 · Lower B',focus:'Trabajo unilateral, extensión de cadera, flexión de rodilla, aductores, abductores y pantorrilla con rodilla flexionada',power:[],main:[
-['Sentadilla dividida asistida','Cuádriceps y glúteos · patrón unilateral','2 × 8 por lado','3–5 min','Usa un apoyo si lo necesitas y controla ambos lados con el mismo recorrido.'],
-['Hip thrust en máquina o puente de glúteos','Glúteo mayor · extensión de cadera','2 × 6–10','3–5 min','Termina con la cadera sin hiperextender la zona lumbar.'],
-['Curl femoral sentado','Isquiotibiales · flexión de rodilla','2 × 8–10','3–5 min','Alinea el eje de la máquina con la rodilla y controla el regreso.']
+{title:'Día 3 · Full Body',focus:'Sesión global: patrón unilateral de pierna, tracción, empuje, cadena posterior y estabilidad',power:[
+['Salto horizontal corto','Potencia de tren inferior · coordinación y aterrizaje','2 × 3','2–3 min','Solo con supervisión cualificada; distancia corta y aterrizaje estable. Omite si hay fatiga.']
+],main:[
+['Sentadilla dividida asistida','Cuádriceps y glúteos · patrón unilateral','2 × 8 por lado','3–5 min','Usa apoyo si hace falta y controla ambos lados.'],
+['Press inclinado con mancuernas','Pectoral mayor · énfasis relativo en fibras claviculares','2 × 6–10','3–5 min','Controla el descenso sin elevar los hombros.'],
+['Jalón al pecho con agarre neutro','Dorsal ancho y redondo mayor · tracción vertical','2 × 8–10','3–5 min','Lleva los codos hacia abajo sin balanceo.'],
+['Hip thrust en máquina o puente de glúteos','Glúteo mayor · extensión de cadera','2 × 8–10','3–5 min','Termina con la cadera sin hiperextender la zona lumbar.']
 ],iso:[
-['Aducción de cadera en máquina','Aductores · aproximación del muslo','1 × 8–10','2 min','Rango cómodo y controlado, sin rebotes.'],
-['Abducción de cadera en máquina o polea','Glúteo medio y menor · estabilización pélvica','1–2 × 8–10','2 min','Mantén la pelvis estable y evita girar el tronco.'],
-['Elevación de gemelos sentado','Tríceps sural · mayor énfasis relativo en sóleo con rodilla flexionada','2 × 8–10','2 min','Pausa breve arriba y controla el descenso.'],
-['Elevación de puntas / tibial anterior','Tibial anterior · dorsiflexión del tobillo','1–2 × 8–10','2 min','Eleva las puntas sin balancear el cuerpo.'],['Inversión y eversión de tobillo con banda','Tibial posterior y fibulares · control medial/lateral del tobillo','1 × 8 por sentido y lado','60–90 s','Resistencia muy ligera, movimiento corto y controlado; detén si molesta.'],
-['Plancha lateral','Core · estabilidad lateral y oblicuos','2 × 20–30 s por lado','60–90 s','Mantén hombro, tronco y pelvis alineados.'],['Pallof press','Core · antirotación; oblicuos y transverso como estabilizadores','1 × 8 por lado','60–90 s','Resistencia ligera; evita que el tronco rote.']
+['Curl femoral sentado','Isquiotibiales · flexión de rodilla','1–2 × 8–10','2 min','Alinea el eje de la máquina con la rodilla y controla el regreso.'],
+['Pallof press','Core · antirotación; oblicuos y transverso como estabilizadores','1 × 8 por lado','60–90 s','Resistencia ligera; evita que el tronco rote.'],
+['Elevación en Y inclinada, ligera','Trapecio inferior y control escapular','1 × 8–10','2 min','Carga muy baja, pulgares hacia arriba y recorrido sin dolor.']
+]},
+{title:'Día 4 · Lower',focus:'Tren inferior: cuádriceps, isquiotibiales, glúteos, aductores, abductores, pantorrilla y tobillo',power:[],main:[
+['Sentadilla goblet o prensa de piernas','Cuádriceps y glúteo mayor · patrón dominante de rodilla','2 × 6–10','3–5 min','Mantén apoyo estable y recorrido controlado.'],
+['Peso muerto rumano con mancuernas','Isquiotibiales y glúteo mayor · bisagra de cadera','2 × 6–10','3–5 min','Cadera atrás, columna neutra y técnica estable.'],
+['Curl femoral sentado','Isquiotibiales · flexión de rodilla','2 × 8–10','3–5 min','Controla el regreso y no rebotes.']
+],iso:[
+['Extensión de rodilla en máquina','Cuádriceps · extensión de rodilla','1 × 8–10','2 min','Alinea el eje de la máquina con la rodilla.'],
+['Aducción de cadera en máquina','Aductores · aproximación del muslo','1 × 8–10','2 min','Rango cómodo y controlado.'],
+['Abducción de cadera en máquina o polea','Glúteo medio y menor · estabilización pélvica','1 × 8–10','2 min','Mantén la pelvis estable.'],
+['Elevación de gemelos sentado','Tríceps sural · énfasis relativo en sóleo','2 × 8–10','2 min','Pausa breve arriba y controla el descenso.'],
+['Elevación de puntas / tibial anterior','Tibial anterior · dorsiflexión del tobillo','1 × 8–10','2 min','Eleva las puntas sin balancear el cuerpo.'],
+['Plancha lateral','Core · estabilidad lateral y oblicuos','1 × 20–30 s por lado','60–90 s','Mantén hombro, tronco y pelvis alineados.']
 ]}
 ];
 const coverage=[
