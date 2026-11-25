@@ -63,7 +63,7 @@ jobs:
           build = Path("android/app/build.gradle").read_text(encoding="utf-8")
           if build.count("versionCode 8") != 3 or "versionName '1.3.4'" not in build:
               raise SystemExit("Android update version must be 1.3.4 / versionCode 8")
-          if "const CACHE = 'adaz-shell-v55';" not in sw:
+          if "const CACHE = 'adaz-shell-v56';" not in sw:
               raise SystemExit("Android layout release must refresh the offline cache")
 
           if re.search(r"(?<!\$)\$\([^)]*\)\.forEach", html):
@@ -104,7 +104,7 @@ jobs:
           build_workflow = Path(".github/workflows/build-adaz-apks.yml").read_text(encoding="utf-8")
           if "app-personal-debug.apk" not in build_workflow or "app-family-debug.apk" not in build_workflow or "actions/upload-artifact@v4" not in build_workflow:
               raise SystemExit("Downloadable PC APK artifact packaging is missing")
-          if "const CACHE = 'adaz-shell-v55';" not in sw:
+          if "const CACHE = 'adaz-shell-v56';" not in sw:
               raise SystemExit("Service worker cache version was not refreshed")
 
           family_js = Path("adaz-family.js").read_text(encoding="utf-8")
