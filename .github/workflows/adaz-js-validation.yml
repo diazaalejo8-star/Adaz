@@ -259,7 +259,7 @@ jobs:
           academy = Path("adaz-academy.js").read_text(encoding="utf-8")
           if "pickFresh('icfes',a,4)" not in calendar or "20 preguntas originales: 4 por cada una de las cinco áreas" not in calendar:
               raise SystemExit("ICFES diagnostics must contain 20 questions balanced across five academic areas")
-          if "const fresh=pool.filter(x=>!used.includes(x.id))" not in calendar or "rotation[key]=refill.map(x=>x.id)" not in calendar:
+          if "const fresh=pool.filter(x=>!used.includes(x.id))" not in calendar or "rotation[key]=[...fresh.map(x=>x.id),...refill.map(x=>x.id)].slice(-pool.length)" not in calendar or "previousRotationKey='adaz-question-rotation-v1'" not in calendar:
               raise SystemExit("Question rotation must complete a category bank cycle before repeating")
           for lesson_id in ["ie2", "ie3", "ie4"]:
               if f"id:'{lesson_id}'" not in academy:
